@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast"; // Update to correct path
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 const SignIn: React.FC = () => {
