@@ -10,38 +10,42 @@ const MoodIcon: React.FC<MoodIconProps> = ({ iconType }) => {
     case 'calm':
       return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 12C12 9.23858 13.7909 7 16 7C18.2091 7 20 9.23858 20 12C20 14.7614 18.2091 17 16 17C13.7909 17 12 14.7614 12 12Z" fill="currentColor"/>
-          <path d="M12 12C12 14.7614 10.2091 17 8 17C5.79086 17 4 14.7614 4 12C4 9.23858 5.79086 7 8 7C10.2091 7 12 9.23858 12 12Z" fill="currentColor"/>
-          <circle cx="8" cy="10" r="1" fill="white"/>
-          <circle cx="16" cy="14" r="1" fill="white"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M8 14C8.5 15.5 10 17 12 17C14 17 15.5 15.5 16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="8" cy="10" r="1.5" fill="currentColor" />
+          <circle cx="16" cy="10" r="1.5" fill="currentColor" />
         </svg>
       );
     case 'relax':
       return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 4C13.3132 4 14.6136 4.25866 15.8268 4.7612C17.0401 5.26375 18.1425 6.00035 19.0711 6.92893C19.9997 7.85752 20.7362 8.95991 21.2388 10.1732C21.7413 11.3864 22 12.6868 22 14C22 15.3132 21.7413 16.6136 21.2388 17.8268C20.7362 19.0401 19.9997 20.1425 19.0711 21.0711C18.1425 21.9997 17.0401 22.7362 15.8268 23.2388C14.6136 23.7413 13.3132 24 12 24C9.34784 24 6.8043 22.9464 4.92893 21.0711C3.05357 19.1957 2 16.6522 2 14C2 11.3478 3.05357 8.8043 4.92893 6.92893C6.8043 5.05357 9.34784 4 12 4Z" fill="currentColor"/>
-          <path d="M8 8C10.2091 8 12 9.79086 12 12C12 14.2091 10.2091 16 8 16C5.79086 16 4 14.2091 4 12C4 9.79086 5.79086 8 8 8Z" fill="white"/>
-          <path d="M16 8C18.2091 8 20 9.79086 20 12C20 14.2091 18.2091 16 16 16C13.7909 16 12 14.2091 12 12C12 9.79086 13.7909 8 16 8Z" fill="white"/>
-          <path d="M12 16C14.2091 16 16 17.7909 16 20C16 22.2091 14.2091 24 12 24C9.79086 24 8 22.2091 8 20C8 17.7909 9.79086 16 12 16Z" fill="white"/>
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" />
+          <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor" />
+          <path d="M7 9C8.10457 9 9 8.10457 9 7C9 5.89543 8.10457 5 7 5C5.89543 5 5 5.89543 5 7C5 8.10457 5.89543 9 7 9Z" fill="currentColor" />
+          <path d="M17 9C18.1046 9 19 8.10457 19 7C19 5.89543 18.1046 5 17 5C15.8954 5 15 5.89543 15 7C15 8.10457 15.8954 9 17 9Z" fill="currentColor" />
+          <path d="M7 19C8.10457 19 9 18.1046 9 17C9 15.8954 8.10457 15 7 15C5.89543 15 5 15.8954 5 17C5 18.1046 5.89543 19 7 19Z" fill="currentColor" />
+          <path d="M17 19C18.1046 19 19 18.1046 19 17C19 15.8954 18.1046 15 17 15C15.8954 15 15 15.8954 15 17C15 18.1046 15.8954 19 17 19Z" fill="currentColor" />
         </svg>
       );
     case 'focus':
       return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" fill="currentColor"/>
-          <path d="M12 7C13.1046 7 14 6.10457 14 5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5C10 6.10457 10.8954 7 12 7Z" fill="currentColor"/>
-          <path d="M17 22H7C6.20435 22 5.44129 21.6839 4.87868 21.1213C4.31607 20.5587 4 19.7956 4 19V17C4 16.2044 4.31607 15.4413 4.87868 14.8787C5.44129 14.3161 6.20435 14 7 14H17C17.7956 14 18.5587 14.3161 19.1213 14.8787C19.6839 15.4413 20 16.2044 20 17V19C20 19.7956 19.6839 20.5587 19.1213 21.1213C18.5587 21.6839 17.7956 22 17 22Z" fill="currentColor"/>
-          <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" fill="currentColor"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+          <circle cx="12" cy="12" r="4" fill="currentColor" />
+          <path d="M12 2V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M12 20V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M2 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M20 12H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       );
     case 'anxious':
       return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 19L19 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M13.5 15.5L16 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="currentColor"/>
-          <path d="M5 22V19C5 17.9391 5.42143 16.9217 6.17157 16.1716C6.92172 15.4214 7.93913 15 9 15H15C16.0609 15 17.0783 15.4214 17.8284 16.1716" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M8 15C8.5 13.5 10 12 12 12C14 12 15.5 13.5 16 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M7.5 9L9.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M16.5 9L14.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M12 8V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       );
     default:

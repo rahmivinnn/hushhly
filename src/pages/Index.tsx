@@ -80,8 +80,13 @@ const Index = () => {
       
       {/* Bottom Section with white background */}
       <div className="flex-1 bg-white">
+        {/* Meditation Icon */}
+        <div className="flex justify-center mt-4">
+          <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-12 h-12" />
+        </div>
+        
         {/* Music Player - adjusted to match reference */}
-        <div className="w-full px-6 mt-8">
+        <div className="w-full px-6 mt-4">
           <MusicPlayer 
             isPlaying={isPlaying} 
             onPlayPause={handlePlayPauseMusic} 

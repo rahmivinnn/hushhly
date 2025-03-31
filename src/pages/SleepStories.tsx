@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ArrowLeft, Bell, Star, Play } from 'lucide-react';
@@ -23,7 +22,6 @@ const SleepStories: React.FC = () => {
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string}>({title: "", duration: ""});
   const [searchQuery, setSearchQuery] = useState<string>("");
   
-  // Our original stories list
   const originalStories: StoryItem[] = [
     {
       id: "1",
@@ -56,7 +54,6 @@ const SleepStories: React.FC = () => {
     }
   ];
   
-  // State for our shuffled lists
   const [featuredStories, setFeaturedStories] = useState<StoryItem[]>([...originalStories]);
   const [shortStories, setShortStories] = useState<StoryItem[]>([...originalStories]);
   const [relaxingTales, setRelaxingTales] = useState<StoryItem[]>([...originalStories]);
@@ -143,7 +140,6 @@ const SleepStories: React.FC = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-white pb-16">
-      {/* Header */}
       <header className="px-4 pt-4 pb-2 flex justify-between items-center">
         <button onClick={handleBackButton} className="p-2 text-black">
           <ArrowLeft size={20} />
@@ -158,7 +154,6 @@ const SleepStories: React.FC = () => {
         </button>
       </header>
       
-      {/* Search Bar */}
       <div className="px-4 mb-4">
         <div className="relative">
           <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -172,14 +167,12 @@ const SleepStories: React.FC = () => {
         </div>
       </div>
       
-      {/* Featured Story Banner */}
       <div className="px-4 mb-6">
         {featuredStories.length > 0 && (
           <StoryCard story={featuredStories[0]} isFeatured={true} />
         )}
       </div>
       
-      {/* Featured Sleep Stories Section */}
       <section className="px-4 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Featured Sleep Stories</h2>
@@ -201,12 +194,11 @@ const SleepStories: React.FC = () => {
           onClick={() => handleViewMore("Featured Sleep Stories")} 
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          <span>View More</span>
+          <span className="mr-2">View More</span>
           <MoodIcon iconType="relax" />
         </button>
       </section>
       
-      {/* Short Stories Section */}
       <section className="px-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Short Stories for Quick Sleep</h2>
         
@@ -220,12 +212,11 @@ const SleepStories: React.FC = () => {
           onClick={() => handleViewMore("Short Stories")} 
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          <span>View More</span>
+          <span className="mr-2">View More</span>
           <MoodIcon iconType="calm" />
         </button>
       </section>
       
-      {/* Long Relaxing Tales Section */}
       <section className="px-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Long Relaxing Tales</h2>
         
@@ -239,12 +230,11 @@ const SleepStories: React.FC = () => {
           onClick={() => handleViewMore("Long Relaxing Tales")} 
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          <span>View More</span>
+          <span className="mr-2">View More</span>
           <MoodIcon iconType="focus" />
         </button>
       </section>
       
-      {/* Parent & Child Section */}
       <section className="px-4 mb-20">
         <h2 className="text-lg font-semibold mb-4">Parent & Child Bonding Stories</h2>
         
@@ -258,12 +248,11 @@ const SleepStories: React.FC = () => {
           onClick={() => handleViewMore("Parent & Child Bonding Stories")} 
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          <span>View More</span>
+          <span className="mr-2">View More</span>
           <MoodIcon iconType="anxious" />
         </button>
       </section>
       
-      {/* Video Popup */}
       {showVideoPopup && (
         <VideoPopup
           title={currentVideo.title}
@@ -272,7 +261,6 @@ const SleepStories: React.FC = () => {
         />
       )}
       
-      {/* Bottom Navigation */}
       <BottomNavigation />
     </div>
   );

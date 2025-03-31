@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, Search, Moon, ArrowRight } from 'lucide-react';
@@ -6,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import VideoPopup from '@/components/VideoPopup';
 import BottomNavigation from '@/components/BottomNavigation';
 import MoodIcon from '@/components/MoodIcon';
+import SideMenu from '@/components/SideMenu';
+import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
 
 interface MoodOption {
   icon: React.ReactNode;
@@ -27,6 +30,9 @@ const Home: React.FC = () => {
   const [userName, setUserName] = useState<string>("Guest");
   const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string}>({title: "", duration: ""});
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
+  const [selectedMood, setSelectedMood] = useState<'calm' | 'relax' | 'focus' | 'anxious' | null>(null);
+  const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
   
   useEffect(() => {
     // Try to get user data from localStorage
@@ -109,12 +115,24 @@ const Home: React.FC = () => {
     navigate('/sleep-stories');
   };
 
+  const handleMoodSelection = (moodType: 'calm' | 'relax' | 'focus' | 'anxious') => {
+    setSelectedMood(moodType);
+    setShowMoodFeedback(true);
+  };
+
+  const toggleSideMenu = () => {
+    setIsSideMenuOpen(!isSideMenuOpen);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
       <header className="px-4 pt-4 pb-2">
         <div className="flex justify-between items-center">
-          <button className="p-2 text-gray-800">
+          <button 
+            className="p-2 text-gray-800"
+            onClick={toggleSideMenu}
+          >
             <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
             <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
             <div className="w-6 h-0.5 bg-gray-800"></div>
@@ -150,6 +168,7 @@ const Home: React.FC = () => {
               key={index}
               className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2`}
               aria-label={`Feeling ${mood.label}`}
+              onClick={() => handleMoodSelection(mood.type)}
             >
               <div className="mb-1 text-white">{mood.icon}</div>
               <span className="text-xs">{mood.label}</span>
@@ -169,7 +188,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           <div className="text-4xl">
-            <MoodIcon iconType="focus" />
+            <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-12 h-12" />
           </div>
         </div>
       </section>
@@ -287,6 +306,20 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+      
+      {/* Side Menu */}
+      <SideMenu 
+        isOpen={isSideMenuOpen} 
+        onClose={() => setIsSideMenuOpen(false)} 
+        userName={userName}
+      />
+      
+      {/* Mood Feedback Dialog */}
+      <MoodFeedbackDialog 
+        isOpen={showMoodFeedback}
+        onClose={() => setShowMoodFeedback(false)}
+        selectedMood={selectedMood}
+      />
       
       {/* Video Popup */}
       {showVideoPopup && (
