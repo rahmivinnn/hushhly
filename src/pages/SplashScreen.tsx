@@ -34,7 +34,7 @@ const SplashScreen: React.FC = () => {
     } else {
       setAnimating(true);
       setTimeout(() => {
-        navigate('/meditation');
+        navigate('/sign-up');
       }, 500);
     }
   };
@@ -52,7 +52,7 @@ const SplashScreen: React.FC = () => {
   const handleSkip = () => {
     setAnimating(true);
     setTimeout(() => {
-      navigate('/meditation');
+      navigate('/sign-up');
     }, 500);
   };
 
@@ -67,43 +67,8 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-800 ease-in-out`}
     >
-      {/* Animated gradient background */}
+      {/* Simple gradient background without highlights */}
       <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue overflow-hidden">
-        {/* Animated patterns */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path 
-                d="M0,0 L100,0 L100,100 L0,100 Z" 
-                fill="none" 
-                stroke="white" 
-                strokeWidth="0.5"
-                strokeDasharray="5,5"
-                className="animate-spin-slow"
-              />
-              <circle 
-                cx="50" 
-                cy="50" 
-                r="30" 
-                fill="none" 
-                stroke="white" 
-                strokeWidth="0.5" 
-                className="animate-pulse-subtle"
-              />
-              <circle 
-                cx="50" 
-                cy="50" 
-                r="20" 
-                fill="none" 
-                stroke="white" 
-                strokeWidth="0.3" 
-                className="animate-pulse-subtle"
-                style={{animationDelay: '1s'}}
-              />
-            </svg>
-          </div>
-        </div>
-        
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
         <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
@@ -150,7 +115,7 @@ const SplashScreen: React.FC = () => {
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
-        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={handleBack} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft size={20} />
         </button>
         <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
@@ -180,7 +145,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -198,7 +163,7 @@ const SplashScreen: React.FC = () => {
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
-        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={handleBack} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft size={20} />
         </button>
         <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
@@ -228,7 +193,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -246,7 +211,7 @@ const SplashScreen: React.FC = () => {
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
-        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={handleBack} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft size={20} />
         </button>
         <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
@@ -276,7 +241,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -294,7 +259,7 @@ const SplashScreen: React.FC = () => {
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
-        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={handleBack} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft size={20} />
         </button>
         <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
@@ -324,7 +289,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
