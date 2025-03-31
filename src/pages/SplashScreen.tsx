@@ -19,7 +19,7 @@ const SplashScreen: React.FC = () => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
         }, 800); // Duration for fade-out animation
-      }, 3000); // Increased delay before transition to 3 seconds
+      }, currentScreen === 0 ? 3000 : 5000); // 3 seconds for first screen, 5 seconds for second screen
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -41,7 +41,7 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: White background with blue gradient Hushhly logo
+    // Screen 1: White background with purple Hushhly logo
     <div 
       key="screen-1" 
       className={`flex flex-col h-full bg-white ${
@@ -59,16 +59,23 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
     
-    // Screen 2: Blue gradient background with white Hushhly logo
+    // Screen 2: Blue gradient background with white Hushhly logo and highlight effect
     <div 
       key="screen-2" 
-      className={`flex flex-col h-full bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue ${
+      className={`flex flex-col h-full relative overflow-hidden ${
         animating 
           ? 'opacity-0 scale-95' 
           : 'opacity-100 scale-100'
       } transition-all duration-800 ease-in-out`}
     >
-      <div className="flex-grow flex items-center justify-center">
+      {/* Background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue">
+        {/* Highlight effect */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-white opacity-10 blur-3xl animate-pulse-subtle"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl animate-pulse-subtle" style={{animationDelay: '1s'}}></div>
+      </div>
+      
+      <div className="flex-grow flex items-center justify-center relative z-10">
         <img 
           src="/lovable-uploads/0981a356-f652-4bd3-92d9-eb41d75469be.png" 
           alt="Hushhly Logo" 
