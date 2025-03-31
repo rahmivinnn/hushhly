@@ -54,32 +54,14 @@ const Index = () => {
     <div className="flex flex-col h-screen">
       {/* Top Section with blue gradient background - height adjusted */}
       <div 
-        className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-b-[40%] pb-24 pt-0 relative overflow-hidden"
+        className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[40%] pb-24 pt-0 relative overflow-hidden"
         style={{ height: '40%' }}
       >
         {/* Status Bar */}
         <StatusBar />
         
         {/* Logo and Header */}
-        <div className="flex justify-between items-center w-full px-4 py-3">
-          {/* Left empty space */}
-          <div className="w-8"></div>
-          
-          {/* Logo - perfectly centered */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <img src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" alt="Hushhly logo" className="h-8" />
-          </div>
-          
-          {/* Right side buttons */}
-          <div className="flex space-x-4 ml-auto">
-            <button className="text-white hover:opacity-80 transition-opacity">
-              <Bell size={24} />
-            </button>
-            <button className="text-yellow-400 hover:opacity-80 transition-opacity">
-              <Trophy size={24} />
-            </button>
-          </div>
-        </div>
+        <LogoHeader />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2">

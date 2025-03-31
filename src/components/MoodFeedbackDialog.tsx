@@ -29,7 +29,7 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
       // Trigger animation completion after delay
       const timer = setTimeout(() => {
         setAnimationComplete(true);
-      }, 1500);
+      }, 1000);
       
       return () => clearTimeout(timer);
     }
@@ -41,8 +41,8 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
     switch (selectedMood) {
       case 'calm':
         return {
-          title: "Embracing Calm Today",
-          description: "What a wonderful state of mind to be in. Let's maintain this peaceful energy with a meditation that enhances your natural tranquility.",
+          title: "Feeling Calm Today",
+          description: "It's wonderful that you're feeling calm. This is a perfect state for mindfulness and reflection. Would you like to maintain this tranquility with a peaceful meditation?",
           color: "text-blue-500",
           bgColor: "bg-blue-500",
           gradient: "bg-gradient-to-br from-blue-400 to-blue-600",
@@ -51,7 +51,7 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
       case 'relax':
         return {
           title: "Relaxed Mind, Happy Heart",
-          description: "Your relaxed state is perfect for deeper mindfulness work. We have some ideal meditations to help you maintain this serene energy throughout your day.",
+          description: "Relaxation is key to reducing stress and improving overall well-being. We have some perfect meditations to help you maintain this serene state.",
           color: "text-green-500",
           bgColor: "bg-green-500",
           gradient: "bg-gradient-to-br from-green-400 to-green-600",
@@ -60,7 +60,7 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
       case 'focus':
         return {
           title: "Sharp Focus Activated",
-          description: "Your focused state is ideal for productive meditation. We'll suggest some concentration exercises to help you maintain this mental clarity.",
+          description: "Your focused state is ideal for productivity and achievement. We can suggest some concentration exercises to help you maintain this clarity throughout the day.",
           color: "text-purple-500",
           bgColor: "bg-purple-500",
           gradient: "bg-gradient-to-br from-purple-400 to-purple-600",
@@ -69,7 +69,7 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
       case 'anxious':
         return {
           title: "We're Here for You",
-          description: "It's perfectly okay to feel anxious sometimes. Our guided breathing and gentle meditations can help calm your mind and restore your inner balance.",
+          description: "It's okay to feel anxious sometimes. Deep breathing and guided meditations can help calm your mind and restore your sense of peace and balance.",
           color: "text-amber-500",
           bgColor: "bg-amber-500",
           gradient: "bg-gradient-to-br from-amber-400 to-amber-600",
@@ -89,62 +89,62 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
   
   const content = getFeedbackContent();
   
-  // Animation variants - more gentle animations
+  // Animation variants
   const containerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
+    hidden: { opacity: 0, scale: 0.9 },
     visible: { 
       opacity: 1, 
       scale: 1,
       transition: { 
-        duration: 0.5,
+        duration: 0.4,
         ease: "easeOut"
       }
     }
   };
   
   const iconVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
+    hidden: { scale: 0.5, opacity: 0 },
     visible: { 
       scale: 1, 
       opacity: 1,
       transition: { 
-        delay: 0.3,
-        duration: 0.5,
+        delay: 0.2,
+        duration: 0.4,
         type: "spring",
-        stiffness: 100
+        stiffness: 200
       }
     }
   };
   
   const textVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        delay: 0.4,
-        duration: 0.5
+        delay: 0.3,
+        duration: 0.4
       }
     }
   };
   
   const buttonVariants = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        delay: 0.6,
-        duration: 0.5
+        delay: 0.5,
+        duration: 0.4
       }
     },
     hover: { 
-      scale: 1.03,
-      transition: { duration: 0.3 }
+      scale: 1.05,
+      transition: { duration: 0.2 }
     },
     tap: { 
-      scale: 0.98,
-      transition: { duration: 0.2 }
+      scale: 0.95,
+      transition: { duration: 0.1 }
     }
   };
   
@@ -197,9 +197,9 @@ const MoodFeedbackDialog: React.FC<MoodFeedbackDialogProps> = ({ isOpen, onClose
               className="text-xs text-gray-400 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: animationComplete ? 1 : 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.3 }}
             >
-              We've tailored content based on your current mood
+              We'll recommend content based on your mood
             </motion.p>
           </DialogFooter>
         </motion.div>
