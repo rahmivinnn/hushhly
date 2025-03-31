@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
-import StatusBar from '@/components/StatusBar';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -53,9 +52,9 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img 
-          src="/lovable-uploads/b2f61b89-81b9-4e9d-985a-6bb3d0097476.png" 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
-          className="w-60 h-auto animate-pulse"
+          className="w-64 h-auto animate-pulse"
         />
       </div>
     </div>,
@@ -89,7 +88,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="mb-2">
         <img 
-          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -124,7 +123,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="mb-2">
         <img 
-          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -159,7 +158,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="mb-2">
         <img 
-          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -194,7 +193,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="mb-2">
         <img 
-          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -223,7 +222,7 @@ const SplashScreen: React.FC = () => {
   const renderProgressIndicators = () => {
     if (currentScreen >= 2) {
       return (
-        <div className="flex space-x-2 absolute bottom-10">
+        <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2">
           {[...Array(totalScreens - 2)].map((_, index) => (
             <div 
               key={index}
