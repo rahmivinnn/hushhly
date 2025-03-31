@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -141,7 +142,7 @@ export default {
 				'slide-up-delay-3': 'slide-up 0.5s ease-out 0.3s forwards'
 			},
 			backgroundImage: {
-				'meditation-gradient': 'linear-gradient(to bottom right, #00AEEF, #0072BC)',
+				'meditation-gradient': 'linear-gradient(to bottom right, #00AEEF, #0072BC, #3a0ca3)',
 			}
 		}
 	},

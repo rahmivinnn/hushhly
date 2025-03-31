@@ -3,20 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import StatusBar from '@/components/StatusBar';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState(0);
-  const totalScreens = 6;
+  const totalScreens = 8; // Now we have 8 screens total (2 initial + 6 original)
   const [animating, setAnimating] = useState(false);
 
-  // Auto advance only for the first screen after a short delay
+  // Auto advance only for the first few screens after a short delay
   useEffect(() => {
-    if (currentScreen === 0) {
+    if (currentScreen < 2) {
       const timer = setTimeout(() => {
         setAnimating(true);
         setTimeout(() => {
-          setCurrentScreen(1);
+          setCurrentScreen(currentScreen + 1);
           setAnimating(false);
         }, 500); // Duration of fade-out animation
       }, 2000);
@@ -41,28 +42,58 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: Simple logo splash
+    // Screen 1: White background with blue Hushhly logo (initial)
     <div 
       key="screen-1" 
-      className={`flex flex-col items-center justify-center h-full ${animating ? 'animate-fade-out' : 'animate-fade-in'}`}
+      className={`flex flex-col items-center h-full bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
     >
-      <div className="animate-float">
+      <StatusBar />
+      <div className="flex-grow flex items-center justify-center">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
-          className="w-64 h-auto animate-pulse-subtle"
+          className="w-64 h-auto"
         />
       </div>
     </div>,
     
-    // Screen 2: Welcome to Hushhly
+    // Screen 2: Blue gradient background with white Hushhly logo (second)
     <div 
       key="screen-2" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      className={`flex flex-col items-center h-full bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+    >
+      <StatusBar />
+      <div className="flex-grow flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/0981a356-f652-4bd3-92d9-eb41d75469be.png" 
+          alt="Hushhly Logo" 
+          className="w-64 h-auto"
+        />
+      </div>
+    </div>,
+    
+    // Screen 3: Simple logo splash (formerly Screen 1)
+    <div 
+      key="screen-3" 
+      className={`flex flex-col items-center justify-center h-full bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+    >
+      <div className="animate-pulse-subtle">
+        <img 
+          src="/lovable-uploads/0981a356-f652-4bd3-92d9-eb41d75469be.png" 
+          alt="Hushhly Logo" 
+          className="w-64 h-auto"
+        />
+      </div>
+    </div>,
+    
+    // Screen 4: Welcome to Hushhly (formerly Screen 2)
+    <div 
+      key="screen-4" 
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
     >
       <div className="mb-2 opacity-0 animate-slide-up">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -86,14 +117,14 @@ const SplashScreen: React.FC = () => {
       </Button>
     </div>,
     
-    // Screen 3: Personalized Meditation Plans
+    // Screen 5: Personalized Meditation Plans (formerly Screen 3)
     <div 
-      key="screen-3" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      key="screen-5" 
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
     >
       <div className="mb-2 opacity-0 animate-slide-up">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -117,14 +148,14 @@ const SplashScreen: React.FC = () => {
       </Button>
     </div>,
     
-    // Screen 4: AI Enhanced Experience
+    // Screen 6: AI Enhanced Experience (formerly Screen 4)
     <div 
-      key="screen-4" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      key="screen-6" 
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
     >
       <div className="mb-2 opacity-0 animate-slide-up">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -148,14 +179,14 @@ const SplashScreen: React.FC = () => {
       </Button>
     </div>,
     
-    // Screen 5: Guided Meditation Sessions
+    // Screen 7: Guided Meditation Sessions (formerly Screen 5)
     <div 
-      key="screen-5" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      key="screen-7" 
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
     >
       <div className="mb-2 opacity-0 animate-slide-up">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -179,14 +210,14 @@ const SplashScreen: React.FC = () => {
       </Button>
     </div>,
     
-    // Screen 6: Progress Tracking & Insights
+    // Screen 8: Progress Tracking & Insights (formerly Screen 6)
     <div 
-      key="screen-6" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      key="screen-8" 
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
     >
       <div className="mb-2 opacity-0 animate-slide-up">
         <img 
-          src="/lovable-uploads/a54817e8-f472-4dff-8f63-5fe6b491becf.png" 
+          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
           alt="Hushhly Logo" 
           className="w-40 h-auto"
         />
@@ -211,32 +242,21 @@ const SplashScreen: React.FC = () => {
     </div>
   ];
 
-  // Render background gradient based on the current screen
-  const getBackgroundStyle = () => {
-    // First screen has full gradient, others have white background
-    if (currentScreen === 0) {
-      return "bg-gradient-to-br from-[#5b76c4] to-[#00AEEF]";
-    }
-    return "bg-white";
-  };
-
-  // Floating bubbles for the first screen
-  const renderBubbles = () => {
-    if (currentScreen === 0) {
+  // Progress indicators - only show for info screens (screens 3-8)
+  const renderProgressIndicators = () => {
+    if (currentScreen > 2) {
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+        <div className="flex space-x-2 absolute bottom-10">
+          {[...Array(totalScreens - 3)].map((_, index) => (
             <div 
-              key={i}
-              className={`absolute rounded-full bg-white opacity-${Math.floor(Math.random() * 3) + 1}/10 animate-float`} 
-              style={{
-                width: `${Math.floor(Math.random() * 30) + 10}px`,
-                height: `${Math.floor(Math.random() * 30) + 10}px`,
-                top: `${Math.floor(Math.random() * 100)}%`,
-                left: `${Math.floor(Math.random() * 100)}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${Math.floor(Math.random() * 5) + 3}s`
-              }}
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index + 3 === currentScreen 
+                  ? 'bg-meditation-lightBlue scale-125' 
+                  : index + 3 < currentScreen 
+                    ? 'bg-meditation-lightBlue opacity-70' 
+                    : 'bg-gray-300'
+              }`}
             />
           ))}
         </div>
@@ -246,31 +266,12 @@ const SplashScreen: React.FC = () => {
   };
 
   return (
-    <div 
-      className={`flex flex-col items-center justify-center h-screen ${getBackgroundStyle()} transition-colors duration-500`}
-    >
-      {renderBubbles()}
-      
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Current screen content */}
       {screens[currentScreen]}
       
-      {/* Progress indicators - only show for screens 1-6 */}
-      {currentScreen > 0 && (
-        <div className="flex space-x-2 absolute bottom-10">
-          {[...Array(totalScreens - 1)].map((_, index) => (
-            <div 
-              key={index}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index + 1 === currentScreen 
-                  ? 'bg-meditation-lightBlue scale-125' 
-                  : index + 1 < currentScreen 
-                    ? 'bg-meditation-lightBlue opacity-70' 
-                    : 'bg-gray-300'
-              }`}
-            />
-          ))}
-        </div>
-      )}
+      {/* Progress indicators */}
+      {renderProgressIndicators()}
     </div>
   );
 };
