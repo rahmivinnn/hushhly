@@ -14,6 +14,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Quiz from "./pages/Quiz";
 import Home from "./pages/Home";
 import SleepStories from "./pages/SleepStories";
+import Profile from "./pages/Profile";
+import Community from "./pages/Community";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,9 @@ const App = () => (
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/home" element={<Home />} />
             <Route path="/sleep-stories" element={<SleepStories />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/notifications" element={<Notifications />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

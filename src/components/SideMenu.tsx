@@ -17,13 +17,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
   if (!isOpen) return null;
 
   const handleNavigation = (path: string, name: string) => {
-    if (path === '/profile' || path === '/settings') {
+    if (path === '/profile' || path === '/meditation' || path === '/sleep-stories' || path === '/home' || path === '/community') {
+      navigate(path);
+    } else {
       toast({
         title: `${name} Coming Soon`,
         description: "This feature is under development.",
       });
-    } else {
-      navigate(path);
     }
     onClose();
   };
@@ -85,11 +85,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/about', 'About')}
+            onClick={() => handleNavigation('/community', 'Community')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Info size={20} className="text-blue-500" />
-            <span>About</span>
+            <span>Community</span>
           </button>
           
           <div className="border-t pt-4 mt-4">

@@ -22,6 +22,7 @@ interface MeditationCard {
   description: string;
   duration: string;
   image: string;
+  colors: string;
 }
 
 const Home: React.FC = () => {
@@ -33,6 +34,7 @@ const Home: React.FC = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
   const [selectedMood, setSelectedMood] = useState<'calm' | 'relax' | 'focus' | 'anxious' | null>(null);
   const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   
   useEffect(() => {
     // Try to get user data from localStorage
@@ -48,6 +50,12 @@ const Home: React.FC = () => {
       } catch (error) {
         console.error("Error parsing user data:", error);
       }
+    }
+    
+    // Check if dark mode setting exists
+    const darkModeSetting = localStorage.getItem('darkMode');
+    if (darkModeSetting) {
+      setIsDarkMode(darkModeSetting === 'true');
     }
   }, []);
 
@@ -83,13 +91,15 @@ const Home: React.FC = () => {
       title: "Meditation 101",
       description: "Techniques, Benefits, and a Beginner's How-To",
       duration: "15 Min",
-      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png",
+      colors: "bg-gradient-to-r from-cyan-500 to-blue-500"
     },
     {
       title: "Cardio Meditation",
       description: "Basics of Yoga for Beginners Professionals",
       duration: "10 Min",
-      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
+      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png",
+      colors: "bg-gradient-to-r from-purple-500 to-blue-500"
     }
   ];
 
@@ -98,7 +108,15 @@ const Home: React.FC = () => {
       title: "Focused meditation",
       description: "Quick meditation for stress relief and focus.",
       duration: "5 Min",
-      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png",
+      colors: "bg-gradient-to-r from-green-500 to-blue-500"
+    },
+    {
+      title: "Morning Boost",
+      description: "Energize your day with this short meditation.",
+      duration: "3 Min",
+      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png",
+      colors: "bg-gradient-to-r from-amber-500 to-pink-500"
     }
   ];
 
@@ -122,6 +140,30 @@ const Home: React.FC = () => {
 
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
+  };
+  
+  const toggleDarkMode = () => {
+    const newDarkModeState = !isDarkMode;
+    setIsDarkMode(newDarkModeState);
+    localStorage.setItem('darkMode', String(newDarkModeState));
+    
+    if (newDarkModeState) {
+      document.documentElement.classList.add('dark');
+      toast({
+        title: "Dark Mode Enabled",
+        description: "Easy on the eyes, perfect for nighttime meditation.",
+      });
+    } else {
+      document.documentElement.classList.remove('dark');
+      toast({
+        title: "Light Mode Enabled",
+        description: "Bright and energizing for your daytime practice.",
+      });
+    }
+  };
+  
+  const handleNotificationsClick = () => {
+    navigate('/notifications');
   };
 
   return (
@@ -147,11 +189,17 @@ const Home: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <button className="text-gray-800">
+            <button 
+              className="text-gray-800"
+              onClick={handleNotificationsClick}
+            >
               <Bell size={20} />
             </button>
-            <button className="text-yellow-500">
-              <Moon size={20} fill="currentColor" />
+            <button 
+              className={isDarkMode ? "text-yellow-500" : "text-gray-600"}
+              onClick={toggleDarkMode}
+            >
+              <Moon size={20} fill={isDarkMode ? "currentColor" : "none"} />
             </button>
           </div>
         </div>
@@ -166,7 +214,7 @@ const Home: React.FC = () => {
           {moodOptions.map((mood, index) => (
             <button 
               key={index}
-              className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2`}
+              className={`mood-button flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2 transition-all`}
               aria-label={`Feeling ${mood.label}`}
               onClick={() => handleMoodSelection(mood.type)}
             >
@@ -179,7 +227,7 @@ const Home: React.FC = () => {
       
       {/* Recommended Section */}
       <section className="px-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white flex justify-between items-center">
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-4 text-white flex justify-between items-center">
           <div>
             <h2 className="font-medium">AI-recommended meditation for the day</h2>
             <div className="flex items-center mt-1">
@@ -206,11 +254,11 @@ const Home: React.FC = () => {
         </div>
         
         {dailyMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-4 mb-4">
-            <h3 className="text-lg font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-sm text-gray-600 mb-2">{meditation.description}</p>
+          <div key={index} className={`${meditation.colors} rounded-xl p-4 mb-4 text-white meditation-card`}>
+            <h3 className="text-lg font-medium">{meditation.title}</h3>
+            <p className="text-sm text-white/90 mb-2">{meditation.description}</p>
             <div className="flex items-center mb-3">
-              <div className="flex items-center text-gray-500 text-sm">
+              <div className="flex items-center text-white/90 text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -220,13 +268,13 @@ const Home: React.FC = () => {
             <div className="flex space-x-3">
               <Button 
                 onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm flex items-center"
+                className="bg-white hover:bg-gray-100 text-blue-500 rounded-full px-4 py-2 text-sm flex items-center"
               >
-                Watch Now <div className="ml-1 p-1 bg-white rounded-full"><ArrowRight size={12} className="text-blue-500" /></div>
+                Watch Now <div className="ml-1 p-1 bg-blue-500 rounded-full"><ArrowRight size={12} className="text-white" /></div>
               </Button>
               <Button 
                 onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-4 py-2 text-sm"
+                className="bg-transparent hover:bg-white/10 text-white border border-white rounded-full px-4 py-2 text-sm"
               >
                 Start Meditation
               </Button>
@@ -239,17 +287,20 @@ const Home: React.FC = () => {
       <section className="px-4 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Quick Stress Relief</h2>
-          <button className="text-blue-500 flex items-center text-sm">
+          <button 
+            onClick={goToSleepStories}
+            className="text-blue-500 flex items-center text-sm"
+          >
             View More <ArrowRight size={14} className="ml-1" />
           </button>
         </div>
         
         {quickReliefMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-4 mb-4">
-            <h3 className="text-lg font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-sm text-gray-600 mb-2">{meditation.description}</p>
+          <div key={index} className={`${meditation.colors} rounded-xl p-4 mb-4 text-white meditation-card`}>
+            <h3 className="text-lg font-medium">{meditation.title}</h3>
+            <p className="text-sm text-white/90 mb-2">{meditation.description}</p>
             <div className="flex items-center mb-3">
-              <div className="flex items-center text-gray-500 text-sm">
+              <div className="flex items-center text-white/90 text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -259,13 +310,13 @@ const Home: React.FC = () => {
             <div className="flex space-x-3">
               <Button 
                 onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm flex items-center"
+                className="bg-white hover:bg-gray-100 text-blue-500 rounded-full px-4 py-2 text-sm flex items-center"
               >
-                Watch Now <div className="ml-1 p-1 bg-white rounded-full"><ArrowRight size={12} className="text-blue-500" /></div>
+                Watch Now <div className="ml-1 p-1 bg-blue-500 rounded-full"><ArrowRight size={12} className="text-white" /></div>
               </Button>
               <Button 
                 onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-4 py-2 text-sm"
+                className="bg-transparent hover:bg-white/10 text-white border border-white rounded-full px-4 py-2 text-sm"
               >
                 Start Meditation
               </Button>
@@ -276,7 +327,7 @@ const Home: React.FC = () => {
       
       {/* Quick Access Cards */}
       <section className="px-4 mb-6 space-y-4">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white">
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-4 text-white">
           <p className="text-sm">Quick relaxation before picking up kids</p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center">
@@ -285,13 +336,16 @@ const Home: React.FC = () => {
               </svg>
               <span>02:58 PM</span>
             </div>
-            <button className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center">
+            <button 
+              onClick={handleStartMeditation}
+              className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center"
+            >
               1-Minute Reset <ArrowRight size={14} className="ml-1" />
             </button>
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white">
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-4 text-white">
           <p className="text-sm">Short guided session for daily relaxation</p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center">
@@ -300,7 +354,10 @@ const Home: React.FC = () => {
               </svg>
               <span>5 Min</span>
             </div>
-            <button className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center">
+            <button 
+              onClick={handleStartMeditation}
+              className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center"
+            >
               5-Minute Meditation <ArrowRight size={14} className="ml-1" />
             </button>
           </div>
