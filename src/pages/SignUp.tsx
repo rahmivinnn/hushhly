@@ -46,7 +46,7 @@ const SignUp: React.FC = () => {
     // Simulate signup delay
     setTimeout(() => {
       // Store info in localStorage for demo purposes
-      localStorage.setItem('user', JSON.stringify({ fullName, email }));
+      localStorage.setItem('user', JSON.stringify({ fullName, email, password }));
       
       setLoading(false);
       toast({

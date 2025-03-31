@@ -37,7 +37,7 @@ const SignIn: React.FC = () => {
       const savedUser = localStorage.getItem('user');
       if (savedUser) {
         const user = JSON.parse(savedUser);
-        if (user.email === email) {
+        if (user.email === email && user.password === password) {
           localStorage.setItem('isLoggedIn', 'true');
           
           setLoading(false);
