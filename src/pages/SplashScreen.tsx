@@ -41,27 +41,9 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: White background with purple Hushhly logo
+    // Screen 1: Blue gradient background with the new Hushhly logo and elegant highlight effect
     <div 
       key="screen-1" 
-      className={`flex flex-col h-full bg-white ${
-        animating 
-          ? 'opacity-0 scale-95' 
-          : 'opacity-100 scale-100'
-      } transition-all duration-800 ease-in-out`}
-    >
-      <div className="flex-grow flex items-center justify-center">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-64 h-auto animate-pulse"
-        />
-      </div>
-    </div>,
-    
-    // Screen 2: Blue gradient background with white Hushhly logo and elegant highlight effect
-    <div 
-      key="screen-2" 
       className={`flex flex-col h-full relative overflow-hidden ${
         animating 
           ? 'opacity-0 scale-95' 
@@ -79,7 +61,25 @@ const SplashScreen: React.FC = () => {
       
       <div className="flex-grow flex items-center justify-center relative z-10">
         <img 
-          src="/lovable-uploads/0981a356-f652-4bd3-92d9-eb41d75469be.png" 
+          src="/lovable-uploads/95bfc0b2-220c-4b1f-aa82-f8b84ee38695.png" 
+          alt="Hushhly Logo" 
+          className="w-64 h-auto animate-pulse"
+        />
+      </div>
+    </div>,
+    
+    // Screen 2: White background with purple Hushhly logo
+    <div 
+      key="screen-2" 
+      className={`flex flex-col h-full bg-white ${
+        animating 
+          ? 'opacity-0 scale-95' 
+          : 'opacity-100 scale-100'
+      } transition-all duration-800 ease-in-out`}
+    >
+      <div className="flex-grow flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
           alt="Hushhly Logo" 
           className="w-64 h-auto animate-pulse"
         />
