@@ -19,8 +19,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 800); // Longer duration for fade-out animation
-      }, 1800); // Longer delay before transition
+        }, 800); // Duration for fade-out animation
+      }, 1800); // Delay before transition
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -42,7 +42,7 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: White background with blue gradient Hushhly logo (uploaded image)
+    // Screen 1: White background with blue gradient Hushhly logo
     <div 
       key="screen-1" 
       className={`flex flex-col h-full bg-white ${
@@ -55,7 +55,7 @@ const SplashScreen: React.FC = () => {
         <img 
           src="/lovable-uploads/b2f61b89-81b9-4e9d-985a-6bb3d0097476.png" 
           alt="Hushhly Logo" 
-          className="w-60 h-auto"
+          className="w-60 h-auto animate-pulse"
         />
       </div>
     </div>,
@@ -87,7 +87,6 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -123,7 +122,6 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -159,7 +157,6 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -186,7 +183,7 @@ const SplashScreen: React.FC = () => {
       </Button>
     </div>,
     
-    // Screen 6: Get Started
+    // Screen 6: Progress Tracking & Insights
     <div 
       key="screen-6" 
       className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
@@ -195,7 +192,6 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 

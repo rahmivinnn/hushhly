@@ -5,7 +5,7 @@ interface StatusBarProps {
   visible?: boolean;
 }
 
-const StatusBar: React.FC<StatusBarProps> = ({ visible = true }) => {
+const StatusBar: React.FC<StatusBarProps> = ({ visible = false }) => {
   if (!visible) return null;
   
   return (
