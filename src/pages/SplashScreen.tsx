@@ -19,8 +19,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 500); // Duration of fade-out animation
-      }, 1500);
+        }, 800); // Longer duration for fade-out animation
+      }, 1800); // Longer delay before transition
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -31,28 +31,31 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen + 1);
         setAnimating(false);
-      }, 300);
+      }, 500);
     } else {
       setAnimating(true);
       setTimeout(() => {
         navigate('/meditation');
-      }, 300);
+      }, 500);
     }
   };
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: White background with blue Hushhly logo
+    // Screen 1: White background with blue gradient Hushhly logo (uploaded image)
     <div 
       key="screen-1" 
-      className={`flex flex-col h-full bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+      className={`flex flex-col h-full bg-white ${
+        animating 
+          ? 'opacity-0 scale-95' 
+          : 'opacity-100 scale-100'
+      } transition-all duration-800 ease-in-out`}
     >
-      <StatusBar />
       <div className="flex-grow flex items-center justify-center">
         <img 
-          src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
+          src="/lovable-uploads/b2f61b89-81b9-4e9d-985a-6bb3d0097476.png" 
           alt="Hushhly Logo" 
-          className="w-64 h-auto"
+          className="w-60 h-auto"
         />
       </div>
     </div>,
@@ -60,16 +63,17 @@ const SplashScreen: React.FC = () => {
     // Screen 2: Blue gradient background with white Hushhly logo
     <div 
       key="screen-2" 
-      className={`flex flex-col h-full bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+      className={`flex flex-col h-full bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue ${
+        animating 
+          ? 'opacity-0 scale-95' 
+          : 'opacity-100 scale-100'
+      } transition-all duration-800 ease-in-out`}
     >
-      <div className="bg-transparent h-8 px-4">
-        <StatusBar />
-      </div>
       <div className="flex-grow flex items-center justify-center">
         <img 
           src="/lovable-uploads/0981a356-f652-4bd3-92d9-eb41d75469be.png" 
           alt="Hushhly Logo" 
-          className="w-64 h-auto"
+          className="w-64 h-auto animate-pulse"
         />
       </div>
     </div>,
@@ -77,8 +81,13 @@ const SplashScreen: React.FC = () => {
     // Screen 3: Welcome to Hushhly
     <div 
       key="screen-3" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+        animating 
+          ? 'opacity-0 translate-x-10' 
+          : 'opacity-100 translate-x-0'
+      } transition-all duration-500 ease-in-out`}
     >
+      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -108,8 +117,13 @@ const SplashScreen: React.FC = () => {
     // Screen 4: Personalized Meditation Plans
     <div 
       key="screen-4" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+        animating 
+          ? 'opacity-0 translate-x-10' 
+          : 'opacity-100 translate-x-0'
+      } transition-all duration-500 ease-in-out`}
     >
+      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -139,8 +153,13 @@ const SplashScreen: React.FC = () => {
     // Screen 5: AI Enhanced Experience
     <div 
       key="screen-5" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+        animating 
+          ? 'opacity-0 translate-x-10' 
+          : 'opacity-100 translate-x-0'
+      } transition-all duration-500 ease-in-out`}
     >
+      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 
@@ -170,8 +189,13 @@ const SplashScreen: React.FC = () => {
     // Screen 6: Get Started
     <div 
       key="screen-6" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+        animating 
+          ? 'opacity-0 translate-x-10' 
+          : 'opacity-100 translate-x-0'
+      } transition-all duration-500 ease-in-out`}
     >
+      <StatusBar visible={false} />
       <div className="mb-2">
         <img 
           src="/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png" 

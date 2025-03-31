@@ -1,7 +1,13 @@
 
 import React from 'react';
 
-const StatusBar: React.FC = () => {
+interface StatusBarProps {
+  visible?: boolean;
+}
+
+const StatusBar: React.FC<StatusBarProps> = ({ visible = true }) => {
+  if (!visible) return null;
+  
   return (
     <div className="flex justify-between items-center bg-white h-8 px-4 text-black">
       {/* Time */}
