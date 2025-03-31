@@ -18,7 +18,7 @@ const Index = () => {
     title: "Painting Forest",
     duration: "15 Min",
     listeners: "59899",
-    coverImage: "/lovable-uploads/b1f1e2a8-90e5-40f7-b499-00798b4a4ae9.png" // Using the uploaded image
+    coverImage: "/lovable-uploads/b8c99ac8-9d66-4ede-a21c-323b3bdbdaa6.png" // Using the updated forest image
   };
 
   const handleStartButton = () => {
@@ -57,34 +57,40 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-meditation-gradient flex flex-col relative overflow-hidden">
-      {/* Status Bar */}
-      <StatusBar />
-      
-      {/* Logo and Header */}
-      <LogoHeader />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-32">
-        <h1 className="text-white text-4xl font-bold mb-2">Meditation 101</h1>
-        <p className="text-white text-xl mb-12">Tap the start button when ready</p>
+    <div className="flex flex-col h-screen">
+      {/* Top Section with blue gradient background */}
+      <div className="bg-meditation-gradient rounded-b-[40%] pb-32 pt-0 relative overflow-hidden">
+        {/* Status Bar */}
+        <StatusBar />
         
-        {/* Start Button */}
-        <div className="relative">
-          <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
-          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-            <Timer duration={sessionDuration} />
+        {/* Logo and Header */}
+        <LogoHeader />
+        
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-4 pb-24 pt-6">
+          <h1 className="text-white text-4xl font-bold mb-2">Meditation 101</h1>
+          <p className="text-white text-xl mb-12">Tap the start button when ready</p>
+          
+          {/* Start Button */}
+          <div className="relative">
+            <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
+            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+              <Timer duration={sessionDuration} />
+            </div>
           </div>
         </div>
       </div>
       
-      {/* Music Player */}
-      <div className="w-full px-6 mb-20">
-        <MusicPlayer 
-          isPlaying={isPlaying} 
-          onPlayPause={handlePlayPauseMusic} 
-          track={trackInfo} 
-        />
+      {/* Bottom Section with white background */}
+      <div className="flex-1 bg-white">
+        {/* Music Player */}
+        <div className="w-full px-6 mt-4">
+          <MusicPlayer 
+            isPlaying={isPlaying} 
+            onPlayPause={handlePlayPauseMusic} 
+            track={trackInfo} 
+          />
+        </div>
       </div>
       
       {/* Bottom Navigation */}

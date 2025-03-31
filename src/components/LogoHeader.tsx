@@ -4,12 +4,12 @@ import { Bell, Trophy, AlignLeft } from 'lucide-react';
 
 const LogoHeader: React.FC = () => {
   return (
-    <div className="flex justify-between items-center w-full px-4 py-2">
+    <div className="flex justify-between items-center w-full px-4 py-3">
       <button className="text-white">
         <AlignLeft size={28} />
       </button>
       <div className="text-white text-4xl font-bold italic">
-        shh.
+        <img src="/lovable-uploads/2a293d49-f787-45c8-b809-f4315bc615a0.png" alt="shh logo" className="h-12" />
       </div>
       <div className="flex space-x-4">
         <button className="text-white">

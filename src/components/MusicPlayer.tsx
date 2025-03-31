@@ -20,7 +20,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track
       
       <div className="flex items-center mb-6">
         <div className="w-20 h-20 rounded-lg overflow-hidden mr-4">
-          <img src={track.coverImage} alt={track.title} className="w-full h-full object-cover" />
+          <img src="/lovable-uploads/b8c99ac8-9d66-4ede-a21c-323b3bdbdaa6.png" alt={track.title} className="w-full h-full object-cover" />
         </div>
         <div>
           <h3 className="text-2xl font-semibold text-gray-800">{track.title}</h3>
@@ -49,7 +49,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track
         </button>
       </div>
       
-      <div className="mt-12">
+      <div className="mt-8 mb-16">
         <button className="text-meditation-blue text-xl font-medium">
           Adjust Session Length
         </button>
