@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, Search, Moon, ArrowRight } from 'lucide-react';
@@ -6,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import VideoPopup from '@/components/VideoPopup';
 import BottomNavigation from '@/components/BottomNavigation';
+import MoodIcon from '@/components/MoodIcon';
 
 interface MoodOption {
   icon: React.ReactNode;
   label: string;
   color: string;
+  type: 'calm' | 'relax' | 'focus' | 'anxious';
 }
 
 interface MeditationCard {
@@ -23,7 +24,7 @@ interface MeditationCard {
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [userName, setUserName] = useState<string>("Caiti");
+  const [userName, setUserName] = useState<string>("Guest");
   const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string}>({title: "", duration: ""});
   
@@ -31,33 +32,43 @@ const Home: React.FC = () => {
     // Try to get user data from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      if (userData.name) {
-        setUserName(userData.name);
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData.fullName) {
+          setUserName(userData.fullName);
+        } else if (userData.name) {
+          setUserName(userData.name);
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
       }
     }
   }, []);
 
   const moodOptions: MoodOption[] = [
     {
-      icon: <div className="text-2xl">☯️</div>,
+      icon: <MoodIcon iconType="calm" />,
       label: "Calm",
-      color: "bg-blue-500"
+      color: "bg-gradient-to-r from-cyan-500 to-blue-500",
+      type: "calm"
     },
     {
-      icon: <div className="text-2xl">⊕</div>,
+      icon: <MoodIcon iconType="relax" />,
       label: "Relax",
-      color: "bg-blue-400"
+      color: "bg-gradient-to-r from-cyan-500 to-blue-500",
+      type: "relax"
     },
     {
-      icon: <div className="text-2xl">🧘</div>,
+      icon: <MoodIcon iconType="focus" />,
       label: "Focus",
-      color: "bg-blue-400" 
+      color: "bg-gradient-to-r from-cyan-500 to-blue-500",
+      type: "focus" 
     },
     {
-      icon: <div className="text-2xl">🙅</div>,
+      icon: <MoodIcon iconType="anxious" />,
       label: "Anxious",
-      color: "bg-blue-500"
+      color: "bg-gradient-to-r from-cyan-500 to-blue-500",
+      type: "anxious"
     }
   ];
 
@@ -138,8 +149,9 @@ const Home: React.FC = () => {
             <button 
               key={index}
               className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2`}
+              aria-label={`Feeling ${mood.label}`}
             >
-              <div className="mb-1">{mood.icon}</div>
+              <div className="mb-1 text-white">{mood.icon}</div>
               <span className="text-xs">{mood.label}</span>
             </button>
           ))}
@@ -156,7 +168,9 @@ const Home: React.FC = () => {
               <ArrowRight size={16} className="ml-1" />
             </div>
           </div>
-          <div className="text-4xl">🧘</div>
+          <div className="text-4xl">
+            <MoodIcon iconType="focus" />
+          </div>
         </div>
       </section>
       

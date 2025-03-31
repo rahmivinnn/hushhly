@@ -5,6 +5,7 @@ import { Search, ArrowLeft, Bell, Star, Play } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import VideoPopup from '@/components/VideoPopup';
+import MoodIcon from '@/components/MoodIcon';
 
 interface StoryItem {
   id: string;
@@ -198,9 +199,10 @@ const SleepStories: React.FC = () => {
         
         <button 
           onClick={() => handleViewMore("Featured Sleep Stories")} 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          View More
+          <span>View More</span>
+          <MoodIcon iconType="relax" />
         </button>
       </section>
       
@@ -216,9 +218,10 @@ const SleepStories: React.FC = () => {
         
         <button 
           onClick={() => handleViewMore("Short Stories")} 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          View More
+          <span>View More</span>
+          <MoodIcon iconType="calm" />
         </button>
       </section>
       
@@ -234,9 +237,10 @@ const SleepStories: React.FC = () => {
         
         <button 
           onClick={() => handleViewMore("Long Relaxing Tales")} 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          View More
+          <span>View More</span>
+          <MoodIcon iconType="focus" />
         </button>
       </section>
       
@@ -252,9 +256,10 @@ const SleepStories: React.FC = () => {
         
         <button 
           onClick={() => handleViewMore("Parent & Child Bonding Stories")} 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4 text-sm flex items-center justify-center"
         >
-          View More
+          <span>View More</span>
+          <MoodIcon iconType="anxious" />
         </button>
       </section>
       
