@@ -41,7 +41,7 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: Blue gradient background with the new Hushhly logo and fresher highlight effect
+    // Screen 1: Blue gradient background with the Hushhly logo and an attractive design
     <div 
       key="screen-1" 
       className={`flex flex-col h-full relative overflow-hidden ${
@@ -50,14 +50,49 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-800 ease-in-out`}
     >
-      {/* Background with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue">
-        {/* Fresh, vibrant highlights that complement the background */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-blue-300 opacity-40 blur-2xl animate-pulse-subtle"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-cyan-200 opacity-30 blur-2xl animate-pulse-subtle" style={{animationDelay: '1.2s'}}></div>
-        {/* Additional fresh highlights with more vibrant colors */}
-        <div className="absolute top-3/4 left-1/3 w-64 h-64 rounded-full bg-indigo-300 opacity-25 blur-2xl animate-pulse-subtle" style={{animationDelay: '0.8s'}}></div>
-        <div className="absolute top-1/3 right-1/5 w-48 h-48 rounded-full bg-sky-200 opacity-30 blur-xl animate-pulse-subtle" style={{animationDelay: '1.5s'}}></div>
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue overflow-hidden">
+        {/* Animated patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path 
+                d="M0,0 L100,0 L100,100 L0,100 Z" 
+                fill="none" 
+                stroke="white" 
+                strokeWidth="0.5"
+                strokeDasharray="5,5"
+                className="animate-spin-slow"
+              />
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="30" 
+                fill="none" 
+                stroke="white" 
+                strokeWidth="0.5" 
+                className="animate-pulse-subtle"
+              />
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="20" 
+                fill="none" 
+                stroke="white" 
+                strokeWidth="0.3" 
+                className="animate-pulse-subtle"
+                style={{animationDelay: '1s'}}
+              />
+            </svg>
+          </div>
+        </div>
+        
+        {/* Floating particles */}
+        <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1.5s'}}></div>
+        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.5s'}}></div>
       </div>
       
       <div className="flex-grow flex items-center justify-center relative z-10">
