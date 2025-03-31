@@ -8,7 +8,7 @@ interface TimerProps {
 
 const Timer: React.FC<TimerProps> = ({ duration }) => {
   return (
-    <div className="flex items-center justify-center mt-2 text-white space-x-2">
+    <div className="flex items-center justify-center mt-2 text-white space-x-1">
       <Clock size={20} />
       <span className="text-xl">{duration} Min</span>
     </div>

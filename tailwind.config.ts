@@ -28,7 +28,7 @@ export default {
 				meditation: {
 					blue: '#0D9ECC',
 					darkBlue: '#3F64AF',
-					lightBlue: '#70C6E5',
+					lightBlue: '#0D9ECC',
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',

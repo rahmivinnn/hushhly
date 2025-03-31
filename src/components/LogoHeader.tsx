@@ -1,16 +1,19 @@
 
 import React from 'react';
-import { Bell, Trophy, AlignLeft } from 'lucide-react';
+import { Bell, Trophy } from 'lucide-react';
 
 const LogoHeader: React.FC = () => {
   return (
     <div className="flex justify-between items-center w-full px-4 py-3">
-      <button className="text-white">
-        <AlignLeft size={28} />
-      </button>
-      <div className="text-white text-4xl font-bold italic">
-        <img src="/lovable-uploads/2a293d49-f787-45c8-b809-f4315bc615a0.png" alt="shh logo" className="h-12" />
+      {/* Left empty space (removed hamburger menu) */}
+      <div className="w-8"></div>
+      
+      {/* Logo - smaller as requested */}
+      <div className="text-white">
+        <img src="/lovable-uploads/2a293d49-f787-45c8-b809-f4315bc615a0.png" alt="shh logo" className="h-8" />
       </div>
+      
+      {/* Right side buttons */}
       <div className="flex space-x-4">
         <button className="text-white">
           <Bell size={24} />

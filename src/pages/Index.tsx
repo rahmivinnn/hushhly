@@ -18,7 +18,7 @@ const Index = () => {
     title: "Painting Forest",
     duration: "15 Min",
     listeners: "59899",
-    coverImage: "/lovable-uploads/b8c99ac8-9d66-4ede-a21c-323b3bdbdaa6.png" // Using the updated forest image
+    coverImage: "/lovable-uploads/b8c99ac8-9d66-4ede-a21c-323b3bdbdaa6.png"
   };
 
   const handleStartButton = () => {
@@ -59,7 +59,10 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Top Section with blue gradient background */}
-      <div className="bg-meditation-gradient rounded-b-[40%] pb-32 pt-0 relative overflow-hidden">
+      <div 
+        className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[50%] pb-44 pt-0 relative overflow-hidden"
+        style={{ height: '60%' }}
+      >
         {/* Status Bar */}
         <StatusBar />
         
@@ -67,14 +70,14 @@ const Index = () => {
         <LogoHeader />
         
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 pb-24 pt-6">
-          <h1 className="text-white text-4xl font-bold mb-2">Meditation 101</h1>
-          <p className="text-white text-xl mb-12">Tap the start button when ready</p>
+        <div className="flex-1 flex flex-col items-center justify-center px-4 pt-8">
+          <h1 className="text-white text-3xl font-semibold mb-1">Meditation 101</h1>
+          <p className="text-white text-lg mb-10">Tap the start button when ready</p>
           
           {/* Start Button */}
           <div className="relative">
             <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
-            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+            <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
               <Timer duration={sessionDuration} />
             </div>
           </div>
@@ -84,7 +87,7 @@ const Index = () => {
       {/* Bottom Section with white background */}
       <div className="flex-1 bg-white">
         {/* Music Player */}
-        <div className="w-full px-6 mt-4">
+        <div className="w-full px-6 mt-6">
           <MusicPlayer 
             isPlaying={isPlaying} 
             onPlayPause={handlePlayPauseMusic} 

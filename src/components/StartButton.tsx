@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 
 interface StartButtonProps {
   onClick: () => void;
@@ -10,13 +10,13 @@ const StartButton: React.FC<StartButtonProps> = ({ onClick, isPlaying }) => {
   return (
     <button 
       onClick={onClick}
-      className="relative w-60 h-60 rounded-full flex items-center justify-center"
+      className="relative w-48 h-48 rounded-full flex items-center justify-center"
     >
       {/* Outer glow ring */}
       <div className="absolute inset-0 rounded-full bg-white bg-opacity-20 animate-pulse-light"></div>
       
       {/* Inner button */}
-      <div className="w-52 h-52 rounded-full bg-meditation-gradient flex items-center justify-center text-4xl font-bold text-white">
+      <div className="w-40 h-40 rounded-full bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue flex items-center justify-center text-3xl font-bold text-white">
         {isPlaying ? 'Pause' : 'Start'}
       </div>
       
