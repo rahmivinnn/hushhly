@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowLeft } from 'lucide-react';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +37,23 @@ const SplashScreen: React.FC = () => {
         navigate('/meditation');
       }, 500);
     }
+  };
+
+  const handleBack = () => {
+    if (currentScreen > 2) { // Only allow going back after the intro screens
+      setAnimating(true);
+      setTimeout(() => {
+        setCurrentScreen(currentScreen - 1);
+        setAnimating(false);
+      }, 500);
+    }
+  };
+
+  const handleSkip = () => {
+    setAnimating(true);
+    setTimeout(() => {
+      navigate('/meditation');
+    }, 500);
   };
 
   // Define the content for each screen
@@ -125,141 +142,193 @@ const SplashScreen: React.FC = () => {
     // Screen 3: Welcome to Hushhly
     <div 
       key="screen-3" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+      className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <div className="mb-2">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-40 h-auto"
-        />
+      {/* Back button and Skip text in the header */}
+      <div className="w-full flex justify-between items-center pt-6 px-4">
+        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
+          Skip for now
+        </button>
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
-      <div>
-        <img 
-          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-          alt="Meditation Bear" 
-          className="w-48 h-auto mb-8"
-        />
+      
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <div className="mb-2">
+          <img 
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+            alt="Hushhly Logo" 
+            className="w-40 h-auto"
+          />
+        </div>
+        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
+        <div>
+          <img 
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+            alt="Meditation Bear" 
+            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            style={{ animationDuration: '3s' }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+          A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
+        </p>
+        <Button 
+          onClick={handleNext}
+          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        >
+          Next <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
       </div>
-      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
-        A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
-      </p>
-      <Button 
-        onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
-      >
-        Next <ChevronRight className="ml-1 h-4 w-4" />
-      </Button>
     </div>,
     
     // Screen 4: Personalized Meditation Plans
     <div 
       key="screen-4" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+      className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <div className="mb-2">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-40 h-auto"
-        />
+      {/* Back button and Skip text in the header */}
+      <div className="w-full flex justify-between items-center pt-6 px-4">
+        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
+          Skip for now
+        </button>
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Personalized Meditation Plans</h2>
-      <div>
-        <img 
-          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-          alt="Meditation Bear" 
-          className="w-48 h-auto mb-8"
-        />
+      
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <div className="mb-2">
+          <img 
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+            alt="Hushhly Logo" 
+            className="w-40 h-auto"
+          />
+        </div>
+        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Personalized Meditation Plans</h2>
+        <div>
+          <img 
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+            alt="Meditation Bear" 
+            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            style={{ animationDuration: '3s' }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+          Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
+        </p>
+        <Button 
+          onClick={handleNext}
+          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        >
+          Next <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
       </div>
-      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
-        Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
-      </p>
-      <Button 
-        onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
-      >
-        Next <ChevronRight className="ml-1 h-4 w-4" />
-      </Button>
     </div>,
     
     // Screen 5: AI Enhanced Experience
     <div 
       key="screen-5" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+      className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <div className="mb-2">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-40 h-auto"
-        />
+      {/* Back button and Skip text in the header */}
+      <div className="w-full flex justify-between items-center pt-6 px-4">
+        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
+          Skip for now
+        </button>
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">AI Enhanced Experience</h2>
-      <div>
-        <img 
-          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-          alt="Meditation Bear" 
-          className="w-48 h-auto mb-8"
-        />
+      
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <div className="mb-2">
+          <img 
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+            alt="Hushhly Logo" 
+            className="w-40 h-auto"
+          />
+        </div>
+        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">AI Enhanced Experience</h2>
+        <div>
+          <img 
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+            alt="Meditation Bear" 
+            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            style={{ animationDuration: '3s' }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+          Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
+        </p>
+        <Button 
+          onClick={handleNext}
+          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        >
+          Next <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
       </div>
-      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
-        Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
-      </p>
-      <Button 
-        onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
-      >
-        Next <ChevronRight className="ml-1 h-4 w-4" />
-      </Button>
     </div>,
     
     // Screen 6: Progress Tracking & Insights
     <div 
       key="screen-6" 
-      className={`flex flex-col items-center justify-center h-full px-8 text-center bg-white ${
+      className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
       } transition-all duration-500 ease-in-out`}
     >
-      <div className="mb-2">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-40 h-auto"
-        />
+      {/* Back button and Skip text in the header */}
+      <div className="w-full flex justify-between items-center pt-6 px-4">
+        <button onClick={handleBack} className="p-2 text-meditation-lightBlue hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
+          Skip for now
+        </button>
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Progress Tracking & Insights</h2>
-      <div>
-        <img 
-          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-          alt="Meditation Bear" 
-          className="w-48 h-auto mb-8"
-        />
+      
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <div className="mb-2">
+          <img 
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+            alt="Hushhly Logo" 
+            className="w-40 h-auto"
+          />
+        </div>
+        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Progress Tracking & Insights</h2>
+        <div>
+          <img 
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+            alt="Meditation Bear" 
+            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            style={{ animationDuration: '3s' }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+          Track your meditation journey and <br /> get personalized insights to <br /> improve
+        </p>
+        <Button 
+          onClick={handleNext}
+          className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        >
+          Get Started <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
       </div>
-      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
-        Track your meditation journey and <br /> get personalized insights to <br /> improve
-      </p>
-      <Button 
-        onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
-      >
-        Get Started <ChevronRight className="ml-1 h-4 w-4" />
-      </Button>
     </div>
   ];
 
