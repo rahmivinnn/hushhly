@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,7 +66,10 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				"meditation-lightBlue": "#4cc9f0",
+				"meditation-mediumBlue": "#4361ee",
+				"meditation-darkBlue": "#3a0ca3",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -107,7 +109,7 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-light': 'pulse-light 2s ease-in-out infinite',
+				'pulse-light': 'pulseLight 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 				'spin-slow': 'spin-slow 10s linear infinite'
 			},
 			backgroundImage: {
