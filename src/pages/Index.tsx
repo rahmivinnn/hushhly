@@ -55,7 +55,7 @@ const Index = () => {
       {/* Top Section with blue gradient background - height adjusted */}
       <div 
         className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[40%] pb-24 pt-0 relative overflow-hidden"
-        style={{ height: '45%' }}
+        style={{ height: '40%' }}
       >
         {/* Status Bar */}
         <StatusBar />
@@ -65,13 +65,13 @@ const Index = () => {
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2">
-          <h1 className="text-white text-2xl font-semibold mb-1">Meditation 101</h1>
-          <p className="text-white text-base mb-6">Tap the start button when ready</p>
+          <h1 className="text-white text-xl font-semibold mb-1">Meditation 101</h1>
+          <p className="text-white text-sm mb-4">Tap the start button when ready</p>
           
           {/* Start Button */}
           <div className="relative">
             <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
-            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
               <Timer duration={sessionDuration} />
             </div>
           </div>
@@ -81,7 +81,7 @@ const Index = () => {
       {/* Bottom Section with white background */}
       <div className="flex-1 bg-white">
         {/* Music Player - adjusted to match reference */}
-        <div className="w-full px-6 mt-12">
+        <div className="w-full px-6 mt-8">
           <MusicPlayer 
             isPlaying={isPlaying} 
             onPlayPause={handlePlayPauseMusic} 

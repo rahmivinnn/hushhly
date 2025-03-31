@@ -10,13 +10,13 @@ const StartButton: React.FC<StartButtonProps> = ({ onClick, isPlaying }) => {
   return (
     <button 
       onClick={onClick}
-      className="relative w-48 h-48 rounded-full flex items-center justify-center"
+      className="relative w-32 h-32 rounded-full flex items-center justify-center"
     >
       {/* Outer glow ring */}
       <div className="absolute inset-0 rounded-full bg-white bg-opacity-20 animate-pulse-light"></div>
       
       {/* Inner button */}
-      <div className="w-40 h-40 rounded-full bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue flex items-center justify-center text-3xl font-bold text-white">
+      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue flex items-center justify-center text-lg font-bold text-white">
         {isPlaying ? 'Pause' : 'Start'}
       </div>
       

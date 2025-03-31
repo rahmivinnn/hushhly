@@ -37,53 +37,53 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track
   
   return (
     <div className="w-full max-w-md mx-auto">
-      <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">Background Music</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Background Music</h1>
       
-      <div className="flex items-center mb-6">
-        <div className="w-24 h-24 rounded-3xl overflow-hidden mr-6">
+      <div className="flex items-center mb-4">
+        <div className="w-16 h-16 rounded-2xl overflow-hidden mr-4">
           <img src="/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png" alt={track.title} className="w-full h-full object-cover" />
         </div>
         <div>
-          <h2 className="text-5xl font-semibold text-gray-800">{track.title}</h2>
-          <p className="text-2xl text-gray-500">{track.duration} {track.listeners} Listening</p>
+          <h2 className="text-lg font-semibold text-gray-800">{track.title}</h2>
+          <p className="text-sm text-gray-500">{track.duration} {track.listeners} Listening</p>
         </div>
       </div>
       
-      <div className="flex justify-between items-center my-10">
+      <div className="flex justify-between items-center my-6">
         <button 
-          className="text-gray-400 hover:text-gray-700 transition-colors p-2"
+          className="text-gray-400 hover:text-gray-700 transition-colors p-1"
           onClick={handleShuffle}
         >
-          <Shuffle size={32} className="transform hover:scale-110 transition-transform" />
+          <Shuffle size={20} className="transform hover:scale-110 transition-transform" />
         </button>
         <button 
-          className="text-gray-400 hover:text-gray-700 transition-colors p-2"
+          className="text-gray-400 hover:text-gray-700 transition-colors p-1"
           onClick={handleSkipBack}
         >
-          <SkipBack size={32} className="transform hover:scale-110 transition-transform" />
+          <SkipBack size={20} className="transform hover:scale-110 transition-transform" />
         </button>
         <button 
-          className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue hover:bg-opacity-90 text-white rounded-full p-6 transform hover:scale-105 transition-all"
+          className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue hover:bg-opacity-90 text-white rounded-full p-4 transform hover:scale-105 transition-all"
           onClick={onPlayPause}
         >
-          <Play size={36} fill="white" className={isPlaying ? "animate-pulse" : ""} />
+          <Play size={24} fill="white" className={isPlaying ? "animate-pulse" : ""} />
         </button>
         <button 
-          className="text-gray-400 hover:text-gray-700 transition-colors p-2"
+          className="text-gray-400 hover:text-gray-700 transition-colors p-1"
           onClick={handleSkipForward}
         >
-          <SkipForward size={32} className="transform hover:scale-110 transition-transform" />
+          <SkipForward size={20} className="transform hover:scale-110 transition-transform" />
         </button>
         <button 
-          className="text-gray-400 hover:text-gray-700 transition-colors p-2"
+          className="text-gray-400 hover:text-gray-700 transition-colors p-1"
           onClick={handleRepeat}
         >
-          <Repeat size={32} className="transform hover:scale-110 transition-transform" />
+          <Repeat size={20} className="transform hover:scale-110 transition-transform" />
         </button>
       </div>
       
-      <div className="mt-10 mb-8 text-center">
-        <button className="text-meditation-lightBlue text-3xl font-medium hover:text-meditation-darkBlue transition-colors">
+      <div className="mt-6 mb-4 text-center">
+        <button className="text-meditation-lightBlue text-sm font-medium hover:text-meditation-darkBlue transition-colors">
           Adjust Session Length
         </button>
       </div>
