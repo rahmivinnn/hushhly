@@ -59,7 +59,7 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
     
-    // Screen 2: Blue gradient background with white Hushhly logo and highlight effect
+    // Screen 2: Blue gradient background with white Hushhly logo and elegant highlight effect
     <div 
       key="screen-2" 
       className={`flex flex-col h-full relative overflow-hidden ${
@@ -70,9 +70,11 @@ const SplashScreen: React.FC = () => {
     >
       {/* Background with gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue">
-        {/* Highlight effect */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-white opacity-10 blur-3xl animate-pulse-subtle"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl animate-pulse-subtle" style={{animationDelay: '1s'}}></div>
+        {/* Elegant highlights that blend with the background */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-meditation-lightBlue opacity-30 blur-3xl animate-pulse-subtle"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-meditation-mediumBlue opacity-40 blur-3xl animate-pulse-subtle" style={{animationDelay: '1s'}}></div>
+        {/* Additional subtle highlight for more elegance */}
+        <div className="absolute top-3/4 right-1/3 w-48 h-48 rounded-full bg-blue-300 opacity-20 blur-3xl animate-pulse-subtle" style={{animationDelay: '1.5s'}}></div>
       </div>
       
       <div className="flex-grow flex items-center justify-center relative z-10">
