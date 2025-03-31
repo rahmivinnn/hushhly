@@ -2,7 +2,7 @@
 import React from 'react';
 
 const StatusBar: React.FC = () => {
-  // Empty status bar - removing the clock and other elements as requested
+  // Empty status bar - all elements removed as requested
   return (
     <div className="h-6"></div>
   );

@@ -18,7 +18,7 @@ const Index = () => {
     title: "Painting Forest",
     duration: "15 Min",
     listeners: "59899",
-    coverImage: "/lovable-uploads/b8c99ac8-9d66-4ede-a21c-323b3bdbdaa6.png"
+    coverImage: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
   };
 
   const handleStartButton = () => {
@@ -40,13 +40,7 @@ const Index = () => {
   };
 
   const handlePlayPauseMusic = () => {
-    if (audioService.isPlaying()) {
-      audioService.pause();
-      setIsPlaying(false);
-    } else {
-      audioService.play();
-      setIsPlaying(true);
-    }
+    handleStartButton(); // Use the same handler to keep audio state synchronized
   };
 
   // Clean up audio on unmount
@@ -58,10 +52,10 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Top Section with blue gradient background */}
+      {/* Top Section with blue gradient background - height adjusted */}
       <div 
-        className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[50%] pb-44 pt-0 relative overflow-hidden"
-        style={{ height: '60%' }}
+        className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[40%] pb-24 pt-0 relative overflow-hidden"
+        style={{ height: '45%' }}
       >
         {/* Status Bar */}
         <StatusBar />
@@ -70,14 +64,14 @@ const Index = () => {
         <LogoHeader />
         
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 pt-8">
-          <h1 className="text-white text-3xl font-semibold mb-1">Meditation 101</h1>
-          <p className="text-white text-lg mb-10">Tap the start button when ready</p>
+        <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2">
+          <h1 className="text-white text-2xl font-semibold mb-1">Meditation 101</h1>
+          <p className="text-white text-base mb-6">Tap the start button when ready</p>
           
           {/* Start Button */}
           <div className="relative">
             <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
-            <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
+            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
               <Timer duration={sessionDuration} />
             </div>
           </div>
@@ -86,8 +80,8 @@ const Index = () => {
       
       {/* Bottom Section with white background */}
       <div className="flex-1 bg-white">
-        {/* Music Player */}
-        <div className="w-full px-6 mt-6">
+        {/* Music Player - adjusted to match reference */}
+        <div className="w-full px-6 mt-12">
           <MusicPlayer 
             isPlaying={isPlaying} 
             onPlayPause={handlePlayPauseMusic} 

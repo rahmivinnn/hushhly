@@ -32,6 +32,14 @@ class AudioService {
       this.audioElement.volume = Math.max(0, Math.min(1, volume));
     }
   }
+  
+  toggleRepeat() {
+    if (this.audioElement) {
+      this.audioElement.loop = !this.audioElement.loop;
+      return this.audioElement.loop;
+    }
+    return false;
+  }
 }
 
 export const audioService = new AudioService();
