@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,8 +68,8 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				"meditation-lightBlue": "#4cc9f0",
-				"meditation-mediumBlue": "#4361ee",
+				"meditation-lightBlue": "#00AEEF",
+				"meditation-mediumBlue": "#0072BC",
 				"meditation-darkBlue": "#3a0ca3",
 			},
 			borderRadius: {
@@ -113,7 +114,7 @@ export default {
 				'spin-slow': 'spin-slow 10s linear infinite'
 			},
 			backgroundImage: {
-				'meditation-gradient': 'linear-gradient(to bottom right, #0D9ECC, #3F64AF)',
+				'meditation-gradient': 'linear-gradient(to bottom right, #00AEEF, #0072BC)',
 			}
 		}
 	},

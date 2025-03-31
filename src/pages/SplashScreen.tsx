@@ -31,32 +31,24 @@ const SplashScreen: React.FC = () => {
   const screens = [
     // Screen 1: Simple logo splash
     <div key="screen-1" className="flex flex-col items-center justify-center h-full">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-16 animate-fade-in"
-      />
+      <h1 className="text-white text-4xl font-semibold">Hushhly</h1>
     </div>,
     
     // Screen 2: Welcome to Hushhly
     <div key="screen-2" className="flex flex-col items-center justify-center h-full px-8 text-center">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-12 mb-8"
-      />
-      <h1 className="text-2xl font-semibold mb-8 text-meditation-darkBlue">Welcome to Hushhly</h1>
+      <h1 className="text-meditation-lightBlue text-2xl font-semibold mb-2">Hushhly</h1>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Welcome to Hushhly</h2>
       <img 
         src="/lovable-uploads/6406cb8f-7e3b-40c1-9558-ab53228aa839.png" 
         alt="Meditation Bear" 
         className="w-48 h-48 mb-8"
       />
       <p className="text-sm text-gray-600 mb-10">
-        A smarter way to experience the benefits of daily meditation and mindfulness
+        A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-darkBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -64,23 +56,19 @@ const SplashScreen: React.FC = () => {
     
     // Screen 3: Personalized Meditation Plans
     <div key="screen-3" className="flex flex-col items-center justify-center h-full px-8 text-center">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-12 mb-8"
-      />
-      <h1 className="text-xl font-semibold mb-4 text-meditation-darkBlue">Personalized Meditation Plans</h1>
+      <h1 className="text-meditation-lightBlue text-2xl font-semibold mb-2">Hushhly</h1>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Personalized Meditation Plans</h2>
       <img 
         src="/lovable-uploads/6406cb8f-7e3b-40c1-9558-ab53228aa839.png" 
         alt="Meditation Bear" 
         className="w-48 h-48 mb-8"
       />
       <p className="text-sm text-gray-600 mb-10">
-        Tailored meditations based on your goals, mood, and schedule to maximize benefits
+        Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-darkBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -88,23 +76,19 @@ const SplashScreen: React.FC = () => {
     
     // Screen 4: AI Enhanced Experience
     <div key="screen-4" className="flex flex-col items-center justify-center h-full px-8 text-center">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-12 mb-8"
-      />
-      <h1 className="text-xl font-semibold mb-4 text-meditation-darkBlue">AI Enhanced Experience</h1>
+      <h1 className="text-meditation-lightBlue text-2xl font-semibold mb-2">Hushhly</h1>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">AI Enhanced Experience</h2>
       <img 
         src="/lovable-uploads/6406cb8f-7e3b-40c1-9558-ab53228aa839.png" 
         alt="Meditation Bear" 
         className="w-48 h-48 mb-8"
       />
       <p className="text-sm text-gray-600 mb-10">
-        Our AI learns your preferences to improve your mindfulness journey over time
+        Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-darkBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -112,23 +96,19 @@ const SplashScreen: React.FC = () => {
     
     // Screen 5: Guided Meditation Sessions
     <div key="screen-5" className="flex flex-col items-center justify-center h-full px-8 text-center">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-12 mb-8"
-      />
-      <h1 className="text-xl font-semibold mb-4 text-meditation-darkBlue">Guided Meditation Sessions</h1>
+      <h1 className="text-meditation-lightBlue text-2xl font-semibold mb-2">Hushhly</h1>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Guided Meditation Sessions</h2>
       <img 
         src="/lovable-uploads/6406cb8f-7e3b-40c1-9558-ab53228aa839.png" 
         alt="Meditation Bear" 
         className="w-48 h-48 mb-8"
       />
       <p className="text-sm text-gray-600 mb-10">
-        Expert-led sessions to help you focus, relax, and enhance your wellbeing
+        Expert-led sessions to help you <br /> focus, relax, and enhance your <br /> wellbeing
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-darkBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -136,23 +116,19 @@ const SplashScreen: React.FC = () => {
     
     // Screen 6: Progress Tracking & Insights
     <div key="screen-6" className="flex flex-col items-center justify-center h-full px-8 text-center">
-      <img 
-        src="/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png" 
-        alt="Hushhly Logo" 
-        className="h-12 mb-8"
-      />
-      <h1 className="text-xl font-semibold mb-4 text-meditation-darkBlue">Progress Tracking & Insights</h1>
+      <h1 className="text-meditation-lightBlue text-2xl font-semibold mb-2">Hushhly</h1>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Progress Tracking & Insights</h2>
       <img 
         src="/lovable-uploads/6406cb8f-7e3b-40c1-9558-ab53228aa839.png" 
         alt="Meditation Bear" 
         className="w-48 h-48 mb-8"
       />
       <p className="text-sm text-gray-600 mb-10">
-        Track your meditation journey and get personalized insights to improve
+        Track your meditation journey and <br /> get personalized insights to <br /> improve
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-darkBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
       >
         Get Started <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -161,9 +137,9 @@ const SplashScreen: React.FC = () => {
 
   // Render background gradient based on the current screen
   const getBackgroundStyle = () => {
-    // First screen has full gradient, others have white background with gradient header
+    // First screen has full gradient, others have white background
     if (currentScreen === 0) {
-      return "bg-gradient-to-br from-[#4361ee] to-[#4cc9f0]";
+      return "bg-gradient-to-br from-[#00AEEF] to-[#0072BC]";
     }
     return "bg-white";
   };
