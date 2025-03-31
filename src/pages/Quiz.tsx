@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -148,8 +148,8 @@ const Quiz: React.FC = () => {
           description: "Your meditation experience has been personalized.",
         });
         
-        // Navigate to meditation page
-        navigate('/meditation');
+        // Navigate to home page instead of meditation
+        navigate('/home');
       }, 500);
     }
   };
@@ -174,7 +174,7 @@ const Quiz: React.FC = () => {
       title: "Quiz skipped",
       description: "You can take the quiz later from your profile settings.",
     });
-    navigate('/meditation');
+    navigate('/home');
   };
   
   // Calculate progress percentage

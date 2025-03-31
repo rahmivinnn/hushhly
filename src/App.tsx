@@ -12,6 +12,8 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import Quiz from "./pages/Quiz";
+import Home from "./pages/Home";
+import SleepStories from "./pages/SleepStories";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,8 @@ const App = () => (
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/sleep-stories" element={<SleepStories />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

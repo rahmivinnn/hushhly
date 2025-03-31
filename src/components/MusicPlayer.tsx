@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Play, Pause, Shuffle, SkipBack, SkipForward, Repeat } from 'lucide-react';
 import { audioService } from '@/services/audioService';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface MusicPlayerProps {
   isPlaying: boolean;
@@ -15,29 +15,80 @@ interface MusicPlayerProps {
   };
 }
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track }) => {
+// List of available tracks
+const availableTracks = [
+  {
+    title: "Painting Forest",
+    duration: "15 Min",
+    listeners: "59899",
+    coverImage: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
+  },
+  {
+    title: "The Whispering Forest",
+    duration: "10 Min",
+    listeners: "48750",
+    coverImage: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+  },
+  {
+    title: "Starlit Dreams",
+    duration: "15 Min",
+    listeners: "39084",
+    coverImage: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
+  },
+  {
+    title: "The Gentle Night",
+    duration: "12 Min",
+    listeners: "42568",
+    coverImage: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+  }
+];
+
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track: initialTrack }) => {
   const { toast } = useToast();
+  const [currentTrack, setCurrentTrack] = useState(initialTrack);
 
   const handleShuffle = () => {
+    // Get random track different from current
+    let randomTrack;
+    do {
+      randomTrack = availableTracks[Math.floor(Math.random() * availableTracks.length)];
+    } while (randomTrack.title === currentTrack.title);
+    
+    // Update current track
+    setCurrentTrack(randomTrack);
+    
+    // If currently playing, restart with new track
+    if (isPlaying) {
+      audioService.play();
+    }
+    
     toast({
-      title: "Shuffle",
-      description: "Shuffle functionality coming soon",
+      title: "Track Changed",
+      description: `Now playing: ${randomTrack.title}`,
       duration: 2000,
     });
   };
 
   const handleSkipBack = () => {
+    const currentIndex = availableTracks.findIndex(t => t.title === currentTrack.title);
+    const prevIndex = (currentIndex - 1 + availableTracks.length) % availableTracks.length;
+    setCurrentTrack(availableTracks[prevIndex]);
+    
     toast({
       title: "Previous Track",
-      description: "Previous track functionality coming soon",
+      description: `Now playing: ${availableTracks[prevIndex].title}`,
       duration: 2000,
     });
   };
 
   const handleSkipForward = () => {
+    const currentIndex = availableTracks.findIndex(t => t.title === currentTrack.title);
+    const nextIndex = (currentIndex + 1) % availableTracks.length;
+    setCurrentTrack(availableTracks[nextIndex]);
+    
     toast({
       title: "Next Track",
-      description: "Next track functionality coming soon",
+      description: `Now playing: ${availableTracks[nextIndex].title}`,
       duration: 2000,
     });
   };
@@ -57,11 +108,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track
       
       <div className="flex items-center mb-4">
         <div className="w-16 h-16 rounded-2xl overflow-hidden mr-4">
-          <img src={track.coverImage} alt={track.title} className="w-full h-full object-cover" />
+          <img src={currentTrack.coverImage} alt={currentTrack.title} className="w-full h-full object-cover" />
         </div>
         <div>
-          <h2 className="text-base font-semibold text-gray-800">{track.title}</h2>
-          <p className="text-xs text-gray-500">{track.duration} • {track.listeners} Listening</p>
+          <h2 className="text-base font-semibold text-gray-800">{currentTrack.title}</h2>
+          <p className="text-xs text-gray-500">{currentTrack.duration} • {currentTrack.listeners} Listening</p>
         </div>
       </div>
       
@@ -108,7 +159,16 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ isPlaying, onPlayPause, track
       </div>
       
       <div className="mt-5 mb-4 text-center">
-        <button className="text-meditation-lightBlue text-sm font-medium hover:text-meditation-darkBlue transition-colors">
+        <button 
+          onClick={() => {
+            toast({
+              title: "Session Length",
+              description: "You can adjust your session length in settings.",
+              duration: 3000,
+            });
+          }}
+          className="text-meditation-lightBlue text-sm font-medium hover:text-meditation-darkBlue transition-colors"
+        >
           Adjust Session Length
         </button>
       </div>
