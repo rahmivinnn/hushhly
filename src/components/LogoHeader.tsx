@@ -8,8 +8,8 @@ const LogoHeader: React.FC = () => {
       {/* Left empty space (removed hamburger menu) */}
       <div className="w-8"></div>
       
-      {/* Logo - smaller as requested */}
-      <div className="text-white">
+      {/* Logo - centered properly */}
+      <div className="text-white flex justify-center flex-1">
         <img src="/lovable-uploads/2a293d49-f787-45c8-b809-f4315bc615a0.png" alt="shh logo" className="h-8" />
       </div>
       

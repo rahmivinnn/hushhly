@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Pause, Play } from 'lucide-react';
 
 interface StartButtonProps {
   onClick: () => void;
@@ -17,7 +18,11 @@ const StartButton: React.FC<StartButtonProps> = ({ onClick, isPlaying }) => {
       
       {/* Inner button */}
       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue flex items-center justify-center text-lg font-bold text-white">
-        {isPlaying ? 'Pause' : 'Start'}
+        {isPlaying ? (
+          <Pause size={28} fill="white" className="text-white" />
+        ) : (
+          <Play size={28} fill="white" className="text-white ml-1" />
+        )}
       </div>
       
       {/* Animated ring when playing */}
