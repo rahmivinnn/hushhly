@@ -19,7 +19,7 @@ const SplashScreen: React.FC = () => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
         }, 800); // Duration for fade-out animation
-      }, 1800); // Delay before transition
+      }, 3000); // Increased delay before transition to 3 seconds
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -93,7 +93,7 @@ const SplashScreen: React.FC = () => {
           className="w-40 h-auto"
         />
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Welcome to Hushhly</h2>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
       <div>
         <img 
           src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
@@ -101,12 +101,12 @@ const SplashScreen: React.FC = () => {
           className="w-48 h-auto mb-8"
         />
       </div>
-      <p className="text-sm text-gray-600 mb-10">
+      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
         A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -128,7 +128,7 @@ const SplashScreen: React.FC = () => {
           className="w-40 h-auto"
         />
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Personalized Meditation Plans</h2>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Personalized Meditation Plans</h2>
       <div>
         <img 
           src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
@@ -136,12 +136,12 @@ const SplashScreen: React.FC = () => {
           className="w-48 h-auto mb-8"
         />
       </div>
-      <p className="text-sm text-gray-600 mb-10">
+      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
         Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -163,7 +163,7 @@ const SplashScreen: React.FC = () => {
           className="w-40 h-auto"
         />
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">AI Enhanced Experience</h2>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">AI Enhanced Experience</h2>
       <div>
         <img 
           src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
@@ -171,12 +171,12 @@ const SplashScreen: React.FC = () => {
           className="w-48 h-auto mb-8"
         />
       </div>
-      <p className="text-sm text-gray-600 mb-10">
+      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
         Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -198,7 +198,7 @@ const SplashScreen: React.FC = () => {
           className="w-40 h-auto"
         />
       </div>
-      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8">Progress Tracking & Insights</h2>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Progress Tracking & Insights</h2>
       <div>
         <img 
           src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
@@ -206,12 +206,12 @@ const SplashScreen: React.FC = () => {
           className="w-48 h-auto mb-8"
         />
       </div>
-      <p className="text-sm text-gray-600 mb-10">
+      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
         Track your meditation journey and <br /> get personalized insights to <br /> improve
       </p>
       <Button 
         onClick={handleNext}
-        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center"
+        className="bg-meditation-lightBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in"
       >
         Get Started <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
