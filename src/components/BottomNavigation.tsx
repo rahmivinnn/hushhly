@@ -14,19 +14,15 @@ const BottomNavigation: React.FC = () => {
   };
   
   const handleNavigation = (path: string, label: string) => {
-    if (path === '/home' || path === '/sleep-stories' || path === '/meditation') {
-      navigate(path);
-    } else {
-      // For not yet implemented sections
-      toast({
-        title: `${label} Coming Soon`,
-        description: `The ${label.toLowerCase()} section is under development.`,
-      });
-    }
+    navigate(path);
+    toast({
+      title: `${label} Section`,
+      description: `Welcome to the ${label.toLowerCase()} section.`,
+    });
   };
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 pb-6">
+    <div className="fixed bottom-0 left-0 right-0 pb-6 z-30">
       <div className="mx-auto w-11/12 max-w-md bg-gradient-to-r from-blue-500 to-blue-600 rounded-full py-4 px-6">
         <div className="flex justify-between items-center">
           <button 

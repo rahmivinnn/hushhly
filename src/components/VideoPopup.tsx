@@ -13,6 +13,22 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, onClose }) => 
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   
+  // Get appropriate YouTube video ID based on title
+  const getYoutubeVideoId = (title: string): string => {
+    // Map meditation titles to YouTube video IDs
+    const videoMap: Record<string, string> = {
+      "The Whispering Forest": "NcQEcSlspZw", // 15-min meditation for sleep
+      "Starlit Dreams": "ZToicYcHIOU", // Meditation with relaxing music
+      "Painting Forest": "inpok4MKVLM", // Forest sounds meditation
+      "The Gentle Night": "ZVTsbz9L1ZA", // 15-min breathing meditation
+      "Meditation 101": "ZVTsbz9L1ZA", // Default meditation
+      "Cardio Meditation": "6kP-SonMQjU", // Cardio-related meditation
+      "Focused meditation": "xvQeERWvDyI", // Short 5-min meditation
+    };
+    
+    return videoMap[title] || "ZVTsbz9L1ZA"; // Default meditation if not found
+  };
+  
   // Simulate video playback with progress
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -64,6 +80,8 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, onClose }) => 
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
   
+  const videoId = getYoutubeVideoId(title);
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
       <div className="relative bg-black rounded-lg w-full max-w-md mx-4 overflow-hidden">
@@ -76,28 +94,28 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, onClose }) => 
           <X size={20} />
         </button>
         
-        {/* Video placeholder */}
-        <div className="relative aspect-[9/16] bg-gray-900 flex items-center justify-center">
-          <img 
-            src="/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png" 
-            alt="Video thumbnail" 
-            className="absolute inset-0 w-full h-full object-cover opacity-60"
-          />
+        {/* Video - YouTube embed */}
+        <div className="relative aspect-[9/16]">
+          <iframe 
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&modestbranding=1&rel=0&controls=0`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full object-cover"
+          ></iframe>
           
-          {/* Play/Pause overlay button */}
-          <button 
-            onClick={togglePlayPause} 
-            className="absolute inset-0 w-full h-full flex items-center justify-center"
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            <div className="bg-black/30 p-5 rounded-full">
-              {isPlaying ? (
-                <Pause size={32} className="text-white" />
-              ) : (
+          {/* Overlay for controls - only show when not playing */}
+          {!isPlaying && (
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+              <button 
+                onClick={togglePlayPause} 
+                className="bg-black/30 p-5 rounded-full"
+                aria-label="Play"
+              >
                 <Play size={32} className="text-white ml-1" />
-              )}
+              </button>
             </div>
-          </button>
+          )}
           
           {/* Video info overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">

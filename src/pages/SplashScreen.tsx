@@ -67,8 +67,15 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-800 ease-in-out`}
     >
-      {/* Simple gradient background without highlights */}
-      <div className="absolute inset-0 bg-gradient-to-b from-meditation-lightBlue via-meditation-mediumBlue to-meditation-darkBlue overflow-hidden">
+      {/* Gradient background using the provided image */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 overflow-hidden"
+        style={{
+          backgroundImage: "url('/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
         <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>

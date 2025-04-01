@@ -7,7 +7,7 @@ import Timer from '@/components/Timer';
 import MusicPlayer from '@/components/MusicPlayer';
 import BottomNavigation from '@/components/BottomNavigation';
 import { audioService } from '@/services/audioService';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
