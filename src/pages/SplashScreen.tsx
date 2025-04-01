@@ -18,8 +18,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 800); // Duration for fade-out animation
-      }, currentScreen === 0 ? 3000 : 5000); // 3 seconds for first screen, 5 seconds for second screen
+        }, 500); // Faster fade-out animation (was 800ms)
+      }, currentScreen === 0 ? 1500 : 2000); // Faster delays (was 3000ms and 5000ms)
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -30,12 +30,12 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen + 1);
         setAnimating(false);
-      }, 500);
+      }, 300); // Even faster transition for manual navigation
     } else {
       setAnimating(true);
       setTimeout(() => {
         navigate('/sign-up');
-      }, 500);
+      }, 300);
     }
   };
 
@@ -45,7 +45,7 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen - 1);
         setAnimating(false);
-      }, 500);
+      }, 300);
     }
   };
 
@@ -53,7 +53,7 @@ const SplashScreen: React.FC = () => {
     setAnimating(true);
     setTimeout(() => {
       navigate('/sign-up');
-    }, 500);
+    }, 300);
   };
 
   // Define the content for each screen
@@ -65,13 +65,13 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 scale-95' 
           : 'opacity-100 scale-100'
-      } transition-all duration-800 ease-in-out`}
+      } transition-all duration-500 ease-in-out`}
     >
       {/* Gradient background using the provided image */}
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 overflow-hidden"
+        className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: "url('/lovable-uploads/609e29e9-6bb1-4851-801e-fad263fee6c4.png')",
+          backgroundImage: "url('/lovable-uploads/b818fcbe-50cc-4c46-b707-dff61eab138c.png')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
@@ -100,7 +100,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 scale-95' 
           : 'opacity-100 scale-100'
-      } transition-all duration-800 ease-in-out`}
+      } transition-all duration-500 ease-in-out`}
     >
       <div className="flex-grow flex items-center justify-center">
         <img 
@@ -118,7 +118,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-500 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -152,7 +152,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -166,7 +166,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-500 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -200,7 +200,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -214,7 +214,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-500 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -248,7 +248,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -262,7 +262,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-500 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -296,7 +296,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button 
           onClick={handleNext}
-          className="bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -314,9 +314,9 @@ const SplashScreen: React.FC = () => {
               key={index}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index + 2 === currentScreen 
-                  ? 'bg-meditation-lightBlue scale-125' 
+                  ? 'bg-blue-500 scale-125' 
                   : index + 2 < currentScreen 
-                    ? 'bg-meditation-lightBlue opacity-70' 
+                    ? 'bg-blue-400 opacity-70' 
                     : 'bg-gray-300'
               }`}
             />
