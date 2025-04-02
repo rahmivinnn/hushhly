@@ -18,8 +18,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 300); // Faster fade-out animation
-      }, currentScreen === 0 ? 1000 : 1500); // Faster delays
+        }, 500); // Faster fade-out animation (was 800ms)
+      }, currentScreen === 0 ? 1500 : 2000); // Faster delays (was 3000ms and 5000ms)
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -30,12 +30,12 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen + 1);
         setAnimating(false);
-      }, 200); // Even faster transition for manual navigation
+      }, 300); // Even faster transition for manual navigation
     } else {
       setAnimating(true);
       setTimeout(() => {
         navigate('/sign-up');
-      }, 200);
+      }, 300);
     }
   };
 
@@ -45,7 +45,7 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen - 1);
         setAnimating(false);
-      }, 200);
+      }, 300);
     }
   };
 
@@ -53,7 +53,7 @@ const SplashScreen: React.FC = () => {
     setAnimating(true);
     setTimeout(() => {
       navigate('/sign-up');
-    }, 200);
+    }, 300);
   };
 
   // Define the content for each screen
@@ -65,53 +65,31 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 scale-95' 
           : 'opacity-100 scale-100'
-      } transition-all duration-300 ease-in-out`}
+      } transition-all duration-500 ease-in-out`}
     >
-      {/* New background using the provided image */}
+      {/* Gradient background using the provided image */}
       <div 
-        className="absolute inset-0 overflow-hidden bg-gradient-to-b from-blue-400 via-blue-600 to-indigo-800"
+        className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: "url('/lovable-uploads/826e7d87-ec17-4666-b1a2-5c9f443c8385.png')",
+          backgroundImage: "url('/lovable-uploads/b818fcbe-50cc-4c46-b707-dff61eab138c.png')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
       >
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.5s'}}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.7s'}}></div>
-        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.3s'}}></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1.5s'}}></div>
+        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.5s'}}></div>
       </div>
       
-      <div className="flex-grow flex flex-col items-center justify-center relative z-10">
-        {/* "shh." logo from the new image */}
-        <div className="w-48 h-48 flex items-center justify-center">
-          <img 
-            src="/lovable-uploads/4f330210-bedd-48e1-82c5-3fbd5809d120.png" 
-            alt="Hushhly Logo" 
-            className="w-full h-auto"
-          />
-        </div>
-        <h1 className="text-white text-4xl font-bold tracking-wider mt-6 animate-pulse-light">
-          Hushhly
-        </h1>
-        <p className="text-white/80 text-lg mt-2">Find your inner peace</p>
-      </div>
-      
-      {/* Wave animation at bottom */}
-      <div className="relative h-24 mt-auto">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="rgba(255,255,255,0.1)" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
+      <div className="flex-grow flex items-center justify-center relative z-10">
+        <img 
+          src="/lovable-uploads/95bfc0b2-220c-4b1f-aa82-f8b84ee38695.png" 
+          alt="Hushhly Logo" 
+          className="w-64 h-auto animate-pulse"
+        />
       </div>
     </div>,
     
@@ -122,7 +100,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 scale-95' 
           : 'opacity-100 scale-100'
-      } transition-all duration-300 ease-in-out`}
+      } transition-all duration-500 ease-in-out`}
     >
       <div className="flex-grow flex items-center justify-center">
         <img 
@@ -140,7 +118,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-200 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -179,22 +157,6 @@ const SplashScreen: React.FC = () => {
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
-      
-      {/* Wave bottom */}
-      <div className="relative h-24 w-full mt-auto">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="#33C3F0" 
-            fillOpacity="0.2" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
-      </div>
     </div>,
     
     // Screen 4: Personalized Meditation Plans
@@ -204,7 +166,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-200 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -243,22 +205,6 @@ const SplashScreen: React.FC = () => {
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
-      
-      {/* Wave bottom */}
-      <div className="relative h-24 w-full mt-auto">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="#33C3F0" 
-            fillOpacity="0.2" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
-      </div>
     </div>,
     
     // Screen 5: AI Enhanced Experience
@@ -268,7 +214,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-200 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -307,22 +253,6 @@ const SplashScreen: React.FC = () => {
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
-      
-      {/* Wave bottom */}
-      <div className="relative h-24 w-full mt-auto">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="#33C3F0" 
-            fillOpacity="0.2" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
-      </div>
     </div>,
     
     // Screen 6: Progress Tracking & Insights
@@ -332,7 +262,7 @@ const SplashScreen: React.FC = () => {
         animating 
           ? 'opacity-0 translate-x-10' 
           : 'opacity-100 translate-x-0'
-      } transition-all duration-200 ease-in-out`}
+      } transition-all duration-300 ease-in-out`}
     >
       {/* Back button and Skip text in the header */}
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -370,22 +300,6 @@ const SplashScreen: React.FC = () => {
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
-      </div>
-      
-      {/* Wave bottom */}
-      <div className="relative h-24 w-full mt-auto">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
-          className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="#33C3F0" 
-            fillOpacity="0.2" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
       </div>
     </div>
   ];

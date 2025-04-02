@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Moon, User, Settings, Heart, Info, LogOut, Home, Award, Users, Briefcase, Bell } from 'lucide-react';
+import { X, Moon, User, Settings, Heart, Info, LogOut } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -17,8 +16,15 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
 
   if (!isOpen) return null;
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
+  const handleNavigation = (path: string, name: string) => {
+    if (path === '/profile' || path === '/settings') {
+      toast({
+        title: `${name} Coming Soon`,
+        description: "This feature is under development.",
+      });
+    } else {
+      navigate(path);
+    }
     onClose();
   };
 
@@ -32,10 +38,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
     onClose();
   };
 
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-  };
-
   return (
     <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose}>
       <div 
@@ -43,29 +45,15 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 border border-blue-200">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-blue-500 text-white">{getInitials(userName)}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-lg font-semibold">Welcome, {userName}</h2>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100">
+          <h2 className="text-lg font-semibold">Welcome, {userName}</h2>
+          <button onClick={onClose} className="p-1">
             <X size={20} />
           </button>
         </div>
         
         <div className="space-y-4">
           <button 
-            onClick={() => handleNavigation('/home')}
-            className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
-          >
-            <Home size={20} className="text-blue-500" />
-            <span>Home</span>
-          </button>
-          
-          <button 
-            onClick={() => handleNavigation('/profile')}
+            onClick={() => handleNavigation('/profile', 'Profile')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <User size={20} className="text-blue-500" />
@@ -73,23 +61,15 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/community')}
+            onClick={() => handleNavigation('/settings', 'Settings')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
-            <Users size={20} className="text-blue-500" />
-            <span>Community</span>
+            <Settings size={20} className="text-blue-500" />
+            <span>Settings</span>
           </button>
           
           <button 
-            onClick={() => handleNavigation('/work')}
-            className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
-          >
-            <Briefcase size={20} className="text-blue-500" />
-            <span>Work Meditation</span>
-          </button>
-          
-          <button 
-            onClick={() => handleNavigation('/sleep-stories')}
+            onClick={() => handleNavigation('/sleep-stories', 'Sleep Stories')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Moon size={20} className="text-blue-500" />
@@ -97,7 +77,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/meditation')}
+            onClick={() => handleNavigation('/meditation', 'Meditation')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Heart size={20} className="text-blue-500" />
@@ -105,20 +85,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/notifications')}
-            className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
-          >
-            <Bell size={20} className="text-blue-500" />
-            <span>Notifications</span>
-          </button>
-          
-          <button 
-            onClick={() => {
-              toast({
-                title: "About",
-                description: "Hushhly is a meditation and mindfulness app designed to help you find inner peace.",
-              });
-            }}
+            onClick={() => handleNavigation('/about', 'About')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Info size={20} className="text-blue-500" />

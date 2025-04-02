@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, Volume2, SkipBack, Play, Pause, SkipForward, Heart } from 'lucide-react';
+import { X, Volume2, SkipBack, Play, SkipForward, Heart } from 'lucide-react';
 
 interface VideoPopupProps {
   title: string;
@@ -10,12 +10,6 @@ interface VideoPopupProps {
 }
 
 const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRkP3lKj_lY', onClose }) => {
-  const [isPlaying, setIsPlaying] = React.useState(true);
-  
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-  
   return (
     <div className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 animate-fade-in">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden">
@@ -53,15 +47,8 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRk
             <button className="p-3 hover:bg-white/10 rounded-full">
               <SkipBack size={24} />
             </button>
-            <button 
-              onClick={handlePlayPause}
-              className="p-4 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors"
-            >
-              {isPlaying ? (
-                <Pause size={28} fill="white" />
-              ) : (
-                <Play size={28} fill="white" />
-              )}
+            <button className="p-4 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors">
+              <Play size={28} fill="white" />
             </button>
             <button className="p-3 hover:bg-white/10 rounded-full">
               <SkipForward size={24} />

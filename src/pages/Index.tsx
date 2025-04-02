@@ -8,35 +8,18 @@ import MusicPlayer from '@/components/MusicPlayer';
 import BottomNavigation from '@/components/BottomNavigation';
 import { audioService } from '@/services/audioService';
 import { useToast } from "@/hooks/use-toast";
-import SideMenu from '@/components/SideMenu';
-import { Menu } from 'lucide-react';
 
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(15); // minutes
-  const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const { toast } = useToast();
-  
-  const [audioFrequency, setAudioFrequency] = useState<number[]>([]);
 
   const trackInfo = {
-    title: "The Whispering Forest",
+    title: "Painting Forest",
     duration: "15 Min",
     listeners: "59899",
-    coverImage: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+    coverImage: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
   };
-
-  // Generate random audio frequencies for visualization when playing
-  useEffect(() => {
-    if (isPlaying) {
-      const interval = setInterval(() => {
-        const newFreqs = Array.from({ length: 20 }, () => Math.random() * 100);
-        setAudioFrequency(newFreqs);
-      }, 300);
-      
-      return () => clearInterval(interval);
-    }
-  }, [isPlaying]);
 
   const handleStartButton = () => {
     if (isPlaying) {
@@ -60,10 +43,6 @@ const Index = () => {
     handleStartButton(); // Use the same handler to keep audio state synchronized
   };
 
-  const toggleSideMenu = () => {
-    setSideMenuOpen(!sideMenuOpen);
-  };
-
   // Clean up audio on unmount
   useEffect(() => {
     return () => {
@@ -71,39 +50,18 @@ const Index = () => {
     };
   }, []);
 
-  // Get username from local storage
-  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : { username: 'User' };
-
   return (
     <div className="flex flex-col h-screen">
-      {/* Top Section with blue gradient background */}
+      {/* Top Section with blue gradient background - height adjusted */}
       <div 
-        className="relative overflow-hidden pb-24 pt-0"
-        style={{ 
-          height: '40%',
-          background: 'linear-gradient(to bottom right, #33C3F0, #3A6CDD, #4346B8)'
-        }}
+        className="bg-gradient-to-br from-meditation-lightBlue to-meditation-darkBlue rounded-b-[40%] pb-24 pt-0 relative overflow-hidden"
+        style={{ height: '40%' }}
       >
         {/* Status Bar */}
         <StatusBar />
         
-        {/* Menu Button and Logo Header */}
-        <div className="flex items-center justify-between px-4 pt-2">
-          <button 
-            onClick={toggleSideMenu}
-            className="p-2 text-white rounded-full"
-          >
-            <Menu size={24} />
-          </button>
-          <div className="flex-1 flex justify-center">
-            <img 
-              src="/lovable-uploads/4f330210-bedd-48e1-82c5-3fbd5809d120.png" 
-              alt="Hushhly Logo" 
-              className="h-8"
-            />
-          </div>
-          <div className="w-8"></div> {/* Empty div for balance */}
-        </div>
+        {/* Logo and Header */}
+        <LogoHeader />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2">
@@ -118,32 +76,16 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
-        {/* Audio Visualization Waves */}
-        {isPlaying && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 flex items-end justify-center space-x-1 px-10">
-            {audioFrequency.map((height, index) => (
-              <div
-                key={index}
-                className="w-1 bg-white opacity-80 rounded-t-full"
-                style={{ 
-                  height: `${Math.max(10, height)}%`,
-                  transition: 'height 0.3s ease'
-                }}
-              ></div>
-            ))}
-          </div>
-        )}
       </div>
       
       {/* Bottom Section with white background */}
       <div className="flex-1 bg-white">
         {/* Meditation Icon */}
-        <div className="flex justify-center mt-8">
-          <img src="/lovable-uploads/ea183b79-044d-41d7-9965-47b76c6e771c.png" alt="Meditation" className="w-16 h-16" />
+        <div className="flex justify-center mt-4">
+          <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-12 h-12" />
         </div>
         
-        {/* Music Player */}
+        {/* Music Player - adjusted to match reference */}
         <div className="w-full px-6 mt-4">
           <MusicPlayer 
             isPlaying={isPlaying} 
@@ -152,13 +94,6 @@ const Index = () => {
           />
         </div>
       </div>
-      
-      {/* Side Menu */}
-      <SideMenu 
-        isOpen={sideMenuOpen} 
-        onClose={() => setSideMenuOpen(false)} 
-        userName={user.username || 'User'}
-      />
       
       {/* Bottom Navigation */}
       <BottomNavigation />
