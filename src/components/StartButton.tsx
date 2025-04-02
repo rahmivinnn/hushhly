@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 
@@ -24,18 +25,7 @@ const StartButton: React.FC<StartButtonProps> = ({ onClick, isPlaying }) => {
   
   return (
     <div className="relative w-32 h-32 flex items-center justify-center">
-      {/* Audio frequency visualization - more dynamic with uploaded image */}
-      {isPlaying && (
-        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-64">
-          <img 
-            src="/lovable-uploads/dce868d6-bbb3-4793-898f-41efab62551b.png" 
-            alt="Audio Frequency" 
-            className="w-full animate-pulse"
-          />
-        </div>
-      )}
-      
-      {/* Frequency waves when playing - keep as backup or addition */}
+      {/* Frequency waves when playing */}
       {isPlaying && (
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 flex items-center justify-center">

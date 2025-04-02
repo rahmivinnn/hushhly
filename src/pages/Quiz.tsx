@@ -278,18 +278,14 @@ const Quiz: React.FC = () => {
       </div>
       
       <div className="relative h-24">
-        <img 
-          src="/lovable-uploads/7cfb30e5-1f90-4011-b1e1-360980fb8378.png" 
-          alt="Cloud Background" 
-          className="absolute bottom-0 left-0 w-full h-24 object-cover"
+        <div 
+          className="absolute bottom-0 left-0 w-full h-24 overflow-hidden"
           style={{
+            backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "top center",
             clipPath: "ellipse(100% 55% at 48% 100%)"
           }}
-        />
-        <img 
-          src="/lovable-uploads/cb83e1b7-4900-4ae0-aea6-8fa95e662add.png" 
-          alt="SSH Logo" 
-          className="absolute bottom-4 left-4 h-16 w-auto z-10"
         />
       </div>
     </div>

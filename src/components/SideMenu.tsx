@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Moon, User, Settings, Heart, Info, LogOut, Users } from 'lucide-react';
+import { X, Moon, User, Settings, Heart, Info, LogOut } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface SideMenuProps {
