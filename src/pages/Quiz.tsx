@@ -201,7 +201,7 @@ const Quiz: React.FC = () => {
       {/* Logo */}
       <div className="flex justify-center mt-2 mb-4">
         <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+          src="/lovable-uploads/4f330210-bedd-48e1-82c5-3fbd5809d120.png" 
           alt="Hushhly Logo" 
           className="w-32 h-auto" 
         />
@@ -301,20 +301,13 @@ const Quiz: React.FC = () => {
         </Button>
       </div>
       
-      {/* Wave bottom decoration */}
-      <div className="relative h-24">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1440 320" 
+      {/* Wave bottom decoration - updated design */}
+      <div className="relative h-32 overflow-hidden">
+        <img 
+          src="/lovable-uploads/a61a4e37-f3b4-48cb-89dc-cb7b04ba6fee.png" 
+          alt="Wave decoration" 
           className="absolute bottom-0 left-0 w-full"
-          preserveAspectRatio="none"
-        >
-          <path 
-            fill="#33C3F0" 
-            fillOpacity="0.2" 
-            d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,165.3C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
+        />
       </div>
     </div>
   );

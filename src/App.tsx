@@ -22,6 +22,15 @@ import EditProfile from "./pages/EditProfile";
 
 const queryClient = new QueryClient();
 
+// Remove the Lovable badge
+const style = document.createElement('style');
+style.textContent = `
+  .lovable-root .lovable-badge {
+    display: none !important;
+  }
+`;
+document.head.appendChild(style);
+
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
