@@ -18,8 +18,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 500); // Faster fade-out animation (was 800ms)
-      }, currentScreen === 0 ? 1500 : 2000); // Faster delays (was 3000ms and 5000ms)
+        }, 400); // Faster fade-out animation
+      }, currentScreen === 0 ? 1000 : 1500); // Faster delays
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -71,7 +71,7 @@ const SplashScreen: React.FC = () => {
       <div 
         className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: "url('/lovable-uploads/b818fcbe-50cc-4c46-b707-dff61eab138c.png')",
+          backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}

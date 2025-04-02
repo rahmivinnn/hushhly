@@ -17,14 +17,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
   if (!isOpen) return null;
 
   const handleNavigation = (path: string, name: string) => {
-    if (path === '/profile' || path === '/settings') {
-      toast({
-        title: `${name} Coming Soon`,
-        description: "This feature is under development.",
-      });
-    } else {
-      navigate(path);
-    }
+    navigate(path);
     onClose();
   };
 
@@ -61,7 +54,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/settings', 'Settings')}
+            onClick={() => handleNavigation('/edit-profile', 'Settings')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Settings size={20} className="text-blue-500" />
@@ -85,11 +78,19 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
           
           <button 
-            onClick={() => handleNavigation('/about', 'About')}
+            onClick={() => handleNavigation('/community', 'Community')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
-            <Info size={20} className="text-blue-500" />
-            <span>About</span>
+            <Users size={20} className="text-blue-500" />
+            <span>Community</span>
+          </button>
+          
+          <button 
+            onClick={() => handleNavigation('/work', 'Work')}
+            className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
+          >
+            <User size={20} className="text-blue-500" />
+            <span>Work Meditation</span>
           </button>
           
           <div className="border-t pt-4 mt-4">
