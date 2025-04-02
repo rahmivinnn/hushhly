@@ -67,16 +67,16 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-500 ease-in-out`}
     >
-      {/* Gradient background using the provided image */}
+      {/* Gradient background using the uploaded image */}
       <div 
         className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
+          backgroundImage: "url('/lovable-uploads/7cfb30e5-1f90-4011-b1e1-360980fb8378.png')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
       >
-        {/* Floating particles */}
+        {/* Floating particles for interactive effect */}
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
         <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1.5s'}}></div>
@@ -86,7 +86,7 @@ const SplashScreen: React.FC = () => {
       
       <div className="flex-grow flex items-center justify-center relative z-10">
         <img 
-          src="/lovable-uploads/95bfc0b2-220c-4b1f-aa82-f8b84ee38695.png" 
+          src="/lovable-uploads/cb83e1b7-4900-4ae0-aea6-8fa95e662add.png" 
           alt="Hushhly Logo" 
           className="w-64 h-auto animate-pulse"
         />

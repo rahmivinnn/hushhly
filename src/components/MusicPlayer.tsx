@@ -15,7 +15,7 @@ interface MusicPlayerProps {
   };
 }
 
-// List of available tracks
+// Updated list of available tracks with new sleep story icons
 const availableTracks = [
   {
     title: "Painting Forest",
@@ -24,22 +24,28 @@ const availableTracks = [
     coverImage: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
   },
   {
-    title: "The Whispering Forest",
+    title: "Sunset Mountains",
     duration: "10 Min",
     listeners: "48750",
-    coverImage: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+    coverImage: "/lovable-uploads/073f7916-4a77-4421-8e76-4a76d2d2b3a8.png"
   },
   {
-    title: "Starlit Dreams",
+    title: "Rainforest Sounds",
     duration: "15 Min",
     listeners: "39084",
-    coverImage: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
+    coverImage: "/lovable-uploads/7968c94e-ae83-42cc-bd9d-57c9e901e288.png"
   },
   {
-    title: "The Gentle Night",
+    title: "Lakeside Meditation",
     duration: "12 Min",
     listeners: "42568",
-    coverImage: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+    coverImage: "/lovable-uploads/e63d8a4d-354d-4613-b686-84f7178d845c.png"
+  },
+  {
+    title: "Forest Frog",
+    duration: "8 Min",
+    listeners: "31254",
+    coverImage: "/lovable-uploads/b3c2e198-3032-4ec2-ac27-169ea18801ec.png"
   }
 ];
 

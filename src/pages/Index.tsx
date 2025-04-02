@@ -68,6 +68,15 @@ const Index = () => {
           <h1 className="text-white text-xl font-semibold mb-1">Meditation 101</h1>
           <p className="text-white text-sm mb-4">Tap the start button when ready</p>
           
+          {/* SSH Logo instead of bear */}
+          <div className="absolute top-12 left-1/2 transform -translate-x-1/2">
+            <img 
+              src="/lovable-uploads/cb83e1b7-4900-4ae0-aea6-8fa95e662add.png" 
+              alt="SSH Logo" 
+              className="h-12 w-auto"
+            />
+          </div>
+          
           {/* Start Button */}
           <div className="relative">
             <StartButton onClick={handleStartButton} isPlaying={isPlaying} />
