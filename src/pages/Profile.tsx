@@ -253,13 +253,20 @@ const Profile: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-50 pb-16">
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-500 to-blue-700 pt-4 pb-16 rounded-b-[40px]">
-        <div className="flex items-center justify-between px-4 mb-4">
+        <div className="flex items-center justify-between px-4 mb-2">
           <button onClick={handleBack} className="p-2 text-white">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-semibold text-white flex items-center">
-            Profile
-          </h1>
+          <div className="flex flex-col items-center">
+            <h1 className="text-xl font-semibold text-white flex items-center">
+              Profile
+            </h1>
+            <img 
+              src="/lovable-uploads/d21c0c25-8b92-4072-9b03-fcabb669b008.png"
+              alt="Shh"
+              className="h-4 mt-1"
+            />
+          </div>
           <button onClick={handleSettingsClick} className="p-2 text-white">
             <Settings size={20} />
           </button>
