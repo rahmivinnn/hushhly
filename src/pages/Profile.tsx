@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Settings, ArrowLeft, Award, Clock, Calendar, BarChart2, Edit2, LogOut, Camera, Plus } from 'lucide-react';
@@ -102,7 +101,6 @@ const Profile: React.FC = () => {
   ]);
   
   useEffect(() => {
-    // Try to get user data from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -140,7 +138,6 @@ const Profile: React.FC = () => {
           avatar: newAvatar
         }));
         
-        // Save to localStorage
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           try {
@@ -169,7 +166,6 @@ const Profile: React.FC = () => {
         fullName: newName
       }));
       
-      // Save to localStorage
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         try {
@@ -232,7 +228,6 @@ const Profile: React.FC = () => {
       }
     }));
     
-    // Update achievement progress
     setAchievements(prev => 
       prev.map(achievement => {
         if (achievement.id === "master") {
@@ -251,22 +246,27 @@ const Profile: React.FC = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-16">
-      {/* Header */}
       <div className="bg-gradient-to-br from-blue-500 to-blue-700 pt-4 pb-16 rounded-b-[40px]">
         <div className="flex items-center justify-between px-4 mb-4">
           <button onClick={handleBack} className="p-2 text-white">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-semibold text-white flex items-center">
-            Profile
-          </h1>
+          
+          <div className="flex flex-col items-center">
+            <img 
+              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
+              alt="Shh" 
+              className="h-6 mb-1"
+            />
+            <h1 className="text-xl font-semibold text-white">Profile</h1>
+          </div>
+          
           <button onClick={handleSettingsClick} className="p-2 text-white">
             <Settings size={20} />
           </button>
         </div>
       </div>
       
-      {/* Profile Card */}
       <div className="px-4 -mt-12 relative z-10">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center mb-6">
@@ -315,7 +315,6 @@ const Profile: React.FC = () => {
         </div>
       </div>
       
-      {/* Tabs */}
       <div className="px-4 mt-6">
         <Tabs defaultValue="stats" className="w-full" onValueChange={(value) => setActiveTab(value as any)}>
           <TabsList className="grid w-full grid-cols-3">
@@ -477,7 +476,6 @@ const Profile: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Bottom Navigation */}
       <BottomNavigation />
     </div>
   );

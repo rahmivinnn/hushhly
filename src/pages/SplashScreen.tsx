@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,7 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: Blue gradient background with the Hushhly white text logo
+    // Screen 1: Blue gradient background with the Hushhly white text logo only
     <div 
       key="screen-1" 
       className={`flex flex-col h-full relative overflow-hidden ${
@@ -67,16 +66,11 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-500 ease-in-out`}
     >
-      {/* Blue gradient background (updated to match reference) */}
+      {/* Blue gradient background (using the exact gradient from the reference) */}
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-blue-400 to-blue-600 overflow-hidden"
+        className="absolute inset-0 bg-gradient-to-b from-blue-400 via-blue-600 to-indigo-800 overflow-hidden"
       >
-        {/* Cloud decoration at top */}
-        <img 
-          src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
-          alt="Clouds" 
-          className="absolute top-0 w-full h-auto opacity-80 transform -translate-y-1/2"
-        />
+        {/* No cloud decorations, just the gradient background */}
       </div>
       
       {/* Center Hushhly logo - using the white version */}
@@ -87,13 +81,6 @@ const SplashScreen: React.FC = () => {
           className="w-64 h-auto animate-pulse"
         />
       </div>
-      
-      {/* Cloud decoration at bottom */}
-      <img 
-        src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
-        alt="Clouds" 
-        className="absolute bottom-0 w-full h-auto opacity-80 transform rotate-180"
-      />
     </div>,
     
     // Screen 2: White background with purple Hushhly logo

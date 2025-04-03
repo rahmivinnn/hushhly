@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ArrowLeft, Bell, Star, Play, Heart, User, BookmarkPlus } from 'lucide-react';
@@ -24,11 +23,11 @@ const SleepStories: React.FC = () => {
   const [likedStories, setLikedStories] = useState<string[]>([]);
   
   const storyImages = {
-    "whispering": "/lovable-uploads/22d3aeff-cdab-4eb2-bf79-20758a4f67e5.png",
-    "starlit": "/lovable-uploads/f4201790-0560-4528-a07c-82d09d7d8c95.png",
-    "painting": "/lovable-uploads/dd78a943-7740-468a-906f-4bbf388b15c5.png",
-    "gentle": "/lovable-uploads/ed40a4ff-9341-40c0-be34-87734a264cb6.png",
-    "forest": "/lovable-uploads/c069a9b6-64bb-4c12-8919-cac5a122d8c4.png"
+    "whispering": "/lovable-uploads/f3796138-3de0-44f8-9fab-6a71b48c7632.png",
+    "starlit": "/lovable-uploads/97bc74f2-226d-4977-aa93-9b0d386fca75.png",
+    "painting": "/lovable-uploads/0f00c731-51b5-47e8-8604-6a9fbde4fe91.png",
+    "gentle": "/lovable-uploads/f2a6ea2d-db0c-4da6-ab79-4c8a4b158fff.png",
+    "forest": "/lovable-uploads/79057e46-19a8-4c32-9d96-f637c4ac722c.png"
   };
   
   const originalStories: StoryItem[] = [
@@ -68,7 +67,6 @@ const SleepStories: React.FC = () => {
   const [relaxingTales, setRelaxingTales] = useState<StoryItem[]>([...originalStories]);
   const [parentChildStories, setParentChildStories] = useState<StoryItem[]>([...originalStories]);
 
-  // YouTube video IDs for each story
   const storyVideoIds = {
     "The Whispering Forest": "U5o8UiYxfeY",
     "Starlit Dreams": "rnDiXEhkBd8",
@@ -78,7 +76,6 @@ const SleepStories: React.FC = () => {
   };
   
   useEffect(() => {
-    // Load liked stories from localStorage
     const savedLikes = localStorage.getItem('likedStories');
     if (savedLikes) {
       setLikedStories(JSON.parse(savedLikes));
@@ -143,7 +140,6 @@ const SleepStories: React.FC = () => {
       description: `Loading more ${section.toLowerCase()}...`,
     });
     
-    // Dynamically add more stories
     const additionalStories = shuffleArray([...originalStories]);
     
     switch(section) {
@@ -177,7 +173,6 @@ const SleepStories: React.FC = () => {
       setRelaxingTales(filtered);
       setParentChildStories(filtered);
     } else {
-      // Reset to original stories if search is cleared
       setFeaturedStories([...originalStories]);
       setShortStories([...originalStories]);
       setRelaxingTales([...originalStories]);
@@ -191,7 +186,6 @@ const SleepStories: React.FC = () => {
       description: "Share this meditation story with friends via email or SMS",
     });
     
-    // Simulated share dialog
     setTimeout(() => {
       const confirmed = window.confirm("Share this story with your friends via email or message?");
       if (confirmed) {

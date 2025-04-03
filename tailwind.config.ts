@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -57,6 +56,12 @@ export default {
           lightBlue: "#33C3F0",
           mediumBlue: "#1EAEDB",
           darkBlue: "#0FA0CE",
+        },
+        hushhly: {
+          lightBlue: "#3498db",
+          mediumBlue: "#2980b9",
+          darkBlue: "#1a5276",
+          indigo: "#4a235a"
         }
       },
       borderRadius: {
