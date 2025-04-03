@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import StatusBar from '@/components/StatusBar';
 import LogoHeader from '@/components/LogoHeader';
 import StartButton from '@/components/StartButton';
@@ -82,7 +82,7 @@ const Index = () => {
       <div className="flex-1 bg-white">
         {/* Meditation Icon */}
         <div className="flex justify-center mt-4">
-          <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-12 h-12" />
+          <img src="/lovable-uploads/c0cb37e6-6c26-4923-ace7-eb84ba25eae4.png" alt="Meditation" className="w-12 h-12" />
         </div>
         
         {/* Music Player - adjusted to match reference */}

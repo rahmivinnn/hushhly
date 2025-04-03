@@ -67,11 +67,11 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-500 ease-in-out`}
     >
-      {/* Gradient background using the provided image */}
+      {/* Blue gradient background (portrait style) */}
       <div 
         className="absolute inset-0 overflow-hidden"
         style={{
-          backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
+          backgroundImage: "url('/lovable-uploads/46de7f20-e3ff-479d-9c3e-c568d07bb906.png')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
