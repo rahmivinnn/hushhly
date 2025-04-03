@@ -67,23 +67,19 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100'
       } transition-all duration-500 ease-in-out`}
     >
-      {/* Blue gradient background (portrait style) */}
+      {/* Blue gradient background (updated to match reference) */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 overflow-hidden"
+        className="absolute inset-0 bg-gradient-to-b from-blue-400 to-blue-600 overflow-hidden"
       >
-        {/* Floating particles */}
-        <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1.5s'}}></div>
-        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.5s'}}></div>
-        
-        {/* White triangle bottom shape like in the image */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <div className="w-full h-0 border-l-[50vw] border-r-[50vw] border-b-[30vh] border-l-transparent border-r-transparent border-b-white"></div>
-        </div>
+        {/* Cloud decoration at top */}
+        <img 
+          src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
+          alt="Clouds" 
+          className="absolute top-0 w-full h-auto opacity-80 transform -translate-y-1/2"
+        />
       </div>
       
+      {/* Center Hushhly logo - using the white version */}
       <div className="flex-grow flex items-center justify-center relative z-10">
         <img 
           src="/lovable-uploads/e9395b45-6afe-48dc-8187-561a5538e0f9.png" 
@@ -91,6 +87,13 @@ const SplashScreen: React.FC = () => {
           className="w-64 h-auto animate-pulse"
         />
       </div>
+      
+      {/* Cloud decoration at bottom */}
+      <img 
+        src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
+        alt="Clouds" 
+        className="absolute bottom-0 w-full h-auto opacity-80 transform rotate-180"
+      />
     </div>,
     
     // Screen 2: White background with purple Hushhly logo

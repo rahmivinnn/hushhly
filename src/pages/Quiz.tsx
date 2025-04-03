@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -277,16 +278,34 @@ const Quiz: React.FC = () => {
         </Button>
       </div>
       
-      <div className="relative h-24">
-        <div 
-          className="absolute bottom-0 left-0 w-full h-24 overflow-hidden"
-          style={{
-            backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "top center",
-            clipPath: "ellipse(100% 55% at 48% 100%)"
-          }}
-        />
+      {/* Bottom decoration with clouds and shh logo */}
+      <div className="relative h-28">
+        <div className="absolute bottom-0 left-0 w-full h-24 overflow-hidden">
+          {/* Clouds image at bottom left */}
+          <img 
+            src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
+            alt="Clouds" 
+            className="absolute bottom-0 left-0 w-40 h-auto opacity-80"
+          />
+          
+          {/* Shh logo */}
+          <img 
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
+            alt="Shh" 
+            className="absolute bottom-8 left-10 w-16 h-auto z-10"
+          />
+          
+          {/* Blue wave background */}
+          <div 
+            className="absolute bottom-0 left-0 w-full h-24 overflow-hidden"
+            style={{
+              backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "top center",
+              clipPath: "ellipse(100% 55% at 48% 100%)"
+            }}
+          />
+        </div>
       </div>
     </div>
   );

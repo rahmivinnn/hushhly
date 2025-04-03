@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast"; // Update to correct path
+import { useToast } from "@/hooks/use-toast"; 
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 const SignIn: React.FC = () => {
@@ -46,8 +46,8 @@ const SignIn: React.FC = () => {
             description: "You have successfully signed in",
           });
           
-          // Navigate to meditation page after successful login
-          navigate('/meditation');
+          // Navigate to home page after successful login (changed from meditation)
+          navigate('/home');
           return;
         }
       }

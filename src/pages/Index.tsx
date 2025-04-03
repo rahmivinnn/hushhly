@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import StatusBar from '@/components/StatusBar';
 import LogoHeader from '@/components/LogoHeader';
 import StartButton from '@/components/StartButton';
@@ -95,6 +95,13 @@ const Index = () => {
             className={`h-12 transition-opacity duration-500 ${isPlaying ? 'opacity-100' : 'opacity-30'}`} 
           />
         </div>
+        
+        {/* Cloud decoration on top of the circle */}
+        <img 
+          src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
+          alt="Clouds" 
+          className="absolute top-36 left-1/2 transform -translate-x-1/2 w-64 h-auto opacity-30 z-0"
+        />
       </div>
       
       {/* Bottom Section with white background */}

@@ -14,12 +14,17 @@ const LogoHeader: React.FC<LogoHeaderProps> = ({ onMenuToggle }) => {
         <Menu className="h-6 w-6 text-white" />
       </button>
       
-      {/* Center logo */}
-      <div className="flex-1 flex justify-center">
+      {/* Center logo with shh text */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <img 
+          src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
+          alt="Shh" 
+          className="h-8 mb-1"
+        />
         <img 
           src="/lovable-uploads/d7f6d4c3-32de-4014-bb61-67da79c5aeef.png" 
           alt="Hushhly" 
-          className="h-10"
+          className="h-6"
         />
       </div>
       
