@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ArrowLeft, Bell, Star, Play, Heart, User, BookmarkPlus } from 'lucide-react';
+import { Search, ArrowLeft, Bell, Star, Play, Heart, User, BookmarkPlus, Calendar, X, Clock, Copy } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import VideoPopup from '@/components/VideoPopup';
@@ -21,6 +21,11 @@ const SleepStories: React.FC = () => {
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string, videoId?: string}>({title: "", duration: ""});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [likedStories, setLikedStories] = useState<string[]>([]);
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>("21:00");
+  const [scheduledStory, setScheduledStory] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
   
   const storyImages = {
     "whispering": "/lovable-uploads/f3796138-3de0-44f8-9fab-6a71b48c7632.png",
@@ -75,6 +80,14 @@ const SleepStories: React.FC = () => {
     "default": "nRkP3lKj_lY"
   };
   
+  // Map sleep story titles to meditation indices for navigation
+  const storyToMeditationMap: Record<string, number> = {
+    "The Whispering Forest": 0,
+    "Starlit Dreams": 1,
+    "Painting Forest": 2,
+    "The Gentle Night": 3
+  };
+  
   useEffect(() => {
     const savedLikes = localStorage.getItem('likedStories');
     if (savedLikes) {
@@ -125,9 +138,19 @@ const SleepStories: React.FC = () => {
   };
   
   const handlePlayNow = (title: string, duration: string) => {
-    const videoId = storyVideoIds[title as keyof typeof storyVideoIds] || storyVideoIds.default;
-    setCurrentVideo({title, duration, videoId});
-    setShowVideoPopup(true);
+    // Navigate to meditation page with the corresponding track
+    const meditationIndex = storyToMeditationMap[title] || 0;
+    
+    // Store the selected meditation index in localStorage
+    localStorage.setItem('selectedMeditationIndex', meditationIndex.toString());
+    
+    // Navigate to meditation page
+    navigate('/meditation');
+    
+    toast({
+      title: "Starting Meditation",
+      description: `${title} meditation is starting now.`
+    });
   };
   
   const handleBackButton = () => {
@@ -181,20 +204,99 @@ const SleepStories: React.FC = () => {
   };
   
   const handleInvite = () => {
+    setShowShareModal(true);
+  };
+  
+  const handleCopyLink = () => {
+    // In a real app, this would copy the actual invite link
+    navigator.clipboard.writeText("https://hushhly.com/invite/sleep-stories?ref=user123");
     toast({
-      title: "Invite Friends",
-      description: "Share this meditation story with friends via email or SMS",
+      title: "Link Copied",
+      description: "Invite link has been copied to clipboard",
+    });
+  };
+  
+  const handleShareSocial = (platform: string) => {
+    // In a real app, this would open the sharing dialog for the specific platform
+    toast({
+      title: `Share via ${platform}`,
+      description: `Sharing to ${platform}...`,
+    });
+    setShowShareModal(false);
+  };
+  
+  const handleCalendarClick = () => {
+    setShowCalendar(true);
+  };
+  
+  const handleCloseCalendar = () => {
+    setShowCalendar(false);
+  };
+  
+  const handleDateSelection = (date: Date) => {
+    setSelectedDate(date);
+  };
+  
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedTime(e.target.value);
+  };
+  
+  const handleScheduleStory = (title: string) => {
+    if (!selectedDate) {
+      toast({
+        title: "Please select a date",
+        description: "You need to select a date to schedule this story."
+      });
+      return;
+    }
+    
+    const scheduledDateTime = new Date(selectedDate);
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    scheduledDateTime.setHours(hours, minutes);
+    
+    setScheduledStory(title);
+    setShowCalendar(false);
+    
+    // Format date for display
+    const formattedDate = scheduledDateTime.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
     });
     
+    toast({
+      title: "Story Scheduled",
+      description: `"${title}" has been scheduled for ${formattedDate}`,
+    });
+    
+    // Show notification after a short delay to simulate system notification
     setTimeout(() => {
-      const confirmed = window.confirm("Share this story with your friends via email or message?");
-      if (confirmed) {
-        toast({
-          title: "Invite Sent",
-          description: "Invitation has been sent to your friends",
-        });
-      }
-    }, 500);
+      const notificationElement = document.createElement('div');
+      notificationElement.className = 'fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 max-w-xs z-50 animate-slide-in';
+      notificationElement.innerHTML = `
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <img src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" alt="Hushhly" class="h-6 w-auto">
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-gray-900">Sleep story scheduled!</h3>
+            <p class="mt-1 text-sm text-gray-500">"${title}" will start at ${formattedDate}</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(notificationElement);
+      
+      // Remove notification after 5 seconds
+      setTimeout(() => {
+        notificationElement.classList.remove('animate-slide-in');
+        notificationElement.classList.add('animate-slide-out');
+        setTimeout(() => {
+          document.body.removeChild(notificationElement);
+        }, 300);
+      }, 5000);
+    }, 1000);
   };
   
   const StoryCard = ({ story, isFeatured = false }: { story: StoryItem, isFeatured?: boolean }) => (
@@ -242,15 +344,97 @@ const SleepStories: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         
-        <h1 className="text-lg font-semibold flex items-center">
-          Sleep Stories <Star size={16} fill="gold" className="ml-1 text-yellow-400" />
-        </h1>
+        <div className="flex flex-col items-center">
+          <img 
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+            alt="Shh Logo"
+            className="h-6 mb-1"
+          />
+          <h1 className="text-lg font-semibold">Sleep Stories</h1>
+        </div>
         
-        <button onClick={handleInvite} className="p-2 text-blue-500">
-          <User size={20} className="mr-1" /> 
-          <span className="text-xs">Invite</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={handleCalendarClick}
+            className="p-2 text-blue-500"
+          >
+            <Calendar size={20} />
+          </button>
+          <button onClick={handleInvite} className="p-2 text-blue-500">
+            <User size={20} />
+          </button>
+        </div>
       </header>
+      
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md">
+            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Share Sleep Stories</h2>
+              <button onClick={() => setShowShareModal(false)} className="text-gray-500">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6 bg-gray-50 p-3 rounded-lg">
+                <div className="text-sm text-gray-600 truncate flex-1">https://hushhly.com/invite/sleep-stories?ref=user123</div>
+                <button 
+                  onClick={handleCopyLink}
+                  className="ml-3 text-blue-500 hover:text-blue-600"
+                >
+                  <Copy size={18} />
+                </button>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-4">Share via</p>
+              
+              <div className="grid grid-cols-4 gap-4">
+                <button 
+                  onClick={() => handleShareSocial('WhatsApp')}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  </div>
+                  <span className="text-xs">WhatsApp</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleShareSocial('Telegram')}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.5 6.424-.709 8.526-.092.913-.325 1.219-.534 1.249-.457.066-.896-.318-1.39-.624a169.75 169.75 0 0 0-1.199-.744c-.923-.58-1.097-.934-.523-1.438.158-.139 2.09-1.914 2.148-2.077.007-.02.021-.147-.056-.209s-.236-.045-.335-.028c-.13.024-1.6 1.016-2.937 1.857a1.88 1.88 0 0 1-1.068.312 5.6 5.6 0 0 1-1.513-.308c-.611-.17-.919-.519-.888-.855.016-.167.176-.331.483-.478.883-.419 3.304-1.382 5.987-2.54.29-.125 2.661-1.106 2.878-1.131z"/></svg>
+                  </div>
+                  <span className="text-xs">Telegram</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleShareSocial('Twitter')}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                  </div>
+                  <span className="text-xs">Twitter</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleShareSocial('Email')}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center text-white mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  </div>
+                  <span className="text-xs">Email</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="px-4 mb-4">
         <div className="relative">
@@ -429,6 +613,77 @@ const SleepStories: React.FC = () => {
           videoId={currentVideo.videoId}
           onClose={() => setShowVideoPopup(false)}
         />
+      )}
+      
+      {/* Calendar Modal */}
+      {showCalendar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-lg font-semibold">Schedule Sleep Story</h2>
+              <button 
+                onClick={handleCloseCalendar}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
+                <input 
+                  type="date" 
+                  className="w-full h-10 rounded-lg border border-gray-300 px-3"
+                  onChange={(e) => handleDateSelection(new Date(e.target.value))}
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Time</label>
+                <div className="flex items-center">
+                  <Clock size={16} className="text-gray-400 mr-2" />
+                  <input 
+                    type="time" 
+                    className="w-full h-10 rounded-lg border border-gray-300 px-3"
+                    value={selectedTime}
+                    onChange={handleTimeChange}
+                  />
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Story</label>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {originalStories.map(story => (
+                    <div 
+                      key={story.id}
+                      className="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                      onClick={() => handleScheduleStory(story.title)}
+                    >
+                      <div className="w-10 h-10 rounded-lg overflow-hidden mr-3">
+                        <img src={story.image} alt={story.title} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium">{story.title}</h3>
+                        <p className="text-xs text-gray-500">{story.duration}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <button
+                onClick={() => handleScheduleStory(originalStories[0].title)}
+                disabled={!selectedDate}
+                className={`w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 text-sm ${!selectedDate ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Schedule Story
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       
       <BottomNavigation />

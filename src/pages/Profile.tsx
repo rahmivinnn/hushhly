@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, ArrowLeft, Award, Clock, Calendar, BarChart2, Edit2, LogOut, Camera, Plus } from 'lucide-react';
+import { User, Settings, Lock, ChevronRight, Award, Clock, Calendar, BarChart2, Edit2, LogOut, Camera, Plus, Shield, Star, HelpCircle, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,15 @@ interface Achievement {
   description: string;
 }
 
+interface RecentSession {
+  id: number;
+  title: string;
+  date: string;
+  duration: string;
+  type: string;
+  completed: boolean;
+}
+
 const generateRandomIncrease = (): number => {
   return Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
 };
@@ -39,11 +48,18 @@ const Profile: React.FC = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'stats' | 'achievements' | 'history'>('stats');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showRateReviewModal, setShowRateReviewModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
-    fullName: "Guest User",
-    email: "guest@example.com",
-    avatar: "/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png",
+    fullName: "Katif",
+    email: "KatifDesigns@gmail.com",
+    avatar: "https://ui-avatars.com/api/?name=Katif&background=random",
     joined: "April 2023",
     stats: {
       sessionsCompleted: 42,
@@ -52,6 +68,49 @@ const Profile: React.FC = () => {
       longestSession: 30,
     }
   });
+
+  const [recentSessions, setRecentSessions] = useState<RecentSession[]>([
+    {
+      id: 1,
+      title: "Morning Meditation",
+      date: "Today, 6:30 AM",
+      duration: "15 min",
+      type: "Meditation",
+      completed: true
+    },
+    {
+      id: 2,
+      title: "Stress Relief",
+      date: "Yesterday, 7:15 PM",
+      duration: "10 min",
+      type: "Breathing",
+      completed: true
+    },
+    {
+      id: 3,
+      title: "Deep Sleep",
+      date: "May 12, 9:45 PM",
+      duration: "20 min",
+      type: "Sleep Story",
+      completed: true
+    },
+    {
+      id: 4,
+      title: "Focus Session",
+      date: "May 10, 2:30 PM",
+      duration: "15 min",
+      type: "Meditation",
+      completed: true
+    },
+    {
+      id: 5,
+      title: "Anxiety Relief",
+      date: "May 8, 10:15 AM",
+      duration: "12 min",
+      type: "Breathing",
+      completed: true
+    }
+  ]);
 
   const [achievements, setAchievements] = useState<Achievement[]>([
     {
@@ -109,18 +168,15 @@ const Profile: React.FC = () => {
           ...prev,
           fullName: userData.fullName || userData.name || prev.fullName,
           email: userData.email || prev.email,
-          avatar: userData.avatar || prev.avatar,
+          avatar: userData.avatar || 'https://ui-avatars.com/api/?name=Katif&background=random',
         }));
+        setIsPremium(userData.isPremium || false);
       } catch (error) {
         console.error("Error parsing user data:", error);
       }
     }
   }, []);
   
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const handleAvatarClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -159,29 +215,7 @@ const Profile: React.FC = () => {
   };
   
   const handleEditProfile = () => {
-    const newName = prompt("Enter your new name:", userProfile.fullName);
-    if (newName && newName.trim() !== "") {
-      setUserProfile(prev => ({
-        ...prev,
-        fullName: newName
-      }));
-      
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        try {
-          const userData = JSON.parse(storedUser);
-          userData.fullName = newName;
-          localStorage.setItem('user', JSON.stringify(userData));
-        } catch (error) {
-          console.error("Error updating name:", error);
-        }
-      }
-      
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully",
-      });
-    }
+    navigate('/edit-profile');
   };
   
   const handleLogout = () => {
@@ -194,12 +228,66 @@ const Profile: React.FC = () => {
       navigate('/sign-in');
     }, 1000);
   };
+
+  const handleUpgrade = () => {
+    setShowPaymentModal(true);
+  };
   
-  const handleSettingsClick = () => {
+  const handlePasswordSettings = () => {
     toast({
-      title: "Settings",
-      description: "Settings page coming soon",
+      title: "Password Settings",
+      description: "Password change functionality will be available soon",
     });
+  };
+  
+  const handleNotificationSettings = () => {
+    navigate('/notifications');
+  };
+  
+  const handlePrivacyPolicy = () => {
+    setShowPrivacyModal(true);
+  };
+  
+  const handleRateReview = () => {
+    setShowRateReviewModal(true);
+  };
+  
+  const handleHelp = () => {
+    setShowHelpModal(true);
+  };
+
+  const processPayment = () => {
+    setIsProcessingPayment(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessingPayment(false);
+      setPaymentSuccess(true);
+      
+      // Update user premium status
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const userData = JSON.parse(storedUser);
+          userData.isPremium = true;
+          localStorage.setItem('user', JSON.stringify(userData));
+          setIsPremium(true);
+        } catch (error) {
+          console.error("Error updating premium status:", error);
+        }
+      }
+      
+      // Close modal after success messaging
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        setPaymentSuccess(false);
+        
+        toast({
+          title: "Premium Activated",
+          description: "Welcome to Hushhly Premium! Enjoy all features.",
+        });
+      }, 2000);
+    }, 3000);
   };
 
   const handleIncreaseStreak = () => {
@@ -219,6 +307,28 @@ const Profile: React.FC = () => {
 
   const handleIncreaseSessions = () => {
     const increase = generateRandomIncrease();
+    
+    // Add new recent session
+    const now = new Date();
+    const formattedDate = `Today, ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+    
+    const sessionTypes = ["Meditation", "Breathing", "Sleep Story", "Focus"];
+    const sessionTitles = [
+      "Morning Calm", "Stress Relief", "Deep Focus", "Evening Wind Down", 
+      "Anxiety Relief", "Energy Boost", "Sleep Preparation", "Quick Reset"
+    ];
+    
+    const newSession: RecentSession = {
+      id: Date.now(),
+      title: sessionTitles[Math.floor(Math.random() * sessionTitles.length)],
+      date: formattedDate,
+      duration: `${Math.floor(Math.random() * 20) + 5} min`,
+      type: sessionTypes[Math.floor(Math.random() * sessionTypes.length)],
+      completed: true
+    };
+    
+    setRecentSessions(prev => [newSession, ...prev]);
+    
     setUserProfile(prev => ({
       ...prev,
       stats: {
@@ -240,242 +350,491 @@ const Profile: React.FC = () => {
     
     toast({
       title: "Sessions Updated",
-      description: `Added ${increase} new meditation sessions!`,
+      description: `Added a new meditation session!`,
     });
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-16">
-      <div className="bg-gradient-to-br from-blue-500 to-blue-700 pt-4 pb-16 rounded-b-[40px]">
-        <div className="flex items-center justify-between px-4 mb-4">
-          <button onClick={handleBack} className="p-2 text-white">
-            <ArrowLeft size={20} />
+    <div className="flex flex-col min-h-screen bg-white">
+      {/* Header */}
+      <div className="bg-white py-3 px-4 flex items-center justify-between border-b border-gray-200">
+        <button className="text-gray-600">
+          <Settings size={20} />
+        </button>
+        
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
+            alt="Shh" 
+            className="h-6"
+          />
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <button className="text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
           </button>
-          
-          <div className="flex flex-col items-center">
-            <img 
-              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-              alt="Shh" 
-              className="h-6 mb-1"
-            />
-            <h1 className="text-xl font-semibold text-white">Profile</h1>
-          </div>
-          
-          <button onClick={handleSettingsClick} className="p-2 text-white">
-            <Settings size={20} />
+          <button className="text-amber-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           </button>
         </div>
       </div>
-      
-      <div className="px-4 -mt-12 relative z-10">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <div className="flex items-center mb-6">
-            <div className="mr-4 relative">
-              <Avatar className="w-20 h-20 border-4 border-white">
-                <AvatarImage src={userProfile.avatar} />
-                <AvatarFallback className="bg-blue-500 text-white">
-                  {userProfile.fullName.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
+
+      {/* User Profile */}
+      <div className="px-6 py-6 flex items-center">
+        <div className="mr-4 relative">
+          <Avatar className="h-20 w-20 border-2 border-white" onClick={handleAvatarClick}>
+            <AvatarImage src={userProfile.avatar} alt={userProfile.fullName} />
+            <AvatarFallback>{userProfile.fullName.substring(0, 2)}</AvatarFallback>
+          </Avatar>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange}
+            className="hidden" 
+            accept="image/*"
+          />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold">{userProfile.fullName}</h2>
+          <p className="text-gray-600">{userProfile.email}</p>
+        </div>
+      </div>
+
+      {/* Premium Membership */}
+      <div className="mx-6 mb-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-5 text-white">
+        <h3 className="text-2xl font-bold mb-1">Premium Membership</h3>
+        <p className="mb-4 opacity-90">Upgrade for more features</p>
+        
+        <button 
+          onClick={handleUpgrade}
+          className="bg-white text-blue-600 font-semibold py-2 px-6 rounded-full hover:bg-blue-50 transition-colors"
+        >
+          Upgrade
+        </button>
+      </div>
+
+      {/* Settings Section */}
+      <div className="px-6 mb-4">
+        <h3 className="text-xl font-bold mb-4">Setting</h3>
+        
+        <div className="space-y-3">
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handleEditProfile}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <User size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Profile</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handlePasswordSettings}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <Lock size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Password</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handleNotificationSettings}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+              </div>
+              <span className="ml-3 font-medium">Notifications</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* More Section */}
+      <div className="px-6 mb-8">
+        <h3 className="text-xl font-bold mb-4">More</h3>
+        
+        <div className="space-y-3">
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handlePrivacyPolicy}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <Shield size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Privacy & Policy</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handleRateReview}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <Star size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Rate & Review</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handleHelp}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <HelpCircle size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Help</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+          
+          <div 
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+            onClick={handleLogout}
+          >
+            <div className="flex items-center">
+              <div className="p-2 rounded-full">
+                <LogOut size={24} className="text-gray-800" />
+              </div>
+              <span className="ml-3 font-medium">Log out</span>
+            </div>
+            <ChevronRight size={20} className="text-gray-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Sessions - Added to match the request for more session data */}
+      <div className="px-6 mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">Recent Sessions</h3>
+          <button className="text-blue-500 text-sm">View All</button>
+        </div>
+        
+        <div className="space-y-3">
+          {recentSessions.map(session => (
+            <div key={session.id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-full">
+                  {session.type === "Meditation" && <User size={20} className="text-blue-600" />}
+                  {session.type === "Breathing" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>}
+                  {session.type === "Sleep Story" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M17.5 12.5 15 15l2.5 2.5M2 20h20M2 4h20M4 8h10M4 12h6M4 16h6"></path></svg>}
+                  {session.type === "Focus" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>}
+                </div>
+                <div className="ml-3">
+                  <span className="font-medium">{session.title}</span>
+                  <p className="text-xs text-gray-500">{session.date}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="text-sm font-medium">{session.duration}</span>
+                {session.completed && (
+                  <p className="text-xs text-green-500">Completed</p>
+                )}
+              </div>
+            </div>
+          ))}
+          
+          <button 
+            onClick={handleIncreaseSessions}
+            className="w-full p-3 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center"
+          >
+            <Plus size={18} className="mr-2" />
+            Start New Session
+          </button>
+        </div>
+      </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md overflow-hidden">
+            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Upgrade to Premium</h2>
               <button 
-                onClick={handleAvatarClick}
-                className="absolute bottom-0 right-0 bg-blue-500 p-1.5 rounded-full text-white"
+                onClick={() => {
+                  if (!isProcessingPayment) {
+                    setShowPaymentModal(false);
+                  }
+                }} 
+                className={`text-gray-500 ${isProcessingPayment ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={isProcessingPayment}
               >
-                <Camera size={14} />
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleFileChange}
-              />
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">{userProfile.fullName}</h2>
-              <p className="text-gray-500 text-sm">{userProfile.email}</p>
-              <p className="text-gray-400 text-xs">Member since {userProfile.joined}</p>
-            </div>
-          </div>
-          
-          <div className="flex space-x-2 mb-4">
-            <button 
-              onClick={handleEditProfile}
-              className="flex-1 bg-blue-500 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center hover:bg-blue-600 transition-colors"
-            >
-              <Edit2 size={14} className="mr-1" /> Edit Profile
-            </button>
-            <button 
-              onClick={handleLogout}
-              className="flex-1 border border-red-500 text-red-500 py-2 rounded-lg text-sm font-medium flex items-center justify-center hover:bg-red-50 transition-colors"
-            >
-              <LogOut size={14} className="mr-1" /> Log Out
-            </button>
+            
+            {paymentSuccess ? (
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Payment Successful!</h3>
+                <p className="text-gray-600 mb-4">Welcome to Hushhly Premium. You now have access to all premium features.</p>
+              </div>
+            ) : (
+              <div className="p-6">
+                <div className="mb-6 text-center">
+                  <h3 className="text-2xl font-bold text-blue-600 mb-1">$5.99<span className="text-gray-500 text-base font-normal">/month</span></h3>
+                  <p className="text-gray-600">Get access to all premium features</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <h4 className="font-medium mb-2">Premium includes:</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Sleep Stories for Parents &amp; Kids
+                    </li>
+                    <li className="flex items-center text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      AI-Personalized Meditation Plan
+                    </li>
+                    <li className="flex items-center text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Mood Tracking &amp; Insights
+                    </li>
+                    <li className="flex items-center text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Background Sounds &amp; Music
+                    </li>
+                    <li className="flex items-center text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Offline Access
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="space-y-4">
+                  <button 
+                    onClick={processPayment}
+                    disabled={isProcessingPayment}
+                    className={`w-full bg-blue-600 text-white rounded-full py-3 font-medium flex items-center justify-center ${isProcessingPayment ? 'opacity-70' : 'hover:bg-blue-700'}`}
+                  >
+                    {isProcessingPayment ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </>
+                    ) : (
+                      'Subscribe Now'
+                    )}
+                  </button>
+                  
+                  <p className="text-xs text-center text-gray-500">
+                    You can cancel your subscription anytime. No refunds for partial months.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      
-      <div className="px-4 mt-6">
-        <Tabs defaultValue="stats" className="w-full" onValueChange={(value) => setActiveTab(value as any)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="stats">Stats</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="stats" className="mt-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex items-center text-blue-500 mb-1">
-                  <Award size={18} className="mr-2" />
-                  <span className="text-sm font-medium">Sessions</span>
-                </div>
-                <div className="flex items-end">
-                  <p className="text-2xl font-semibold">{userProfile.stats.sessionsCompleted}</p>
-                  <button 
-                    onClick={handleIncreaseSessions}
-                    className="ml-2 text-xs bg-blue-100 text-blue-500 p-1 rounded"
-                  >
-                    <Plus size={12} />
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500">Total sessions completed</p>
-              </div>
-              
-              <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex items-center text-green-500 mb-1">
-                  <BarChart2 size={18} className="mr-2" />
-                  <span className="text-sm font-medium">Streak</span>
-                </div>
-                <div className="flex items-end">
-                  <p className="text-2xl font-semibold">{userProfile.stats.streak} days</p>
-                  <button 
-                    onClick={handleIncreaseStreak}
-                    className="ml-2 text-xs bg-green-100 text-green-500 p-1 rounded"
-                  >
-                    <Plus size={12} />
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500">Current meditation streak</p>
-              </div>
-              
-              <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex items-center text-purple-500 mb-1">
-                  <Clock size={18} className="mr-2" />
-                  <span className="text-sm font-medium">Minutes</span>
-                </div>
-                <p className="text-2xl font-semibold">{userProfile.stats.totalMinutes}</p>
-                <p className="text-xs text-gray-500">Total meditation time</p>
-              </div>
-              
-              <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex items-center text-amber-500 mb-1">
-                  <Calendar size={18} className="mr-2" />
-                  <span className="text-sm font-medium">Longest</span>
-                </div>
-                <p className="text-2xl font-semibold">{userProfile.stats.longestSession} min</p>
-                <p className="text-xs text-gray-500">Longest meditation session</p>
-              </div>
+      )}
+
+      {/* Privacy Policy Modal */}
+      {showPrivacyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-lg font-semibold">Privacy Policy</h2>
+              <button 
+                onClick={() => setShowPrivacyModal(false)} 
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="achievements" className="mt-4">
-            <div className="grid grid-cols-2 gap-4">
-              {achievements.map((achievement) => (
-                <div 
-                  key={achievement.id} 
-                  className={`bg-white p-4 rounded-xl shadow-sm ${achievement.completed ? 'border-2 border-green-500' : ''}`}
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <h3 className="font-semibold mb-2">1. Information We Collect</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                We collect personal information that you provide directly to us, such as when you create an account, subscribe to our services, or contact us for support. This may include your name, email address, and payment information.
+              </p>
+              
+              <h3 className="font-semibold mb-2">2. How We Use Your Information</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                We use the information we collect to provide, maintain, and improve our services, to process your payments, to communicate with you, and to personalize your experience.
+              </p>
+              
+              <h3 className="font-semibold mb-2">3. Sharing Your Information</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                We do not sell, trade, or otherwise transfer your personal information to outside parties except as described in this policy. This does not include trusted third parties who assist us in operating our service.
+              </p>
+              
+              <h3 className="font-semibold mb-2">4. Data Security</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information.
+              </p>
+              
+              <h3 className="font-semibold mb-2">5. Your Rights</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                You have the right to access, update, or delete your personal information at any time. You can do this by accessing your account settings or contacting us directly.
+              </p>
+            </div>
+            <div className="p-4 border-t">
+              <button 
+                onClick={() => setShowPrivacyModal(false)}
+                className="w-full bg-[#0098c1] hover:bg-[#0086ab] text-white rounded-full py-3 text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Rate & Review Modal */}
+      {showRateReviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-lg font-semibold">Rate & Review</h2>
+              <button 
+                onClick={() => setShowRateReviewModal(false)} 
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 text-center">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold mb-2">Enjoying Hushhly?</h3>
+                <p className="text-gray-600">Let us know what you think about our app.</p>
+              </div>
+              
+              <div className="flex justify-center mb-6">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={star} className="text-yellow-400 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  </button>
+                ))}
+              </div>
+              
+              <div className="mb-6">
+                <textarea 
+                  className="w-full h-32 rounded-lg border border-gray-300 p-3 resize-none"
+                  placeholder="Tell us what you like or what we could improve..."
+                ></textarea>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button 
+                  onClick={() => setShowRateReviewModal(false)}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full py-3 text-sm"
                 >
-                  <div className={`w-16 h-16 mx-auto rounded-full ${achievement.color} flex items-center justify-center mb-2`}>
-                    {achievement.icon}
-                  </div>
-                  <h3 className="text-center text-sm font-medium">{achievement.title}</h3>
-                  
-                  {achievement.progress !== undefined && achievement.progress < 100 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-blue-500 h-2 rounded-full" 
-                        style={{ width: `${achievement.progress}%` }}
-                      ></div>
-                    </div>
-                  )}
-                  
-                  {achievement.completed ? (
-                    <div className="mt-1 text-center text-xs text-green-500">Completed!</div>
-                  ) : (
-                    <div className="mt-1 text-center text-xs text-gray-500">
-                      {achievement.progress ? `${achievement.progress}% complete` : 'In progress'}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Thank You!",
+                      description: "Your review has been submitted successfully.",
+                    });
+                    setShowRateReviewModal(false);
+                  }}
+                  className="flex-1 bg-[#0098c1] hover:bg-[#0086ab] text-white rounded-full py-3 text-sm"
+                >
+                  Submit Review
+                </button>
+              </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="history" className="mt-4">
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <h3 className="font-medium mb-3">Recent Sessions</h3>
+          </div>
+        </div>
+      )}
+      
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-lg font-semibold">Help & Support</h2>
+              <button 
+                onClick={() => setShowHelpModal(false)} 
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <h3 className="font-semibold mb-4">Frequently Asked Questions</h3>
               
-              <div className="space-y-3">
-                <div className="flex items-center p-2 border-b border-gray-100">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <Clock size={16} className="text-blue-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Morning Calm</p>
-                    <p className="text-xs text-gray-500">Today, 8:15 AM • 15 min</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-2 border-b border-gray-100">
-                  <div className="bg-purple-100 p-2 rounded-full mr-3">
-                    <Clock size={16} className="text-purple-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Focus Time</p>
-                    <p className="text-xs text-gray-500">Yesterday, 1:30 PM • 10 min</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-2 border-b border-gray-100">
-                  <div className="bg-green-100 p-2 rounded-full mr-3">
-                    <Clock size={16} className="text-green-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Sleep Meditation</p>
-                    <p className="text-xs text-gray-500">Yesterday, 10:45 PM • 15 min</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-2 border-b border-gray-100">
-                  <div className="bg-amber-100 p-2 rounded-full mr-3">
-                    <Clock size={16} className="text-amber-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Anxiety Relief</p>
-                    <p className="text-xs text-gray-500">2 days ago, 4:20 PM • 20 min</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-2">
-                  <div className="bg-indigo-100 p-2 rounded-full mr-3">
-                    <Clock size={16} className="text-indigo-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Deep Relaxation</p>
-                    <p className="text-xs text-gray-500">3 days ago, 9:00 AM • 15 min</p>
-                  </div>
-                </div>
+              <div className="mb-4">
+                <h4 className="font-medium mb-1">How do I start a meditation session?</h4>
+                <p className="text-sm text-gray-600">
+                  You can start a meditation session from the Home screen by selecting any meditation card and tapping "Start Meditation", or from the Meditation tab at the bottom navigation.
+                </p>
               </div>
               
-              <Button className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
-                View All History
-              </Button>
+              <div className="mb-4">
+                <h4 className="font-medium mb-1">How do I track my progress?</h4>
+                <p className="text-sm text-gray-600">
+                  Your meditation progress, streaks, and stats are all available on your Profile page under the "Stats" tab.
+                </p>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-medium mb-1">Can I download meditations for offline use?</h4>
+                <p className="text-sm text-gray-600">
+                  Yes, with a Premium subscription you can download meditations and sleep stories for offline listening.
+                </p>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-medium mb-1">How do I cancel my subscription?</h4>
+                <p className="text-sm text-gray-600">
+                  You can manage your subscription through your app store account settings on your device.
+                </p>
+              </div>
+              
+              <div className="mt-6">
+                <h3 className="font-semibold mb-2">Contact Support</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  If you need further assistance, please contact our support team:
+                </p>
+                <p className="text-sm font-medium">support@hushhly.com</p>
+              </div>
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-      
+            <div className="p-4 border-t flex space-x-3">
+              <button 
+                onClick={() => setShowHelpModal(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full py-3 text-sm"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => {
+                  toast({
+                    title: "Support Request Sent",
+                    description: "Our team will contact you soon.",
+                  });
+                  setShowHelpModal(false);
+                }}
+                className="flex-1 bg-[#0098c1] hover:bg-[#0086ab] text-white rounded-full py-3 text-sm"
+              >
+                Contact Support
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <BottomNavigation />
     </div>
   );

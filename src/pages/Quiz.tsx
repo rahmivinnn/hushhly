@@ -1,168 +1,80 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ChevronRight } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
 
-interface QuizStep {
-  title: string;
-  question: string;
-  options?: string[];
-  multiSelect?: boolean;
-}
-
-const Quiz: React.FC = () => {
+const Quiz = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [animating, setAnimating] = useState(false);
-  
-  const quizSteps: QuizStep[] = [
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleSkip = () => {
+    navigate('/home');
+  };
+
+  const handleNext = () => {
+    if (selectedOption !== null) {
+      if (currentQuestion < quizQuestions.length - 1) {
+        setAnimating(true);
+        setTimeout(() => {
+          setCurrentQuestion(currentQuestion + 1);
+          setSelectedOption(null);
+          setAnimating(false);
+        }, 300);
+      } else {
+        navigate('/home');
+      }
+    }
+  };
+
+  const title = "Personalization Quiz";
+
+  const quizQuestions = [
     {
-      title: "Personalize Your Experience",
-      question: "What brings you to Hushhly?",
+      question: "What's your main goal with meditation?",
       options: [
-        "Reduce stress & anxiety",
-        "Improve focus & productivity",
+        "Reduce stress and anxiety",
+        "Improve focus and concentration",
         "Better sleep quality",
-        "Develop mindfulness practice",
-        "Spiritual growth"
+        "Spiritual growth and self-discovery"
       ]
     },
     {
-      title: "Experience Level",
-      question: "What's your meditation experience level?",
+      question: "How would you describe your meditation experience?",
       options: [
         "Complete beginner",
-        "Some experience",
-        "Regular meditator",
-        "Advanced practitioner"
+        "Tried a few times",
+        "Regular practice",
+        "Experienced meditator"
       ]
     },
     {
-      title: "Time Preference",
-      question: "When do you prefer to meditate?",
+      question: "How much time can you dedicate to meditation daily?",
+      options: [
+        "5 minutes or less",
+        "5-10 minutes",
+        "10-20 minutes",
+        "More than 20 minutes"
+      ]
+    },
+    {
+      question: "What time of day do you prefer to meditate?",
       options: [
         "Morning",
         "Afternoon",
         "Evening",
-        "Before bed",
-        "No preference"
+        "Before bed"
       ]
-    },
-    {
-      title: "Session Length",
-      question: "How long would you like your sessions to be?",
-      options: [
-        "5 minutes",
-        "10 minutes",
-        "15 minutes",
-        "20+ minutes",
-        "Varying lengths"
-      ]
-    },
-    {
-      title: "Additional Interests",
-      question: "Select any topics you're interested in:",
-      options: [
-        "Guided visualization",
-        "Breathing techniques",
-        "Body scan meditation",
-        "Loving-kindness meditation",
-        "Walking meditation",
-        "Sound healing"
-      ],
-      multiSelect: true
     }
   ];
-  
-  const handleSingleSelect = (value: string) => {
-    setAnswers({
-      ...answers,
-      [currentStep]: value
-    });
-  };
-  
-  const handleMultiSelect = (option: string) => {
-    const currentSelections = (answers[currentStep] as string[]) || [];
-    
-    if (currentSelections.includes(option)) {
-      setAnswers({
-        ...answers,
-        [currentStep]: currentSelections.filter(item => item !== option)
-      });
-    } else {
-      setAnswers({
-        ...answers,
-        [currentStep]: [...currentSelections, option]
-      });
-    }
-  };
-  
-  const isCurrentQuestionAnswered = () => {
-    if (quizSteps[currentStep].multiSelect) {
-      const selections = (answers[currentStep] as string[]) || [];
-      return selections.length > 0;
-    }
-    return !!answers[currentStep];
-  };
-  
-  const handleNext = () => {
-    if (!isCurrentQuestionAnswered()) {
-      toast({
-        title: "Please make a selection",
-        description: "Please select at least one option to continue",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (currentStep < quizSteps.length - 1) {
-      setAnimating(true);
-      setTimeout(() => {
-        setCurrentStep(currentStep + 1);
-        setAnimating(false);
-      }, 300);
-    } else {
-      setAnimating(true);
-      setTimeout(() => {
-        localStorage.setItem('quizAnswers', JSON.stringify(answers));
-        toast({
-          title: "Quiz completed!",
-          description: "Your meditation experience has been personalized.",
-        });
-        navigate('/home');
-      }, 500);
-    }
-  };
-  
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setAnimating(true);
-      setTimeout(() => {
-        setCurrentStep(currentStep - 1);
-        setAnimating(false);
-      }, 300);
-    } else {
-      navigate('/sign-up');
-    }
-  };
-  
-  const handleSkip = () => {
-    toast({
-      title: "Quiz skipped",
-      description: "You can take the quiz later from your profile settings.",
-    });
-    navigate('/home');
-  };
-  
-  const progressPercentage = ((currentStep + 1) / quizSteps.length) * 100;
-  
+
+  const progressPercentage = ((currentQuestion + 1) / quizQuestions.length) * 100;
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="w-full flex justify-between items-center pt-6 px-4">
@@ -196,115 +108,108 @@ const Quiz: React.FC = () => {
           />
         </div>
         <div className="flex justify-between mt-2 text-xs text-gray-400">
-          <span>Question {currentStep + 1} of {quizSteps.length}</span>
+          <span>Question {currentQuestion + 1} of {quizQuestions.length}</span>
           <span>{Math.round(progressPercentage)}% complete</span>
         </div>
       </div>
-      
+          
       <div className="flex-1 flex flex-col px-8">
         <div className={`transition-all duration-300 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
           <h2 className="text-xl font-semibold text-meditation-darkBlue mb-2">
-            {quizSteps[currentStep].title}
+            {title}
           </h2>
           <p className="text-gray-600 mb-8">
-            {quizSteps[currentStep].question}
+            {quizQuestions[currentQuestion].question}
           </p>
           
-          {quizSteps[currentStep].multiSelect ? (
-            <div className="space-y-4">
-              {quizSteps[currentStep].options?.map((option, idx) => (
-                <div 
-                  key={idx} 
-                  className="flex items-start space-x-3 p-4 border rounded-xl hover:border-meditation-lightBlue transition-all cursor-pointer"
-                  onClick={() => handleMultiSelect(option)}
-                >
-                  <Checkbox 
-                    id={`option-${idx}`} 
-                    checked={(answers[currentStep] as string[] || []).includes(option)}
-                    onCheckedChange={() => handleMultiSelect(option)}
-                    className="mt-0.5"
-                  />
-                  <Label 
-                    htmlFor={`option-${idx}`}
-                    className="font-medium cursor-pointer"
-                  >
-                    {option}
-                  </Label>
+          <div className="space-y-4 mb-8">
+            {quizQuestions[currentQuestion].options.map((option, index) => (
+              <label 
+                key={index}
+                className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${
+                  selectedOption === index 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-300 hover:border-blue-300'
+                }`}
+                onClick={() => setSelectedOption(index)}
+              >
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                  selectedOption === index 
+                    ? 'border-blue-500' 
+                    : 'border-gray-400'
+                }`}>
+                  {selectedOption === index && (
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  )}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <RadioGroup 
-              value={answers[currentStep] as string || ""}
-              onValueChange={handleSingleSelect} 
-              className="space-y-4"
-            >
-              {quizSteps[currentStep].options?.map((option, idx) => (
-                <div 
-                  key={idx} 
-                  className={`flex items-start space-x-3 p-4 border rounded-xl hover:border-meditation-lightBlue transition-all cursor-pointer ${
-                    answers[currentStep] === option ? 'border-meditation-lightBlue bg-blue-50' : ''
-                  }`}
-                  onClick={() => handleSingleSelect(option)}
-                >
-                  <RadioGroupItem 
-                    value={option} 
-                    id={`option-${idx}`} 
-                    className="mt-0.5"
-                  />
-                  <Label 
-                    htmlFor={`option-${idx}`}
-                    className="font-medium cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          )}
+                <span className="ml-3">{option}</span>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
-      
-      <div className="px-8 py-6">
+          
+      {/* Button container with higher z-index */}
+      <div className="px-8 py-6 z-20 relative">
         <Button 
           onClick={handleNext}
           className="w-full h-12 bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white font-medium rounded-xl flex items-center justify-center"
         >
-          {currentStep < quizSteps.length - 1 ? (
+          {currentQuestion < quizQuestions.length - 1 ? (
             <>Continue <ChevronRight className="ml-1 h-4 w-4" /></>
           ) : (
             "Finish"
           )}
         </Button>
       </div>
+          
+      {/* Progress indicator */}
+      <div className="flex justify-center mt-4 mb-20">
+        <div className="flex space-x-2">
+          {quizQuestions.map((_, index) => (
+            <div 
+              key={index} 
+              className={`h-1 w-12 rounded-full ${
+                index === currentQuestion ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
       
-      {/* Bottom decoration with clouds and shh logo */}
-      <div className="relative h-28">
-        <div className="absolute bottom-0 left-0 w-full h-24 overflow-hidden">
-          {/* Clouds image at bottom left */}
-          <img 
-            src="/lovable-uploads/262033dd-3446-4e39-9a19-6be70d2da587.png" 
-            alt="Clouds" 
-            className="absolute bottom-0 left-0 w-40 h-auto opacity-80"
-          />
+      {/* Bottom decoration with waves only (removed Shh logo) */}
+      <div className="fixed bottom-0 left-0 right-0 w-full h-48 overflow-hidden">
+        <div className="absolute bottom-0 w-full">
+          <svg viewBox="0 0 1440 400" preserveAspectRatio="none" className="w-full">
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#00B4D8" />
+                <stop offset="100%" stopColor="#0077B6" />
+              </linearGradient>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0096C7" />
+                <stop offset="100%" stopColor="#023E8A" />
+              </linearGradient>
+              <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0077B6" />
+                <stop offset="100%" stopColor="#03045E" />
+              </linearGradient>
+            </defs>
+            <path
+              fill="url(#gradient1)"
+              d="M0,224L60,208C120,192,240,160,360,149.3C480,139,600,149,720,176C840,203,960,245,1080,229.3C1200,213,1320,139,1380,101.3L1440,64L1440,400L1380,400C1320,400,1200,400,1080,400C960,400,840,400,720,400C600,400,480,400,360,400C240,400,120,400,60,400L0,400Z"
+            ></path>
+            <path
+              fill="url(#gradient2)"
+              d="M0,224L60,240C120,256,240,288,360,272C480,256,600,192,720,176C840,160,960,192,1080,213.3C1200,235,1320,245,1380,250.7L1440,256L1440,400L1380,400C1320,400,1200,400,1080,400C960,400,840,400,720,400C600,400,480,400,360,400C240,400,120,400,60,400L0,400Z"
+            ></path>
+            <path
+              fill="url(#gradient3)"
+              d="M0,288L60,261.3C120,235,240,181,360,176C480,171,600,213,720,218.7C840,224,960,192,1080,197.3C1200,203,1320,245,1380,266.7L1440,288L1440,400L1380,400C1320,400,1200,400,1080,400C960,400,840,400,720,400C600,400,480,400,360,400C240,400,120,400,60,400L0,400Z"
+            ></path>
+          </svg>
           
-          {/* Shh logo */}
-          <img 
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-            alt="Shh" 
-            className="absolute bottom-8 left-10 w-16 h-auto z-10"
-          />
-          
-          {/* Blue wave background */}
-          <div 
-            className="absolute bottom-0 left-0 w-full h-24 overflow-hidden"
-            style={{
-              backgroundImage: "url('/lovable-uploads/667a882a-30fb-4cfa-81b1-3588db97d93d.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "top center",
-              clipPath: "ellipse(100% 55% at 48% 100%)"
-            }}
-          />
+          {/* Removed the Shh logo */}
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Play, Bot, Volume2, Clock, Calendar, Brain, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +56,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
   };
   
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-blue-400 to-blue-600">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#0098c1] to-[#4c5ab3]">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <button 
@@ -74,7 +73,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
       <AnimatePresence>
         {showIntro && (
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center bg-blue-500 bg-opacity-90 z-10 px-6"
+            className="absolute inset-0 flex flex-col items-center justify-center bg-[#0098c1] bg-opacity-90 z-10 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -91,7 +90,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                 repeatType: "reverse"
               }}
             >
-              <Bot size={60} className="text-blue-500" />
+              <Bot size={60} className="text-[#0098c1]" />
             </motion.div>
             <motion.h2 
               className="text-white text-2xl font-bold mb-3 text-center"
@@ -114,7 +113,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
         
         {analyzing && (
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center bg-blue-500 bg-opacity-90 z-10 px-6"
+            className="absolute inset-0 flex flex-col items-center justify-center bg-[#0098c1] bg-opacity-90 z-10 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -240,7 +239,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                 
                 <Button 
                   onClick={nextStep}
-                  className="w-full bg-white text-blue-600 hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
+                  className="w-full bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
                 >
                   See Why This Works For You
                 </Button>
@@ -299,7 +298,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                   </Button>
                   <Button 
                     onClick={nextStep}
-                    className="flex-1 bg-white text-blue-600 hover:bg-white/90 rounded-full py-3"
+                    className="flex-1 bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3"
                   >
                     Next
                   </Button>
@@ -351,7 +350,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                   </Button>
                   <Button 
                     onClick={handleStartMeditation}
-                    className="flex-1 bg-white text-blue-600 hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
+                    className="flex-1 bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
                   >
                     <Play size={18} className="mr-2" />
                     Start Now
@@ -367,21 +366,6 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      )}
-      
-      {/* Audio wave visualization - only shown when not in intro/analyzing state */}
-      {showResult && (
-        <div className="px-6 py-4 mt-auto">
-          <div className="flex justify-between items-center">
-            <span className="text-white/70 text-sm">08:00</span>
-            <img 
-              src="/lovable-uploads/45c1427f-cca7-4c14-accd-61d713b7fe0f.png" 
-              alt="Audio visualization" 
-              className="h-12 mx-auto" 
-            />
-            <span className="text-white/70 text-sm">15:00</span>
-          </div>
         </div>
       )}
       

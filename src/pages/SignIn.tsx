@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
@@ -33,32 +32,23 @@ const SignIn: React.FC = () => {
     
     // Simulate login delay
     setTimeout(() => {
-      // Check if the user is registered (for demo purposes)
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        if (user.email === email && user.password === password) {
-          localStorage.setItem('isLoggedIn', 'true');
-          
-          setLoading(false);
-          toast({
-            title: "Welcome back!",
-            description: "You have successfully signed in",
-          });
-          
-          // Navigate to home page after successful login (changed from meditation)
-          navigate('/home');
-          return;
-        }
-      }
+      // Accept any email/password combination
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify({
+        email: email,
+        name: email.split('@')[0],
+        fullName: email.split('@')[0]
+      }));
       
       setLoading(false);
       toast({
-        title: "Login failed",
-        description: "Invalid email or password",
-        variant: "destructive",
+        title: "Welcome back!",
+        description: "You have successfully signed in",
       });
-    }, 1500);
+      
+      // Navigate to quiz page after successful login
+      navigate('/quiz');
+    }, 1000);
   };
   
   return (

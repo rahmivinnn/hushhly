@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, ArrowLeft, User, Mail, Calendar, Save } from 'lucide-react';
@@ -30,7 +29,7 @@ const EditProfile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile>({
     fullName: "Guest User",
     email: "guest@example.com",
-    avatar: "/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png",
+    avatar: "/images/default-avatar.svg",
     joined: "April 2023",
     bio: "",
     location: "",
@@ -47,7 +46,7 @@ const EditProfile: React.FC = () => {
           ...prev,
           fullName: userData.fullName || userData.name || prev.fullName,
           email: userData.email || prev.email,
-          avatar: userData.avatar || prev.avatar,
+          avatar: userData.avatar || '/images/default-avatar.svg',
           bio: userData.bio || prev.bio,
           location: userData.location || prev.location,
           interests: userData.interests || prev.interests,
@@ -141,7 +140,7 @@ const EditProfile: React.FC = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-2">
             <Avatar className="w-24 h-24">
-              <AvatarImage src={profile.avatar} />
+              <AvatarImage src={profile.avatar || '/images/default-avatar.svg'} />
               <AvatarFallback className="bg-blue-500 text-white text-xl">
                 {profile.fullName.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>

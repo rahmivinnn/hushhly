@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, ArrowLeft, CheckCircle, Calendar, Play, User, Heart, MessageSquare } from 'lucide-react';
+import { Bell, ArrowLeft, CheckCircle, Calendar, Play, User, Heart, MessageSquare, Trophy, Clock, Users, Star } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import VideoPopup from '@/components/VideoPopup';
@@ -12,6 +11,7 @@ interface Notification {
   title: string;
   message: string;
   timestamp: string;
+  category: 'today' | 'yesterday' | 'last_week';
   isRead: boolean;
   action?: {
     type: 'play' | 'view' | 'respond';
@@ -19,6 +19,8 @@ interface Notification {
     data?: any;
   };
   image?: string;
+  iconBg?: string;
+  icon?: React.ReactNode;
 }
 
 const Notifications: React.FC = () => {
@@ -31,67 +33,92 @@ const Notifications: React.FC = () => {
     {
       id: "1",
       type: 'reminder',
-      title: 'Meditation Reminder',
-      message: 'Time for your daily meditation session',
+      title: 'Take a Deep Breath!',
+      message: 'Your 1-minute reset is ready. Refresh before picking up your kids.',
+      category: 'today',
       timestamp: '1 hour ago',
       isRead: false,
       action: {
         type: 'play',
         label: 'Start Now',
         data: {
-          title: 'Daily Meditation',
-          duration: '15 Min'
+          title: 'Deep Breath Meditation',
+          duration: '1 Min'
         }
       },
-      image: "/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png"
+      iconBg: 'bg-blue-500',
+      icon: <User className="text-white" size={20} />
     },
     {
       id: "2",
-      type: 'achievement',
-      title: 'New Achievement Unlocked',
-      message: 'Congratulations! You completed a 7-day meditation streak',
-      timestamp: '2 hours ago',
-      isRead: true,
-      image: "/lovable-uploads/b1f1e2a8-90e5-40f7-b499-00798b4a4ae9.png"
-    },
-    {
-      id: "3",
-      type: 'social',
-      title: 'Sarah liked your post',
-      message: 'Sarah Johnson liked your post about morning meditation',
-      timestamp: 'Yesterday',
+      type: 'reminder',
+      title: 'Time to Unwind!',
+      message: "Tonight's featured sleep story: The Whispering Forest 🌙 Tap to listen.",
+      category: 'today',
+      timestamp: '3 hours ago',
       isRead: false,
-      image: "/lovable-uploads/df2bc0e8-7436-48b5-b6e7-d2d242a0136f.png"
-    },
-    {
-      id: "4",
-      type: 'system',
-      title: 'New Sleep Story Added',
-      message: 'Check out our new sleep story "Ocean Waves" to help you drift off',
-      timestamp: '2 days ago',
-      isRead: true,
       action: {
         type: 'play',
         label: 'Listen Now',
         data: {
-          title: 'Ocean Waves',
-          duration: '30 Min'
+          title: 'The Whispering Forest',
+          duration: '20 Min'
         }
       },
-      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
+      iconBg: 'bg-blue-500',
+      icon: <Clock className="text-white" size={20} />
+    },
+    {
+      id: "3",
+      type: 'reminder',
+      title: 'Fresh Meditation Just for You!',
+      message: 'Try our latest 5-Minute Morning Boost session and start your day right',
+      category: 'today',
+      timestamp: '5 hours ago',
+      isRead: false,
+      action: {
+        type: 'play',
+        label: 'Start Now',
+        data: {
+          title: 'Morning Boost',
+          duration: '5 Min'
+        }
+      },
+      iconBg: 'bg-blue-500',
+      icon: <User className="text-white" size={20} />
+    },
+    {
+      id: "4",
+      type: 'achievement',
+      title: "Don't Break Your Streak!",
+      message: "You're on a 5-day meditation streak! Keep going strong.",
+      category: 'yesterday',
+      timestamp: 'Yesterday',
+      isRead: true,
+      iconBg: 'bg-blue-500',
+      icon: <User className="text-white" size={20} />
     },
     {
       id: "5",
       type: 'social',
-      title: 'Michael commented on your progress',
-      message: 'Michael Chen: "Great job on maintaining your meditation routine!"',
+      title: 'Join the Conversation!',
+      message: 'A new discussion has started in the Parent Mindfulness group. Share your thoughts!',
+      category: 'last_week',
       timestamp: '3 days ago',
       isRead: true,
-      action: {
-        type: 'respond',
-        label: 'Reply'
-      },
-      image: "/lovable-uploads/e58f1270-59e3-4ee3-973d-f1c45cb79dee.png"
+      iconBg: 'bg-blue-500',
+      icon: <Users className="text-white" size={20} />
+    },
+    {
+      id: "6",
+      type: 'achievement',
+      title: "Congrats! You've Earned a Badge!",
+      message: "You just unlocked the Peaceful Parent badge. Keep up the great work!",
+      category: 'last_week',
+      timestamp: '5 days ago',
+      isRead: true,
+      iconBg: 'bg-blue-500',
+      icon: <Star className="text-white" size={20} />
     }
   ]);
   
@@ -145,40 +172,42 @@ const Notifications: React.FC = () => {
     }
   };
   
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'reminder':
-        return <Calendar className="text-blue-500" />;
-      case 'achievement':
-        return <CheckCircle className="text-green-500" />;
-      case 'social':
-        return <Heart className="text-red-500" />;
-      case 'system':
-        return <Bell className="text-purple-500" />;
-      default:
-        return <Bell className="text-gray-500" />;
-    }
-  };
+  // Group notifications by category
+  const todayNotifications = notifications.filter(n => n.category === 'today');
+  const yesterdayNotifications = notifications.filter(n => n.category === 'yesterday');
+  const lastWeekNotifications = notifications.filter(n => n.category === 'last_week');
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-16">
+    <div className="flex flex-col min-h-screen bg-white pb-16">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-500 to-blue-600 pt-4 pb-6">
-        <div className="flex items-center justify-between px-4 mb-4">
-          <button onClick={handleBack} className="p-2 text-white">
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-xl font-semibold text-white flex items-center">
-            Notifications
-          </h1>
-          <button onClick={handleMarkAllRead} className="p-2 text-white text-xs">
-            Mark All Read
-          </button>
+      <div className="bg-white py-3 px-4 flex items-center justify-between border-b border-gray-200">
+        <button onClick={handleBack} className="text-gray-600">
+          <ArrowLeft size={20} />
+        </button>
+        
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
+            alt="Shh" 
+            className="h-8"
+          />
         </div>
+        
+        <button className="text-amber-500">
+          <Trophy size={20} />
+        </button>
+      </div>
+      
+      {/* Title */}
+      <div className="flex items-center justify-between px-6 py-4">
+        <h1 className="text-2xl font-bold">Notifications</h1>
+        <button onClick={handleMarkAllRead} className="text-sm text-gray-500">
+          Clear All
+        </button>
       </div>
       
       {/* Notifications List */}
-      <div className="flex-1 px-4 pt-4">
+      <div className="flex-1 px-4">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <Bell size={48} className="text-gray-300 mb-4" />
@@ -188,70 +217,105 @@ const Notifications: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {notifications.map(notification => (
-              <div 
-                key={notification.id} 
-                className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${
-                  notification.isRead 
-                    ? 'border-gray-200' 
-                    : notification.type === 'reminder' 
-                      ? 'border-blue-500' 
-                      : notification.type === 'achievement'
-                        ? 'border-green-500'
-                        : notification.type === 'social'
-                          ? 'border-red-500'
-                          : 'border-purple-500'
-                }`}
-              >
-                <div className="flex">
-                  <div className="mr-3">
-                    {notification.image ? (
-                      <img 
-                        src={notification.image} 
-                        alt={notification.title} 
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                        {getNotificationIcon(notification.type)}
+          <div>
+            {/* Today's Notifications */}
+            {todayNotifications.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Today</h2>
+                <div className="space-y-4">
+                  {todayNotifications.map(notification => (
+                    <div 
+                      key={notification.id} 
+                      className="flex items-start"
+                      onClick={() => handleAction(notification)}
+                    >
+                      <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                        {notification.icon}
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <h3 className={`font-medium ${notification.isRead ? 'text-gray-700' : 'text-black'}`}>
-                        {notification.title}
-                      </h3>
-                      <span className="text-xs text-gray-500">{notification.timestamp}</span>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{notification.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <button className="text-xs text-gray-500">
+                            {notification.action?.label || "View"}
+                          </button>
+                          <button className="text-gray-400">
+                            <span className="dots-menu"></span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <p className={`text-sm my-1 ${notification.isRead ? 'text-gray-500' : 'text-gray-700'}`}>
-                      {notification.message}
-                    </p>
-                    
-                    {notification.action && (
-                      <button 
-                        onClick={() => handleAction(notification)}
-                        className={`mt-2 text-sm font-medium flex items-center ${
-                          notification.action.type === 'play' 
-                            ? 'text-blue-500' 
-                            : notification.action.type === 'view'
-                              ? 'text-purple-500'
-                              : 'text-green-500'
-                        }`}
-                      >
-                        {notification.action.type === 'play' && <Play size={14} className="mr-1" />}
-                        {notification.action.type === 'view' && <User size={14} className="mr-1" />}
-                        {notification.action.type === 'respond' && <MessageSquare size={14} className="mr-1" />}
-                        {notification.action.label}
-                      </button>
-                    )}
-                  </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
+            
+            {/* Yesterday's Notifications */}
+            {yesterdayNotifications.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Yesterday</h2>
+                <div className="space-y-4">
+                  {yesterdayNotifications.map(notification => (
+                    <div 
+                      key={notification.id} 
+                      className="flex items-start"
+                      onClick={() => handleAction(notification)}
+                    >
+                      <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                        {notification.icon}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{notification.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <button className="text-xs text-gray-500">
+                            {notification.action?.label || "View"}
+                          </button>
+                          <button className="text-gray-400">
+                            <span className="dots-menu"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Last Week's Notifications */}
+            {lastWeekNotifications.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Last week</h2>
+                <div className="space-y-4">
+                  {lastWeekNotifications.map(notification => (
+                    <div 
+                      key={notification.id} 
+                      className="flex items-start"
+                      onClick={() => handleAction(notification)}
+                    >
+                      <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                        {notification.icon}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{notification.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <button className="text-xs text-gray-500">
+                            {notification.action?.label || "View"}
+                          </button>
+                          <button className="text-gray-400">
+                            <span className="dots-menu"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

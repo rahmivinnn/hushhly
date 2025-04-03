@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
@@ -51,11 +50,11 @@ const SignUp: React.FC = () => {
       setLoading(false);
       toast({
         title: "Account created!",
-        description: "Welcome to Hushhly, " + fullName,
+        description: "Welcome to Hushhly, " + fullName + ". Please sign in to continue.",
       });
       
-      // Navigate to quiz after successful signup
-      navigate('/quiz');
+      // Navigate to sign-in page after successful signup
+      navigate('/sign-in');
     }, 1500);
   };
   
@@ -150,7 +149,7 @@ const SignUp: React.FC = () => {
           <Button 
             type="submit" 
             disabled={loading}
-            className="w-full h-12 bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white font-medium rounded-xl"
+            className={`w-full h-12 bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white font-medium rounded-xl ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {loading ? "Creating Account..." : "Create Account"}
           </Button>

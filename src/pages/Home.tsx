@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, Search, Moon, ArrowRight } from 'lucide-react';
@@ -106,8 +105,12 @@ const Home: React.FC = () => {
   ];
 
   const handleWatchNow = (title: string, duration: string) => {
-    setCurrentVideo({title, duration});
-    setShowVideoPopup(true);
+    if (title === "Meditation 101") {
+      navigate('/meditation-101');
+    } else {
+      setCurrentVideo({title, duration});
+      setShowVideoPopup(true);
+    }
   };
 
   const handleStartMeditation = () => {
@@ -173,8 +176,8 @@ const Home: React.FC = () => {
           <div className="flex items-center">
             <img 
               src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
-              alt="Hushhly Logo"
-              className="h-10"
+              alt="Shh Logo"
+              className="h-8"
             />
           </div>
           
