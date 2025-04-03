@@ -16,7 +16,11 @@ const LogoHeader: React.FC<LogoHeaderProps> = ({ onMenuToggle }) => {
       
       {/* Center logo */}
       <div className="flex-1 flex justify-center">
-        <h1 className="text-white text-2xl font-semibold">Husshly</h1>
+        <img 
+          src="/lovable-uploads/d7f6d4c3-32de-4014-bb61-67da79c5aeef.png" 
+          alt="Hushhly" 
+          className="h-10"
+        />
       </div>
       
       {/* Right side - empty for now to maintain spacing */}

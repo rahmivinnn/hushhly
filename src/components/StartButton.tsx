@@ -49,6 +49,11 @@ const StartButton: React.FC<StartButtonProps> = ({ onClick, isPlaying }) => {
         </div>
       )}
       
+      {/* Large blue circular background */}
+      <div className="absolute inset-0 w-full h-full">
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] rounded-full bg-blue-500 opacity-20"></div>
+      </div>
+      
       {/* Outer glow ring - enhanced glow effect */}
       <div className="absolute inset-0 rounded-full bg-white bg-opacity-20 animate-pulse-light"></div>
       

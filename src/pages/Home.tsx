@@ -9,6 +9,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import MoodIcon from '@/components/MoodIcon';
 import SideMenu from '@/components/SideMenu';
 import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
+import AIRecommendation from '@/components/AIRecommendation';
 
 interface MoodOption {
   icon: React.ReactNode;
@@ -33,6 +34,8 @@ const Home: React.FC = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
   const [selectedMood, setSelectedMood] = useState<'calm' | 'relax' | 'focus' | 'anxious' | null>(null);
   const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
   
   useEffect(() => {
     // Try to get user data from localStorage
@@ -123,6 +126,35 @@ const Home: React.FC = () => {
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
   };
+  
+  const handleNotificationClick = () => {
+    if (!showNotification) {
+      setShowNotification(true);
+      toast({
+        title: "New Notification",
+        description: "You have a meditation session scheduled in 30 minutes!",
+      });
+      
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+    }
+  };
+  
+  const handleAIRecommendationClick = () => {
+    setShowAIRecommendation(true);
+  };
+  
+  const handleQuickSessionClick = (duration: string, title: string) => {
+    toast({
+      title: `${title}`,
+      description: `Starting your ${duration} session now.`,
+    });
+    
+    setTimeout(() => {
+      navigate('/meditation');
+    }, 1500);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -147,10 +179,16 @@ const Home: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <button className="text-gray-800">
+            <button 
+              className={`text-gray-800 ${showNotification ? 'animate-bounce' : ''}`}
+              onClick={handleNotificationClick}
+            >
               <Bell size={20} />
             </button>
-            <button className="text-yellow-500">
+            <button 
+              className="text-yellow-500"
+              onClick={() => navigate('/sleep-stories')}
+            >
               <Moon size={20} fill="currentColor" />
             </button>
           </div>
@@ -166,7 +204,7 @@ const Home: React.FC = () => {
           {moodOptions.map((mood, index) => (
             <button 
               key={index}
-              className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2`}
+              className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2 transition-transform hover:scale-105 active:scale-95`}
               aria-label={`Feeling ${mood.label}`}
               onClick={() => handleMoodSelection(mood.type)}
             >
@@ -179,7 +217,10 @@ const Home: React.FC = () => {
       
       {/* Recommended Section */}
       <section className="px-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white flex justify-between items-center">
+        <div 
+          onClick={handleAIRecommendationClick}
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+        >
           <div>
             <h2 className="font-medium">AI-recommended meditation for the day</h2>
             <div className="flex items-center mt-1">
@@ -276,7 +317,10 @@ const Home: React.FC = () => {
       
       {/* Quick Access Cards */}
       <section className="px-4 mb-6 space-y-4">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white">
+        <div 
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          onClick={() => handleQuickSessionClick("1-minute", "Quick Relaxation")}
+        >
           <p className="text-sm">Quick relaxation before picking up kids</p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center">
@@ -291,7 +335,10 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white">
+        <div 
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          onClick={() => handleQuickSessionClick("5-minute", "Short Guided Session")}
+        >
           <p className="text-sm">Short guided session for daily relaxation</p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center">
@@ -320,6 +367,11 @@ const Home: React.FC = () => {
         onClose={() => setShowMoodFeedback(false)}
         selectedMood={selectedMood}
       />
+      
+      {/* AI Recommendation */}
+      {showAIRecommendation && (
+        <AIRecommendation onClose={() => setShowAIRecommendation(false)} />
+      )}
       
       {/* Video Popup */}
       {showVideoPopup && (

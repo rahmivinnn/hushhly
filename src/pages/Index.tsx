@@ -6,13 +6,19 @@ import StartButton from '@/components/StartButton';
 import Timer from '@/components/Timer';
 import MusicPlayer from '@/components/MusicPlayer';
 import BottomNavigation from '@/components/BottomNavigation';
+import SideMenu from '@/components/SideMenu';
 import { audioService } from '@/services/audioService';
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(15); // minutes
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const { toast } = useToast();
+  
+  // Get username from local storage
+  const storedUser = localStorage.getItem('user');
+  const userName = storedUser ? JSON.parse(storedUser).fullName || JSON.parse(storedUser).name || "Guest" : "Guest";
 
   const trackInfo = {
     title: "Painting Forest",
@@ -43,6 +49,10 @@ const Index = () => {
     handleStartButton(); // Use the same handler to keep audio state synchronized
   };
 
+  const toggleSideMenu = () => {
+    setIsSideMenuOpen(!isSideMenuOpen);
+  };
+
   // Clean up audio on unmount
   useEffect(() => {
     return () => {
@@ -61,7 +71,7 @@ const Index = () => {
         <StatusBar />
         
         {/* Logo and Header */}
-        <LogoHeader />
+        <LogoHeader onMenuToggle={toggleSideMenu} />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2">
@@ -75,6 +85,15 @@ const Index = () => {
               <Timer duration={sessionDuration} />
             </div>
           </div>
+        </div>
+        
+        {/* Audio waves visualization above the start button */}
+        <div className="absolute top-24 left-0 right-0 flex justify-center">
+          <img 
+            src="/lovable-uploads/45c1427f-cca7-4c14-accd-61d713b7fe0f.png" 
+            alt="Audio visualization" 
+            className={`h-12 transition-opacity duration-500 ${isPlaying ? 'opacity-100' : 'opacity-30'}`} 
+          />
         </div>
       </div>
       
@@ -94,6 +113,13 @@ const Index = () => {
           />
         </div>
       </div>
+      
+      {/* Side Menu */}
+      <SideMenu 
+        isOpen={isSideMenuOpen} 
+        onClose={() => setIsSideMenuOpen(false)} 
+        userName={userName}
+      />
       
       {/* Bottom Navigation */}
       <BottomNavigation />

@@ -58,7 +58,7 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 1: Blue gradient background with the Hushhly logo and an attractive design
+    // Screen 1: Blue gradient background with the Hushhly white text logo
     <div 
       key="screen-1" 
       className={`flex flex-col h-full relative overflow-hidden ${
@@ -69,12 +69,7 @@ const SplashScreen: React.FC = () => {
     >
       {/* Blue gradient background (portrait style) */}
       <div 
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          backgroundImage: "url('/lovable-uploads/46de7f20-e3ff-479d-9c3e-c568d07bb906.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center"
-        }}
+        className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 overflow-hidden"
       >
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70"></div>
@@ -82,11 +77,16 @@ const SplashScreen: React.FC = () => {
         <div className="absolute bottom-1/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '1.5s'}}></div>
         <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '2s'}}></div>
         <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-white rounded-full animate-float opacity-70" style={{animationDelay: '0.5s'}}></div>
+        
+        {/* White triangle bottom shape like in the image */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="w-full h-0 border-l-[50vw] border-r-[50vw] border-b-[30vh] border-l-transparent border-r-transparent border-b-white"></div>
+        </div>
       </div>
       
       <div className="flex-grow flex items-center justify-center relative z-10">
         <img 
-          src="/lovable-uploads/95bfc0b2-220c-4b1f-aa82-f8b84ee38695.png" 
+          src="/lovable-uploads/e9395b45-6afe-48dc-8187-561a5538e0f9.png" 
           alt="Hushhly Logo" 
           className="w-64 h-auto animate-pulse"
         />
