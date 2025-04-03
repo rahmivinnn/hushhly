@@ -81,7 +81,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
             onClick={() => handleNavigation('/community', 'Community')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
-            <Users size={20} className="text-blue-500" />
+            <User size={20} className="text-blue-500" />
             <span>Community</span>
           </button>
           

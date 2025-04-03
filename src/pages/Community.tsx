@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, Share, MessageSquare, Bookmark, Search, CalendarIcon, Clock, User, Users, MapPin } from 'lucide-react';
+import { Heart, Share, MessageSquare, Bookmark, Search, CalendarIcon, Clock, User, MapPin } from 'lucide-react';
 import SideMenu from '@/components/SideMenu';
 import LogoHeader from '@/components/LogoHeader';
 import BottomNavigation from '@/components/BottomNavigation';
