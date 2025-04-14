@@ -8,8 +8,17 @@ import { FaApple } from 'react-icons/fa';
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState(0);
-  const totalScreens = 8; // Updated to match the actual number of screens (0-7)
+  const totalScreens = 9; // Updated to include subscription screen
   const [animating, setAnimating] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('annual');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
+  const [showPaymentSheet, setShowPaymentSheet] = useState(false);
+
+  const handleSubscriptionSelect = (plan: 'annual' | 'monthly') => {
+    setSelectedPlan(plan);
+  };
 
   // Auto advance from first screen (blue gradient with hushhly blue logo) to second screen (white background)
   // and then from second screen to third screen (bear image)
@@ -32,7 +41,7 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         setCurrentScreen(currentScreen + 1);
         setAnimating(false);
-      }, 500); // Longer transition for manual navigation
+      }, 500);
     } else {
       setAnimating(true);
       setTimeout(() => {
@@ -70,6 +79,28 @@ const SplashScreen: React.FC = () => {
     setTimeout(() => {
       navigate('/sign-up');
     }, 300);
+  };
+
+  const handleContinue = () => {
+    setShowPaymentModal(true);
+  };
+
+  const handlePayment = (method: 'apple' | 'google') => {
+    setShowPaymentSheet(true);
+    setPaymentStep('processing');
+    
+    // Simulate payment processing steps
+    setTimeout(() => {
+      setPaymentStep('verifying');
+      setTimeout(() => {
+        setPaymentStep('success');
+        setTimeout(() => {
+          setShowPaymentSheet(false);
+          setShowPaymentModal(false);
+          handleNext();
+        }, 1500);
+      }, 2000);
+    }, 2000);
   };
 
   // Define the content for each screen
@@ -114,9 +145,217 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
 
-    // Screen 2: Welcome to Hushhly with bear image
+    // Screen 2: Subscription Screen
     <div 
       key="screen-2" 
+      className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative ${
+        animating 
+          ? 'opacity-0 translate-x-20 scale-95' 
+          : 'opacity-100 translate-x-0 scale-100'
+      } transition-all duration-500 ease-out`}
+    >
+      {/* Header with Logo */}
+      <div className="flex justify-center mb-6">
+        <img 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+          alt="Hushhly Logo" 
+          className="w-32 h-auto brightness-0 invert"
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="text-center text-white mb-8">
+        <h1 className="text-3xl font-bold mb-3">Unlock Premium Features</h1>
+        <p className="text-lg opacity-90 leading-relaxed">
+          Get unlimited access to all meditations, stories, and personalized content
+        </p>
+      </div>
+
+      {/* Subscription Options */}
+      <div className="space-y-4 flex-1">
+        {/* Annual Plan */}
+        <button
+          onClick={() => handleSubscriptionSelect('annual')}
+          className={`w-full p-6 rounded-2xl ${
+            selectedPlan === 'annual'
+              ? 'bg-white text-blue-600 shadow-lg transform scale-105'
+              : 'bg-white/20 text-white hover:bg-white/30'
+          } transition-all duration-300`}
+        >
+          <div className="flex justify-between items-center">
+            <div className="text-left">
+              <div className="font-bold text-xl mb-1">Premium Annual</div>
+              <div className="text-base opacity-80">$59.99/year</div>
+              <div className="text-sm mt-2 opacity-90">Save 37% compared to monthly</div>
+            </div>
+            {selectedPlan === 'annual' && (
+              <div className="text-sm font-bold px-3 py-2 bg-blue-100 text-blue-600 rounded-full">
+                Best value
+              </div>
+            )}
+          </div>
+        </button>
+
+        {/* Monthly Plan */}
+        <button
+          onClick={() => handleSubscriptionSelect('monthly')}
+          className={`w-full p-6 rounded-2xl ${
+            selectedPlan === 'monthly'
+              ? 'bg-white text-blue-600 shadow-lg transform scale-105'
+              : 'bg-white/20 text-white hover:bg-white/30'
+          } transition-all duration-300`}
+        >
+          <div className="flex justify-between items-center">
+            <div className="text-left">
+              <div className="font-bold text-xl mb-1">Monthly</div>
+              <div className="text-base opacity-80">$7.99/month</div>
+              <div className="text-sm mt-2 opacity-90">Flexible monthly billing</div>
+            </div>
+          </div>
+        </button>
+
+        {/* Features List */}
+        <div className="mt-8 space-y-3">
+          <div className="flex items-center text-white">
+            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
+            <span>Unlimited access to all meditations</span>
+          </div>
+          <div className="flex items-center text-white">
+            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
+            <span>Personalized meditation plans</span>
+          </div>
+          <div className="flex items-center text-white">
+            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
+            <span>Offline downloads</span>
+          </div>
+        </div>
+
+        {/* Promo Code Section */}
+        <div className="mt-6">
+          <button 
+            onClick={() => console.log('Show promo code input')}
+            className="text-white/80 text-sm hover:text-white transition-colors"
+          >
+            Have a promo code?
+          </button>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-6 space-y-4">
+        <Button
+          onClick={handleContinue}
+          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-6 text-lg font-semibold rounded-xl shadow-lg transform transition hover:scale-105"
+        >
+          Continue
+        </Button>
+        <div className="text-center">
+          <p className="text-white/80 text-sm">Cancel anytime · Money back guarantee</p>
+        </div>
+      </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-11/12 max-w-md">
+            {showPaymentSheet ? (
+              <div className="relative">
+                {/* Apple Pay / Google Pay Sheet */}
+                <div className="bg-black text-white p-6 rounded-2xl">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="text-lg font-medium">
+                      {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
+                    </div>
+                    <div className="text-lg font-medium">
+                      {selectedPlan === 'annual' ? '$59.99' : '$7.99'}
+                    </div>
+                  </div>
+
+                  {paymentStep === 'processing' && (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-12 w-12 border-2 border-white border-t-transparent mx-auto mb-4"></div>
+                      <p className="text-lg">Processing payment...</p>
+                    </div>
+                  )}
+
+                  {paymentStep === 'verifying' && (
+                    <div className="text-center py-8">
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="animate-pulse w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <p className="text-lg">Verifying with Face ID...</p>
+                    </div>
+                  )}
+
+                  {paymentStep === 'success' && (
+                    <div className="text-center py-8">
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                          <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <p className="text-lg">Payment Successful!</p>
+                    </div>
+                  )}
+
+                  <div className="mt-6 space-y-4">
+                    <div className="flex items-center justify-between text-sm opacity-80">
+                      <span>Card</span>
+                      <span>••••4242</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm opacity-80">
+                      <span>Billing</span>
+                      <span>Default</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-gray-800">Complete Purchase</h3>
+                  <p className="text-gray-600 mt-2">
+                    {selectedPlan === 'annual' ? 'Annual Plan - $59.99/year' : 'Monthly Plan - $7.99/month'}
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <Button
+                    onClick={() => handlePayment('apple')}
+                    className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
+                  >
+                    <FaApple size={24} />
+                    <span>Pay with Apple Pay</span>
+                  </Button>
+                  <Button
+                    onClick={() => handlePayment('google')}
+                    className="w-full bg-blue-600 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
+                  >
+                    <FcGoogle size={24} />
+                    <span>Pay with Google Pay</span>
+                  </Button>
+                  <button
+                    onClick={() => setShowPaymentModal(false)}
+                    className="w-full text-gray-600 py-2 hover:text-gray-800 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>,
+
+    // Screen 3: Welcome to Hushhly with bear image
+    <div 
+      key="screen-3" 
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -133,38 +372,36 @@ const SplashScreen: React.FC = () => {
         </button>
       </div>
       
-      <div className="flex flex-col items-center justify-center flex-grow">
-        <div className="mb-2">
-          <img 
-            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-            alt="Hushhly Logo" 
-            className="w-40 h-auto"
-          />
-        </div>
-        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
-        <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
-            className="w-48 h-auto mb-8 animate-pulse-subtle"
-            style={{ animationDuration: '3s' }}
-          />
-        </div>
-        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
-          A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
-        </p>
-        <Button 
-          onClick={handleNext}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
-        >
-          Next <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
+      <div className="mb-2">
+        <img 
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+          alt="Hushhly Logo" 
+          className="w-40 h-auto"
+        />
       </div>
+      <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
+      <div>
+        <img 
+          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+          alt="Meditation Bear" 
+          className="w-48 h-auto mb-8 animate-pulse-subtle"
+          style={{ animationDuration: '3s' }}
+        />
+      </div>
+      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+        A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
+      </p>
+      <Button 
+        onClick={handleNext}
+        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+      >
+        Next <ChevronRight className="ml-1 h-4 w-4" />
+      </Button>
     </div>,
     
-    // Screen 3: Personalized Meditation Plans
+    // Screen 4: Personalized Meditation Plans
     <div 
-      key="screen-3" 
+      key="screen-4" 
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -210,9 +447,9 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
     
-    // Screen 4: AI Enhanced Experience
+    // Screen 5: AI Enhanced Experience
     <div 
-      key="screen-4" 
+      key="screen-5" 
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -258,9 +495,9 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
     
-    // Screen 5: Progress Tracking & Insights
+    // Screen 6: Progress Tracking & Insights
     <div 
-      key="screen-5" 
+      key="screen-6" 
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -306,9 +543,9 @@ const SplashScreen: React.FC = () => {
       </div>
     </div>,
 
-    // Screen 6: Get Started - Blue gradient background (NEW)
+    // Screen 7: Get Started - Blue gradient background (NEW)
     <div 
-      key="screen-6" 
+      key="screen-7" 
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -354,9 +591,9 @@ const SplashScreen: React.FC = () => {
       <div className="py-6"></div>
     </div>,
     
-    // Screen 7: Login/Signup - Blue gradient background (NEW)
+    // Screen 8: Login/Signup - Blue gradient background (NEW)
     <div 
-      key="screen-7" 
+      key="screen-8" 
       className={`flex flex-col items-center h-full px-8 text-center bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 overflow-auto ${
         animating 
           ? 'opacity-0 translate-x-20 scale-95' 
@@ -447,6 +684,54 @@ const SplashScreen: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+    </div>,
+
+    // Screen 9: Subscription Screen
+    <div 
+      key="screen-9" 
+      className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
+        animating 
+          ? 'opacity-0 translate-x-20 scale-95' 
+          : 'opacity-100 translate-x-0 scale-100'
+      } transition-all duration-500 ease-out`}
+    >
+      {/* Back button and Skip text in the header */}
+      <div className="w-full flex justify-between items-center pt-6 px-4">
+        <button onClick={handleBack} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <button onClick={handleSkip} className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors">
+          Skip for now
+        </button>
+      </div>
+      
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <div className="mb-2">
+          <img 
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+            alt="Hushhly Logo" 
+            className="w-40 h-auto"
+          />
+        </div>
+        <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Subscription</h2>
+        <div>
+          <img 
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
+            alt="Meditation Bear" 
+            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            style={{ animationDuration: '3s' }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+          Choose the plan that's right for you
+        </p>
+        <Button 
+          onClick={handleNext}
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        >
+          Next <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
       </div>
     </div>
   ];
