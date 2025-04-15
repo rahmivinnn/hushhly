@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { biometricService } from '@/services/biometricService';
 import { isAndroid, isIOS } from '@/utils/deviceUtils';
 import { cn } from '@/lib/utils';
+import { toast } from 'react-hot-toast';
 
 interface FingerprintDialogProps {
   isOpen: boolean;
@@ -259,18 +260,59 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
             )}
           </div>
 
-          {/* Gojek-style footer */}
-          <div className="mt-4 border-t pt-4 flex justify-between items-center">
-            <p className="text-xs text-gray-500">
-              Secured by Hushhly Pay
-            </p>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-              className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-            >
-              Cancel
-            </Button>
+          {/* Gojek-style footer with alternative option */}
+          <div className="mt-4 border-t pt-4 flex flex-col space-y-3">
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-gray-500">
+                Secured by Hushhly Pay
+              </p>
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                disabled={authenticating}
+              >
+                Cancel
+              </Button>
+            </div>
+
+            {/* Alternative authentication option */}
+            {!success && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    // Simulate screen lock authentication
+                    setAuthenticating(true);
+                    setError(null);
+                    setSuccess(false);
+
+                    // Show info message
+                    toast.info('Verifying with screen lock...');
+
+                    // Simulate verification process
+                    setTimeout(() => {
+                      setSuccess(true);
+                      setAuthenticating(false);
+
+                      // Show success message
+                      toast.success('Screen lock verified');
+
+                      // Wait a moment before calling onSuccess
+                      setTimeout(() => {
+                        onSuccess();
+                      }, 1500);
+                    }, 5000);
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors flex items-center"
+                  disabled={authenticating || success}
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Use screen lock instead
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

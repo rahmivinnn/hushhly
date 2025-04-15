@@ -141,7 +141,7 @@ class BiometricService {
             error: 'Fingerprint not recognized. Please try again.'
           });
         }
-      }, 3000); // Lebih lama untuk pengalaman yang lebih realistis (3 detik)
+      }, 6000); // Durasi yang lebih lama untuk pengalaman yang lebih realistis (6 detik)
     });
   }
 
@@ -173,7 +173,7 @@ class BiometricService {
             error: errorMessage
           });
         }
-      }, 3500); // Lebih lama untuk Face ID (3.5 detik)
+      }, 7000); // Durasi yang lebih lama untuk Face ID (7 detik)
     });
   }
 }

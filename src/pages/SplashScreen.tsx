@@ -143,7 +143,8 @@ const SplashScreen: React.FC = () => {
       setPaymentStep('verifying');
 
       // Simulate payment processing delay
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      toast.info('Initializing payment...');
+      await new Promise(resolve => setTimeout(resolve, 3500));
 
       // Check if we should use biometric authentication
       const isBiometricAvailable = await biometricService.isAvailable();
@@ -152,7 +153,10 @@ const SplashScreen: React.FC = () => {
         // For Android, show fingerprint dialog
         if (isAndroid()) {
           // Show a toast to instruct the user
-          toast.info('Please verify with your fingerprint');
+          toast.info('Please verify with your fingerprint to complete payment');
+
+          // Add a small delay before showing the dialog
+          await new Promise(resolve => setTimeout(resolve, 1000));
 
           // Show the fingerprint dialog
           setShowBiometricDialog(true);
@@ -161,10 +165,10 @@ const SplashScreen: React.FC = () => {
           return;
         } else {
           // For iOS, use Face ID (handled in the UI animation)
-          toast.info('Please verify with Face ID');
+          toast.info('Please verify with Face ID to complete payment');
 
           // Longer delay for Face ID animation
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 4000));
 
           // Verify with biometric service
           const biometricResult = await biometricService.authenticate(
@@ -179,12 +183,30 @@ const SplashScreen: React.FC = () => {
           toast.success('Face ID verified');
 
           // Additional delay after successful verification
-          await new Promise(resolve => setTimeout(resolve, 1500));
+          await new Promise(resolve => setTimeout(resolve, 3000));
+
+          // Show processing message
+          toast.info('Processing payment...');
+
+          // Add another delay
+          await new Promise(resolve => setTimeout(resolve, 4000));
         }
       } else {
         // Fallback to traditional verification if biometrics not available
-        toast.info('Verifying payment...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        toast.info('Biometric authentication not available');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Show screen lock verification message
+        toast.info('Verifying with screen lock...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        // Show success message
+        toast.success('Screen lock verified');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Show processing message
+        toast.info('Processing payment...');
+        await new Promise(resolve => setTimeout(resolve, 4000));
       }
 
       // Verify the payment with backend
@@ -216,17 +238,23 @@ const SplashScreen: React.FC = () => {
       // Show success message
       toast.success('Fingerprint verified');
 
-      // Keep dialog visible briefly to show success state
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Keep dialog visible longer to show success state
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       // Close the dialog
       setShowBiometricDialog(false);
 
-      // Show verifying message
-      toast.info('Completing payment...');
+      // Show processing message
+      toast.info('Processing payment...');
 
-      // Add a delay to simulate backend verification
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Add a longer delay to simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 4000));
+
+      // Show verifying message
+      toast.info('Verifying payment...');
+
+      // Add another delay to simulate backend verification
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       // Verify the payment with backend
       const paymentId = localStorage.getItem('pendingPaymentId');
@@ -239,6 +267,12 @@ const SplashScreen: React.FC = () => {
       if (!isVerified) {
         throw new Error('Payment verification failed');
       }
+
+      // Show verification success message
+      toast.success('Payment verification successful');
+
+      // Add a delay after verification
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Get payment result from local storage
       const paymentResultJson = localStorage.getItem('pendingPaymentResult');
@@ -280,24 +314,32 @@ const SplashScreen: React.FC = () => {
         await paymentService.saveSubscription(userId, paymentResult.subscriptionDetails);
       }
 
-      // After successful payment, close the payment sheet and continue
-      // Longer delay for a more realistic experience
+      // After successful payment, show success message first
+      toast.success(`Payment verified successfully!`);
+
+      // Add a longer delay before completing the process
       setTimeout(() => {
-        // Close payment UI and proceed
-        setShowBiometricDialog(false);
-        setShowPaymentSheet(false);
-        setShowPaymentModal(false);
+        // Show processing message
+        toast.info(`Finalizing your subscription...`);
 
-        // Show success toast
-        toast.success(`Successfully subscribed to ${selectedPlan === 'annual' ? 'annual' : 'monthly'} plan!`);
+        // Add another delay to simulate backend processing
+        setTimeout(() => {
+          // Close payment UI and proceed
+          setShowBiometricDialog(false);
+          setShowPaymentSheet(false);
+          setShowPaymentModal(false);
 
-        // Continue to next screen
-        handleNext();
+          // Show success toast
+          toast.success(`Successfully subscribed to ${selectedPlan === 'annual' ? 'annual' : 'monthly'} plan!`);
 
-        // Clean up local storage
-        localStorage.removeItem('pendingPaymentId');
-        localStorage.removeItem('pendingPaymentResult');
-      }, 3000);
+          // Continue to next screen
+          handleNext();
+
+          // Clean up local storage
+          localStorage.removeItem('pendingPaymentId');
+          localStorage.removeItem('pendingPaymentResult');
+        }, 4000); // 4 seconds for backend processing
+      }, 3000); // 3 seconds after verification
     } catch (error) {
       console.error('Error completing payment:', error);
       toast.error(error instanceof Error ? error.message : 'An error occurred while completing payment');
