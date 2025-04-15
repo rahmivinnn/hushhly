@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { paymentService } from '@/services/paymentService';
 import { useAuthSimple } from '@/hooks/useAuthSimple';
 import { isAndroid, isIOS } from '@/utils/deviceUtils';
-import { BalanceDisplay } from '@/components/ui/balance-display';
+// BalanceDisplay import removed
 import { balanceService } from '@/services/balanceService';
 import { faceIdService } from '@/services/faceIdService';
 import { applePayService } from '@/services/applePayService';
@@ -1236,16 +1236,21 @@ const SplashScreen: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-4">
-                  {/* Balance Display */}
+                  {/* Balance Information - No Add Funds button */}
                   <div className="bg-gray-50 p-3 rounded-lg">
-                    <BalanceDisplay />
+                    <div className="flex flex-col">
+                      <p className="text-sm text-gray-500">Your Balance</p>
+                      <p className="text-xl font-bold">
+                        {balanceService.formatBalance(balanceService.getUserBalance(getCurrentUserId()).balance)}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Payment Method Options */}
                   <div className="space-y-3">
                     <Button
                       onClick={handleApplePay}
-                      className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
+                      className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors active:scale-95 transform transition-transform"
                     >
                       <FaApple size={24} />
                       <span className="text-lg">Pay with Apple Pay</span>
