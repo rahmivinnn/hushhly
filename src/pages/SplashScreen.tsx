@@ -96,17 +96,46 @@ const SplashScreen: React.FC = () => {
   };
 
   const handlePayment = (method: 'apple' | 'google') => {
+    // Show the payment sheet with the appropriate branding
     setShowPaymentSheet(true);
     setPaymentStep('processing');
 
-    // Simulate payment processing steps
+    // First step: Processing payment (connecting to payment gateway)
     setTimeout(() => {
+      // Second step: Verifying with biometric authentication (Face ID or fingerprint)
       setPaymentStep('verifying');
+
       setTimeout(() => {
+        // Third step: Payment successful
         setPaymentStep('success');
+
+        // After successful payment, close the payment sheet and continue
         setTimeout(() => {
+          // Store subscription information in local storage or context
+          const subscriptionData = {
+            plan: selectedPlan,
+            startDate: new Date().toISOString(),
+            paymentMethod: method,
+            active: true,
+            // For annual plan, set expiry to 1 year from now, for monthly plan, set to 1 month
+            expiryDate: new Date(
+              new Date().setMonth(
+                new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1)
+              )
+            ).toISOString(),
+          };
+
+          // In a real app, you would store this in a secure way and sync with backend
+          localStorage.setItem('hushhly_subscription', JSON.stringify(subscriptionData));
+
+          // Close payment UI and proceed
           setShowPaymentSheet(false);
           setShowPaymentModal(false);
+
+          // Show success toast
+          toast.success(`Successfully subscribed to ${selectedPlan === 'annual' ? 'annual' : 'monthly'} plan!`);
+
+          // Continue to next screen
           handleNext();
         }, 1500);
       }, 2000);
@@ -166,7 +195,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          src="/lovable-uploads/hushhly-white-logo-new.png"
           alt="Hushhly Logo"
           className="w-64 h-auto animate-pulse-subtle"
           style={{ animationDuration: '3s' }}
@@ -183,13 +212,28 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
-      {/* Header with Logo */}
-      <div className="flex justify-center mb-6">
-        <img
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
-          alt="Hushhly Logo"
-          className="w-32 h-auto brightness-0 invert"
-        />
+      {/* Header with Logo and Exit button */}
+      <div className="flex items-center mb-6">
+        <div className="flex-1"></div>
+        <div className="flex-grow flex justify-center">
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
+            className="w-32 h-auto brightness-0 invert"
+          />
+        </div>
+        <div className="flex-1 flex justify-end">
+          <button
+            onClick={handleNext}
+            className="p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+            aria-label="Exit"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -330,13 +374,26 @@ const SplashScreen: React.FC = () => {
             {showPaymentSheet ? (
               <div className="relative">
                 {/* Apple Pay / Google Pay Sheet */}
-                <div className="bg-black text-white p-6 rounded-2xl">
+                <div className={`${paymentStep === 'processing' || paymentStep === 'verifying' || paymentStep === 'success' ? 'bg-black' : ''} text-white p-6 rounded-2xl relative overflow-hidden`}>
+                  {/* Payment method header - Apple Pay or Google Pay */}
                   <div className="flex justify-between items-center mb-6">
-                    <div className="text-lg font-medium">
-                      {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
+                    <div className="text-lg font-medium flex items-center">
+                      {paymentStep === 'processing' && (
+                        <>
+                          {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
+                        </>
+                      )}
                     </div>
                     <div className="text-lg font-medium">
-                      {selectedPlan === 'annual' ? '$59.99' : '$7.99'}
+                      {activePromo ? (
+                        <span className="text-green-400">
+                          ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
+                        </span>
+                      ) : (
+                        <span>
+                          ${selectedPlan === 'annual' ? prices.annual : prices.monthly}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -350,39 +407,67 @@ const SplashScreen: React.FC = () => {
                   {paymentStep === 'verifying' && (
                     <div className="text-center py-8">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="animate-pulse w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div className="animate-pulse w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                          {/* Face ID or Fingerprint icon based on payment method */}
+                          {/* Face ID icon */}
+                          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
                           </svg>
                         </div>
                       </div>
-                      <p className="text-lg">Verifying with Face ID...</p>
+                      <p className="text-lg font-medium">Verifying with Face ID...</p>
+                      <p className="text-sm text-white/70 mt-2">Please authenticate to complete your purchase</p>
                     </div>
                   )}
 
                   {paymentStep === 'success' && (
                     <div className="text-center py-8">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                          <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                          <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                       </div>
-                      <p className="text-lg">Payment Successful!</p>
+                      <p className="text-lg font-medium">Payment Successful!</p>
+                      <p className="text-sm text-white/70 mt-2">
+                        Your {selectedPlan === 'annual' ? 'annual' : 'monthly'} subscription is now active
+                      </p>
+                      <div className="mt-4 bg-white/10 p-3 rounded-lg">
+                        <p className="text-sm text-white/90">
+                          Next billing date: {new Date(new Date().setMonth(new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1))).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
                   )}
 
-                  <div className="mt-6 space-y-4">
-                    <div className="flex items-center justify-between text-sm opacity-80">
-                      <span>Card</span>
-                      <span>••••4242</span>
+                  {(paymentStep === 'processing' || paymentStep === 'verifying' || paymentStep === 'success') && (
+                    <div className="mt-6 space-y-3">
+                      <div className="flex items-center justify-between text-sm opacity-80">
+                        <span>Payment Method</span>
+                        <span className="flex items-center">
+                          {/* Show appropriate icon based on payment method */}
+                          {paymentStep === 'success' && (
+                            <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                            </svg>
+                          )}
+                          ••••4242
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm opacity-80">
+                        <span>Billing Address</span>
+                        <span>Default</span>
+                      </div>
+                      {paymentStep === 'success' && (
+                        <div className="flex items-center justify-between text-sm opacity-80">
+                          <span>Receipt</span>
+                          <span className="text-blue-300">Email</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center justify-between text-sm opacity-80">
-                      <span>Billing</span>
-                      <span>Default</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             ) : (
