@@ -177,9 +177,9 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img
-          src="/lovable-uploads/hushhly-white-logo-new.png"
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto"
+          className="w-64 h-auto brightness-0 invert"
         />
       </div>
     </div>,
@@ -195,7 +195,7 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img
-          src="/lovable-uploads/hushhly-white-logo-new.png"
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
           className="w-64 h-auto animate-pulse-subtle"
           style={{ animationDuration: '3s' }}
