@@ -13,6 +13,7 @@ import { biometricService } from '@/services/biometricService';
 import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
 import { isAndroid, isIOS } from '@/utils/deviceUtils';
 import { BalanceDisplay } from '@/components/ui/balance-display';
+import { balanceService } from '@/services/balanceService';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -133,7 +134,7 @@ const SplashScreen: React.FC = () => {
     return user?.id || getTempUserId();
   };
 
-  const handlePayment = async (method: 'apple' | 'google') => {
+  const handlePayment = async (method: 'apple' | 'google' | 'balance') => {
     // No need to check for user login here - we assume they're already logged in
     // Just proceed directly to payment processing
 
@@ -146,9 +147,19 @@ const SplashScreen: React.FC = () => {
       // Process payment using the payment service with consistent user ID
       const userId = getCurrentUserId();
 
+      // Determine payment method
+      let paymentMethodType: 'apple_pay' | 'google_pay' | 'balance';
+      if (method === 'apple') {
+        paymentMethodType = 'apple_pay';
+      } else if (method === 'google') {
+        paymentMethodType = 'google_pay';
+      } else {
+        paymentMethodType = 'balance';
+      }
+
       const paymentResult = await paymentService.processPayment(
         selectedPlan,
-        { method: method === 'apple' ? 'apple_pay' : 'google_pay' },
+        { method: paymentMethodType },
         activePromo?.code,
         userId
       );
@@ -857,7 +868,7 @@ const SplashScreen: React.FC = () => {
                         Your {selectedPlan === 'annual' ? 'annual' : 'monthly'} subscription is now active
                       </p>
 
-                      {/* Gojek-style transaction details */}
+                      {/* Real transaction details */}
                       <div className="mt-6 bg-white/10 rounded-lg p-3 text-left">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs text-white/60">Plan</span>
@@ -866,9 +877,26 @@ const SplashScreen: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-white/60">Amount</span>
+                          <span className="text-xs text-white/60">Amount (USD)</span>
                           <span className="text-sm text-white font-medium">
                             ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Amount (IDR)</span>
+                          <span className="text-sm text-white font-medium">
+                            {balanceService.formatBalance(Math.round(getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly) * 15000))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Payment Method</span>
+                          <span className="text-sm text-white font-medium flex items-center">
+                            {paymentStep === 'success' && (
+                              <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                              </svg>
+                            )}
+                            Balance Deduction
                           </span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
@@ -900,25 +928,54 @@ const SplashScreen: React.FC = () => {
                   {(paymentStep === 'processing' || paymentStep === 'verifying' || paymentStep === 'success') && (
                     <div className="mt-6 space-y-3">
                       <div className="flex items-center justify-between text-sm opacity-80">
-                        <span>Payment Method</span>
+                        <span>Payment Status</span>
                         <span className="flex items-center">
-                          {/* Show appropriate icon based on payment method */}
                           {paymentStep === 'success' && (
-                            <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                            </svg>
+                            <>
+                              <svg className="w-4 h-4 mr-1 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-green-400">Completed</span>
+                            </>
                           )}
-                          ••••4242
+                          {paymentStep === 'processing' && (
+                            <>
+                              <svg className="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              <span>Processing</span>
+                            </>
+                          )}
+                          {paymentStep === 'verifying' && (
+                            <>
+                              <svg className="w-4 h-4 mr-1 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                              </svg>
+                              <span>Verifying</span>
+                            </>
+                          )}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm opacity-80">
-                        <span>Billing Address</span>
-                        <span>Default</span>
+                        <span>Balance After Payment</span>
+                        <span className="font-medium">
+                          {balanceService.formatBalance(balanceService.getUserBalance(getCurrentUserId()).balance)}
+                        </span>
                       </div>
                       {paymentStep === 'success' && (
                         <div className="flex items-center justify-between text-sm opacity-80">
-                          <span>Receipt</span>
-                          <span className="text-blue-300">Email</span>
+                          <span>View Transactions</span>
+                          <button
+                            onClick={() => {
+                              setShowPaymentSheet(false);
+                              setShowPaymentModal(false);
+                              navigate('/transaction-history');
+                            }}
+                            className="text-blue-300 hover:text-blue-200 transition-colors"
+                          >
+                            History
+                          </button>
                         </div>
                       )}
                     </div>
@@ -975,6 +1032,23 @@ const SplashScreen: React.FC = () => {
 
                   {/* Payment Method Options */}
                   <div className="space-y-3">
+                    <Button
+                      onClick={() => handlePayment('balance')}
+                      className="w-full bg-green-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      <span>Pay with Balance</span>
+                    </Button>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-gray-500">Other Payment Methods</span>
+                      </div>
+                    </div>
                     <Button
                       onClick={() => handlePayment('apple')}
                       className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"

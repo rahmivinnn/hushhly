@@ -4,7 +4,7 @@ import { PromoCode } from '../types/promoCode';
 import { balanceService } from './balanceService';
 
 // Payment gateway types
-export type PaymentMethod = 'credit_card' | 'apple_pay' | 'google_pay';
+export type PaymentMethod = 'credit_card' | 'apple_pay' | 'google_pay' | 'balance';
 export type SubscriptionPlan = 'monthly' | 'annual';
 
 export interface PaymentDetails {
@@ -412,8 +412,8 @@ class PaymentService {
 
     if (details.method === 'credit_card') {
       return !!(details.cardNumber && details.cardExpiry && details.cardCVC);
-    } else if (details.method === 'apple_pay' || details.method === 'google_pay') {
-      // For mobile payment methods, we don't need additional validation
+    } else if (details.method === 'apple_pay' || details.method === 'google_pay' || details.method === 'balance') {
+      // For mobile payment methods and balance, we don't need additional validation
       return true;
     }
 
