@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import { usePromoCode } from '@/hooks/usePromoCode';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +18,13 @@ const SplashScreen: React.FC = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const { applyPromoCode, removePromoCode, activePromo, calculateDiscountedPrice } = usePromoCode();
+  
+  const prices = {
+    annual: 59.99,
+    monthly: 5.99
+  };
 
   const handleSubscriptionSelect = (plan: 'annual' | 'monthly') => {
     setSelectedPlan(plan);
@@ -103,6 +113,25 @@ const SplashScreen: React.FC = () => {
     }, 2000);
   };
 
+  const handlePromoCodeSubmit = () => {
+    if (!promoCode) {
+      toast.error('Please enter a promo code');
+      return;
+    }
+
+    const result = applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
+    
+    if (result.isValid) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const getDiscountedPrice = (originalPrice: number) => {
+    return calculateDiscountedPrice(originalPrice);
+  };
+
   // Define the content for each screen
   const screens = [
     // Screen 0: White background with blue gradient Hushhly text but now with blue gradient background
@@ -119,9 +148,9 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
+          src="/images/hushhly-white-text.svg" 
           alt="Hushhly Logo" 
-          className="w-64 h-auto animate-float"
+          className="w-64 h-auto animate-float brightness-0 invert"
         />
       </div>
     </div>,
@@ -184,9 +213,22 @@ const SplashScreen: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-left">
-              <div className="font-bold text-xl mb-1">Premium Annual</div>
-              <div className="text-base opacity-80">$59.99/year</div>
-              <div className="text-sm mt-2 opacity-90">Save 37% compared to monthly</div>
+              <div className="font-bold text-xl mb-1">Premium {selectedPlan === 'annual' ? 'Annual' : 'Monthly'}</div>
+              <div className="text-base opacity-80">
+                {activePromo ? (
+                  <span className="flex items-center gap-2">
+                    <span className="line-through">${selectedPlan === 'annual' ? prices.annual : prices.monthly}/
+                      {selectedPlan === 'annual' ? 'year' : 'month'}</span>
+                    <span className="text-green-400 no-underline">
+                      ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}/
+                      {selectedPlan === 'annual' ? 'year' : 'month'}
+                    </span>
+                  </span>
+                ) : (
+                  <span>${selectedPlan === 'annual' ? prices.annual : prices.monthly}/
+                    {selectedPlan === 'annual' ? 'year' : 'month'}</span>
+                )}
+              </div>
             </div>
             {selectedPlan === 'annual' && (
               <div className="text-sm font-bold px-3 py-2 bg-blue-100 text-blue-600 rounded-full">
@@ -231,13 +273,40 @@ const SplashScreen: React.FC = () => {
         </div>
 
         {/* Promo Code Section */}
-        <div className="mt-6">
-          <button 
-            onClick={() => console.log('Show promo code input')}
-            className="text-white/80 text-sm hover:text-white transition-colors"
-          >
-            Have a promo code?
-          </button>
+        <div className="mt-6 space-y-4">
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Enter promo code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              className="bg-white/20 text-white placeholder:text-white/60"
+            />
+            <Button
+              onClick={handlePromoCodeSubmit}
+              variant="secondary"
+              className="whitespace-nowrap"
+            >
+              Apply Code
+            </Button>
+          </div>
+          {activePromo && (
+            <div className="text-white bg-white/20 p-3 rounded-lg">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-semibold">{activePromo.code}</p>
+                  <p className="text-sm opacity-80">{activePromo.discount}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-white/80"
+                  onClick={removePromoCode}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -20,6 +20,8 @@ import Work from "./pages/Work";
 import Notifications from "./pages/Notifications";
 import EditProfile from "./pages/EditProfile";
 import Meditation101 from "./pages/Meditation101";
+import SubscriptionScreen from "./pages/SubscriptionScreen";
+import SubscriptionManagement from "./pages/SubscriptionManagement";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<SplashScreen />} />
             <Route path="/splash" element={<SplashScreen />} />
+            <Route path="/subscription" element={<SubscriptionScreen />} />
+            <Route path="/subscription-management" element={<SubscriptionManagement />} />
             <Route path="/meditation" element={<Index />} />
             <Route path="/meditation-101" element={<Meditation101 />} />
             <Route path="/sign-up" element={<SignUp />} />
