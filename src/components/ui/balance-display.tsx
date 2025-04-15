@@ -19,7 +19,6 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
   const [balance, setBalance] = useState(0);
   const [currency, setCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(true);
-  const [isAddingFunds, setIsAddingFunds] = useState(false);
 
   // Get consistent temporary user ID
   const getTempUserId = () => {
@@ -71,41 +70,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
     };
   }, [user]);
 
-  // Handle adding funds
-  const handleAddFunds = async () => {
-    try {
-      setIsAddingFunds(true);
-
-      // Get user ID (consistent temporary or real ID)
-      const userId = getCurrentUserId();
-
-      // Add $100 USD to balance
-      const amount = 100;
-      const description = 'Top up balance';
-
-      // Process the transaction
-      const success = await balanceService.addBalance(userId, amount, description);
-
-      if (success) {
-        // Update local balance
-        const userBalance = balanceService.getUserBalance(userId);
-        setBalance(userBalance.balance);
-
-        // Dispatch custom event to notify other components
-        window.dispatchEvent(new Event('balance-updated'));
-
-        // Show success message
-        toast.success(`Added ${balanceService.formatBalance(amount, currency)} to your balance`);
-      } else {
-        toast.error('Failed to add funds');
-      }
-    } catch (error) {
-      console.error('Error adding funds:', error);
-      toast.error('An error occurred while adding funds');
-    } finally {
-      setIsAddingFunds(false);
-    }
-  };
+  // Add Funds functionality removed
 
   if (isLoading) {
     return (
