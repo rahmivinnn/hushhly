@@ -9,6 +9,9 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { paymentService } from '@/services/paymentService';
 import { useAuthSimple } from '@/hooks/useAuthSimple';
+import { biometricService } from '@/services/biometricService';
+import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
+import { isAndroid, isIOS } from '@/utils/deviceUtils';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +22,7 @@ const SplashScreen: React.FC = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
+  const [showBiometricDialog, setShowBiometricDialog] = useState(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
@@ -126,30 +130,127 @@ const SplashScreen: React.FC = () => {
         user.id
       );
 
-      // Second step: Verifying with biometric authentication (Face ID or fingerprint)
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || 'Payment failed');
+      }
+
+      // Store payment info in localStorage for the biometric flow
+      localStorage.setItem('pendingPaymentId', paymentResult.paymentId || '');
+      localStorage.setItem('pendingPaymentResult', JSON.stringify(paymentResult));
+
+      // Second step: Verify with biometrics
       setPaymentStep('verifying');
 
-      // Simulate biometric verification
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Check if we should use biometric authentication
+      const isBiometricAvailable = await biometricService.isAvailable();
 
-      // Verify the payment
+      if (isBiometricAvailable) {
+        // For Android, show fingerprint dialog
+        if (isAndroid()) {
+          setShowBiometricDialog(true);
+
+          // The verification will continue in the onBiometricSuccess handler
+          return;
+        } else {
+          // For iOS, use Face ID (handled in the UI animation)
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          // Verify with biometric service
+          const biometricResult = await biometricService.authenticate(
+            'Please authenticate to complete your purchase'
+          );
+
+          if (!biometricResult.success) {
+            throw new Error(biometricResult.error || 'Biometric verification failed');
+          }
+        }
+      } else {
+        // Fallback to traditional verification if biometrics not available
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      // Verify the payment with backend
       const isVerified = await paymentService.verifyPayment(paymentResult.paymentId || '');
 
       if (!isVerified) {
         throw new Error('Payment verification failed');
       }
 
+      // Complete the payment process
+      completePaymentProcess(paymentResult);
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
+
+      // Reset payment UI
+      setShowBiometricDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  // Handle successful biometric authentication
+  const handleBiometricSuccess = async () => {
+    try {
+      setShowBiometricDialog(false);
+
+      // Verify the payment with backend
+      const paymentId = localStorage.getItem('pendingPaymentId');
+      if (!paymentId) {
+        throw new Error('Payment ID not found');
+      }
+
+      const isVerified = await paymentService.verifyPayment(paymentId);
+
+      if (!isVerified) {
+        throw new Error('Payment verification failed');
+      }
+
+      // Get payment result from local storage
+      const paymentResultJson = localStorage.getItem('pendingPaymentResult');
+      if (!paymentResultJson) {
+        throw new Error('Payment result not found');
+      }
+
+      const paymentResult = JSON.parse(paymentResultJson);
+
+      // Complete the payment process
+      completePaymentProcess(paymentResult);
+
+    } catch (error) {
+      console.error('Biometric verification error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during verification');
+
+      // Reset payment UI
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    }
+  };
+
+  // Handle biometric authentication error
+  const handleBiometricError = (error: string) => {
+    toast.error(error || 'Fingerprint verification failed');
+    // Keep the dialog open for retry
+  };
+
+  // Complete the payment process after successful verification
+  const completePaymentProcess = async (paymentResult: any) => {
+    try {
       // Third step: Payment successful
       setPaymentStep('success');
 
       // Save subscription details
-      if (paymentResult.subscriptionDetails) {
+      if (paymentResult.subscriptionDetails && user) {
         await paymentService.saveSubscription(user.id, paymentResult.subscriptionDetails);
       }
 
       // After successful payment, close the payment sheet and continue
       setTimeout(() => {
         // Close payment UI and proceed
+        setShowBiometricDialog(false);
         setShowPaymentSheet(false);
         setShowPaymentModal(false);
 
@@ -158,16 +259,14 @@ const SplashScreen: React.FC = () => {
 
         // Continue to next screen
         handleNext();
+
+        // Clean up local storage
+        localStorage.removeItem('pendingPaymentId');
+        localStorage.removeItem('pendingPaymentResult');
       }, 1500);
     } catch (error) {
-      console.error('Payment error:', error);
-      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
-
-      // Reset payment UI
-      setShowPaymentSheet(false);
-      setPaymentStep('select');
-    } finally {
-      setProcessingPayment(false);
+      console.error('Error completing payment:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred while completing payment');
     }
   };
 
@@ -422,6 +521,16 @@ const SplashScreen: React.FC = () => {
       </div>
 
       {/* Payment Modal */}
+      {/* Fingerprint Authentication Dialog */}
+      <FingerprintDialog
+        isOpen={showBiometricDialog}
+        onClose={() => setShowBiometricDialog(false)}
+        onSuccess={handleBiometricSuccess}
+        onError={handleBiometricError}
+        title="Verify Payment"
+        description="Please authenticate with your fingerprint to complete the payment"
+      />
+
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-11/12 max-w-md">
@@ -462,16 +571,27 @@ const SplashScreen: React.FC = () => {
                     <div className="text-center py-8">
                       <div className="flex items-center justify-center mb-4">
                         <div className="animate-pulse w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                          {/* Face ID or Fingerprint icon based on payment method */}
-                          {/* Face ID icon */}
-                          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
-                          </svg>
+                          {/* Face ID or Fingerprint icon based on device type */}
+                          {isAndroid() ? (
+                            /* Fingerprint icon for Android */
+                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
+                            </svg>
+                          ) : (
+                            /* Face ID icon for iOS */
+                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
+                            </svg>
+                          )}
                         </div>
                       </div>
-                      <p className="text-lg font-medium">Verifying with Face ID...</p>
-                      <p className="text-sm text-white/70 mt-2">Please authenticate to complete your purchase</p>
+                      <p className="text-lg font-medium">
+                        {isAndroid() ? 'Verifying with Fingerprint...' : 'Verifying with Face ID...'}
+                      </p>
+                      <p className="text-sm text-white/70 mt-2">
+                        {isAndroid() ? 'Touch the fingerprint sensor' : 'Please authenticate to complete your purchase'}
+                      </p>
                     </div>
                   )}
 
