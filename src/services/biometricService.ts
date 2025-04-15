@@ -20,8 +20,20 @@ class BiometricService {
       // For Android: BiometricManager.canAuthenticate()
       // For iOS: LAContext.canEvaluatePolicy()
 
-      // For this demo, we'll just check if it's a mobile device
-      return isAndroid() || isIOS();
+      // Check if we have a stored preference for biometric availability
+      const hasBiometric = localStorage.getItem('hasBiometric');
+
+      if (hasBiometric === 'true') return true;
+      if (hasBiometric === 'false') return false;
+
+      // For this demo, we'll simulate that 70% of devices have biometrics
+      // This allows us to test both flows
+      const isAvailable = Math.random() < 0.7 && (isAndroid() || isIOS());
+
+      // Store the result so it's consistent for this user session
+      localStorage.setItem('hasBiometric', isAvailable.toString());
+
+      return isAvailable;
     } catch (error) {
       console.error('Error checking biometric availability:', error);
       return false;
@@ -175,6 +187,52 @@ class BiometricService {
         }
       }, 7000); // Durasi yang lebih lama untuk Face ID (7 detik)
     });
+  }
+
+  /**
+   * Authenticate using screen lock (PIN, pattern, or password)
+   * This is used as a fallback when biometric authentication is not available
+   */
+  async authenticateWithScreenLock(reason: string = 'Please authenticate to complete your payment'): Promise<BiometricAuthResult> {
+    try {
+      // If recently authenticated, don't prompt again
+      if (this.isRecentlyAuthenticated()) {
+        console.log('Using recent authentication');
+        return { success: true };
+      }
+
+      // In a real implementation, this would use the device's screen lock
+      // For Android: KeyguardManager.createConfirmDeviceCredentialIntent()
+      // For iOS: LAContext.evaluatePolicy with .deviceOwnerAuthentication
+
+      return new Promise((resolve) => {
+        // Simulate a delay for the screen lock authentication
+        setTimeout(() => {
+          // Simulate a 98% success rate
+          const isSuccessful = Math.random() < 0.98;
+
+          if (isSuccessful) {
+            // Update the last successful auth time
+            this.lastSuccessfulAuth = Date.now();
+
+            resolve({
+              success: true
+            });
+          } else {
+            resolve({
+              success: false,
+              error: 'Screen lock authentication failed. Please try again.'
+            });
+          }
+        }, 5000); // 5 seconds for screen lock authentication
+      });
+    } catch (error) {
+      console.error('Error during screen lock authentication:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error during authentication'
+      };
+    }
   }
 }
 

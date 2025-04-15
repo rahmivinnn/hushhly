@@ -280,28 +280,36 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
             {!success && (
               <div className="flex justify-center">
                 <button
-                  onClick={() => {
-                    // Simulate screen lock authentication
-                    setAuthenticating(true);
-                    setError(null);
-                    setSuccess(false);
+                  onClick={async () => {
+                    try {
+                      // Close the fingerprint dialog first to avoid double popups
+                      onClose();
 
-                    // Show info message
-                    toast.info('Verifying with screen lock...');
-
-                    // Simulate verification process
-                    setTimeout(() => {
-                      setSuccess(true);
-                      setAuthenticating(false);
-
-                      // Show success message
-                      toast.success('Screen lock verified');
-
-                      // Wait a moment before calling onSuccess
+                      // Wait a moment before showing the screen lock message
                       setTimeout(() => {
-                        onSuccess();
-                      }, 1500);
-                    }, 5000);
+                        // Show info message - only once
+                        toast.info('Verifying with screen lock...');
+                      }, 500);
+
+                      // Use the biometric service to authenticate with screen lock
+                      const result = await biometricService.authenticateWithScreenLock();
+
+                      if (result.success) {
+                        // Show success message
+                        toast.success('Screen lock verified');
+
+                        // Wait a moment before calling onSuccess
+                        setTimeout(() => {
+                          onSuccess();
+                        }, 1500);
+                      } else {
+                        // Show error message
+                        toast.error(result.error || 'Screen lock verification failed');
+                      }
+                    } catch (error) {
+                      // Show error message
+                      toast.error('Screen lock verification failed');
+                    }
                   }}
                   className="text-sm text-blue-600 hover:text-blue-800 transition-colors flex items-center"
                   disabled={authenticating || success}

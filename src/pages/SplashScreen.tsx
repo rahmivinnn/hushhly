@@ -192,13 +192,21 @@ const SplashScreen: React.FC = () => {
           await new Promise(resolve => setTimeout(resolve, 4000));
         }
       } else {
-        // Fallback to traditional verification if biometrics not available
+        // Fallback to screen lock verification if biometrics not available
         toast.info('Biometric authentication not available');
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Show screen lock verification message
         toast.info('Verifying with screen lock...');
-        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        // Use the screen lock authentication method
+        const screenLockResult = await biometricService.authenticateWithScreenLock(
+          'Please authenticate to complete your purchase'
+        );
+
+        if (!screenLockResult.success) {
+          throw new Error(screenLockResult.error || 'Screen lock verification failed');
+        }
 
         // Show success message
         toast.success('Screen lock verified');
@@ -296,9 +304,73 @@ const SplashScreen: React.FC = () => {
   };
 
   // Handle biometric authentication error
-  const handleBiometricError = (error: string) => {
+  const handleBiometricError = async (error: string) => {
+    // Show error message
     toast.error(error || 'Fingerprint verification failed');
-    // Keep the dialog open for retry
+
+    // Close the biometric dialog
+    setShowBiometricDialog(false);
+
+    // Wait a moment before showing the screen lock option
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Ask if user wants to try screen lock instead
+    const useScreenLock = window.confirm('Would you like to try using screen lock instead?');
+
+    if (useScreenLock) {
+      try {
+        // Show screen lock verification message
+        toast.info('Verifying with screen lock...');
+
+        // Use the screen lock authentication method
+        const screenLockResult = await biometricService.authenticateWithScreenLock(
+          'Please authenticate to complete your purchase'
+        );
+
+        if (screenLockResult.success) {
+          // Show success message
+          toast.success('Screen lock verified');
+
+          // Wait a moment before proceeding
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          // Show processing message
+          toast.info('Processing payment...');
+
+          // Wait a moment before proceeding
+          await new Promise(resolve => setTimeout(resolve, 3000));
+
+          // Get payment result from local storage
+          const paymentId = localStorage.getItem('pendingPaymentId');
+          const paymentResultJson = localStorage.getItem('pendingPaymentResult');
+
+          if (paymentId && paymentResultJson) {
+            // Verify the payment
+            const isVerified = await paymentService.verifyPayment(paymentId);
+
+            if (isVerified) {
+              // Parse the payment result
+              const paymentResult = JSON.parse(paymentResultJson);
+
+              // Complete the payment process
+              completePaymentProcess(paymentResult);
+              return;
+            }
+          }
+
+          throw new Error('Payment verification failed');
+        } else {
+          throw new Error(screenLockResult.error || 'Screen lock verification failed');
+        }
+      } catch (error) {
+        console.error('Screen lock verification error:', error);
+        toast.error(error instanceof Error ? error.message : 'An error occurred during verification');
+      }
+    }
+
+    // Reset payment UI if screen lock failed or was declined
+    setShowPaymentSheet(false);
+    setPaymentStep('select');
   };
 
   // Complete the payment process after successful verification
