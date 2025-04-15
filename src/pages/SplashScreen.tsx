@@ -20,7 +20,7 @@ const SplashScreen: React.FC = () => {
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const { applyPromoCode, removePromoCode, activePromo, calculateDiscountedPrice } = usePromoCode();
-  
+
   const prices = {
     annual: 59.99,
     monthly: 5.99
@@ -98,7 +98,7 @@ const SplashScreen: React.FC = () => {
   const handlePayment = (method: 'apple' | 'google') => {
     setShowPaymentSheet(true);
     setPaymentStep('processing');
-    
+
     // Simulate payment processing steps
     setTimeout(() => {
       setPaymentStep('verifying');
@@ -120,7 +120,7 @@ const SplashScreen: React.FC = () => {
     }
 
     const result = applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
-    
+
     if (result.isValid) {
       toast.success(result.message);
     } else {
@@ -134,40 +134,40 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 0: White background with blue gradient Hushhly text but now with blue gradient background
-    <div 
-      key="screen-0" 
+    // Screen 0: Clean blue gradient background with Hushhly logo in center
+    <div
+      key="screen-0"
       className={`flex flex-col h-full ${
-        animating 
-          ? 'opacity-0 scale-90 rotate-3' 
+        animating
+          ? 'opacity-0 scale-90 rotate-3'
           : 'opacity-100 scale-100 rotate-0'
       } transition-all duration-700 ease-in-out`}
-      style={{ 
-        background: 'linear-gradient(180deg, #0098c1 0%, #2377b0 50%, #4c5ab3 100%)'
+      style={{
+        background: 'linear-gradient(180deg, #00a0d2 0%, #0076b5 50%, #3a5bb8 100%)'
       }}
     >
       <div className="flex-grow flex items-center justify-center">
-        <img 
-          src="/images/hushhly-white-text.svg" 
-          alt="Hushhly Logo" 
-          className="w-64 h-auto animate-float brightness-0 invert"
+        <img
+          src="/images/hushhly-white-text.svg"
+          alt="Hushhly Logo"
+          className="w-64 h-auto"
         />
       </div>
     </div>,
 
     // Screen 1: White background with Hushhly logo (second screen)
-    <div 
-      key="screen-1" 
+    <div
+      key="screen-1"
       className={`flex flex-col h-full ${
-        animating 
-          ? 'opacity-0 scale-90 -rotate-3' 
+        animating
+          ? 'opacity-0 scale-90 -rotate-3'
           : 'opacity-100 scale-100 rotate-0'
       } transition-all duration-700 ease-in-out bg-white`}
     >
       <div className="flex-grow flex items-center justify-center">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
           className="w-64 h-auto animate-pulse-subtle"
           style={{ animationDuration: '3s' }}
         />
@@ -175,19 +175,19 @@ const SplashScreen: React.FC = () => {
     </div>,
 
     // Screen 2: Subscription Screen
-    <div 
-      key="screen-2" 
+    <div
+      key="screen-2"
       className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
       {/* Header with Logo */}
       <div className="flex justify-center mb-6">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
           className="w-32 h-auto brightness-0 invert"
         />
       </div>
@@ -423,11 +423,11 @@ const SplashScreen: React.FC = () => {
     </div>,
 
     // Screen 3: Welcome to Hushhly with bear image
-    <div 
-      key="screen-3" 
+    <div
+      key="screen-3"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
@@ -440,19 +440,19 @@ const SplashScreen: React.FC = () => {
           Skip for now
         </button>
       </div>
-      
+
       <div className="mb-2">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
           className="w-40 h-auto"
         />
       </div>
       <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Welcome to Hushhly</h2>
       <div>
-        <img 
-          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-          alt="Meditation Bear" 
+        <img
+          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+          alt="Meditation Bear"
           className="w-48 h-auto mb-8 animate-pulse-subtle"
           style={{ animationDuration: '3s' }}
         />
@@ -460,20 +460,20 @@ const SplashScreen: React.FC = () => {
       <p className="text-sm text-gray-600 mb-10 animate-slide-up">
         A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
       </p>
-      <Button 
+      <Button
         onClick={handleNext}
         className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
     </div>,
-    
+
     // Screen 4: Personalized Meditation Plans
-    <div 
-      key="screen-4" 
+    <div
+      key="screen-4"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
@@ -486,20 +486,20 @@ const SplashScreen: React.FC = () => {
           Skip for now
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-2">
-          <img 
-            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-            alt="Hushhly Logo" 
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
             className="w-40 h-auto"
           />
         </div>
         <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Personalized Meditation Plans</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
@@ -507,7 +507,7 @@ const SplashScreen: React.FC = () => {
         <p className="text-sm text-gray-600 mb-10 animate-slide-up">
           Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
         </p>
-        <Button 
+        <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
@@ -515,13 +515,13 @@ const SplashScreen: React.FC = () => {
         </Button>
       </div>
     </div>,
-    
+
     // Screen 5: AI Enhanced Experience
-    <div 
-      key="screen-5" 
+    <div
+      key="screen-5"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
@@ -534,20 +534,20 @@ const SplashScreen: React.FC = () => {
           Skip for now
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-2">
-          <img 
-            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-            alt="Hushhly Logo" 
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
             className="w-40 h-auto"
           />
         </div>
         <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">AI Enhanced Experience</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
@@ -555,7 +555,7 @@ const SplashScreen: React.FC = () => {
         <p className="text-sm text-gray-600 mb-10 animate-slide-up">
           Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
         </p>
-        <Button 
+        <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
@@ -563,13 +563,13 @@ const SplashScreen: React.FC = () => {
         </Button>
       </div>
     </div>,
-    
+
     // Screen 6: Progress Tracking & Insights
-    <div 
-      key="screen-6" 
+    <div
+      key="screen-6"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
@@ -582,20 +582,20 @@ const SplashScreen: React.FC = () => {
           Skip for now
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-2">
-          <img 
-            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-            alt="Hushhly Logo" 
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
             className="w-40 h-auto"
           />
         </div>
         <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Progress Tracking & Insights</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
@@ -603,7 +603,7 @@ const SplashScreen: React.FC = () => {
         <p className="text-sm text-gray-600 mb-10 animate-slide-up">
           Track your meditation journey and <br /> get personalized insights to <br /> improve
         </p>
-        <Button 
+        <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
@@ -613,11 +613,11 @@ const SplashScreen: React.FC = () => {
     </div>,
 
     // Screen 7: Get Started - Blue gradient background (NEW)
-    <div 
-      key="screen-7" 
+    <div
+      key="screen-7"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out relative`}
     >
@@ -627,19 +627,19 @@ const SplashScreen: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center flex-grow">
         {/* White Hushhly text logo */}
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
           className="w-64 h-auto animate-float mb-6 brightness-0 invert"
         />
         <h2 className="text-white text-xl font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
@@ -647,7 +647,7 @@ const SplashScreen: React.FC = () => {
         <p className="text-sm text-white mb-10 animate-slide-up">
           Your journey to mindfulness begins here
         </p>
-        <Button 
+        <Button
           onClick={handleNext}
           className="bg-white text-blue-600 hover:bg-blue-50 px-16 py-6 rounded-full flex items-center justify-center animate-pulse-subtle w-full"
           style={{ animationDuration: '2s' }}
@@ -655,17 +655,17 @@ const SplashScreen: React.FC = () => {
           <span className="text-lg">Get Started</span>
         </Button>
       </div>
-      
+
       {/* Empty div for spacing */}
       <div className="py-6"></div>
     </div>,
-    
+
     // Screen 8: Login/Signup - Blue gradient background (NEW)
-    <div 
-      key="screen-8" 
+    <div
+      key="screen-8"
       className={`flex flex-col items-center h-full px-8 text-center bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 overflow-auto ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out relative`}
     >
@@ -675,49 +675,49 @@ const SplashScreen: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center w-full py-6">
         {/* White Hushhly text logo */}
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
           className="w-64 h-auto mb-6 brightness-0 invert"
         />
         <h2 className="text-white text-xl font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
         </div>
-        
+
         <div className="w-full space-y-4 mt-4 mb-8">
-          <Button 
+          <Button
             onClick={handleLogin}
             className="bg-white text-blue-600 hover:bg-blue-50 rounded-full flex items-center justify-center w-full py-6 animate-slide-up"
             style={{ animationDelay: '0.1s' }}
           >
             <span className="text-lg">Login</span>
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={handleSignUp}
             className="bg-transparent text-white border-2 border-white hover:bg-white/10 rounded-full flex items-center justify-center w-full py-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
             <span className="text-lg">Sign up</span>
           </Button>
-          
+
           <div className="flex items-center justify-center space-x-2 py-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="h-px bg-white/30 flex-grow"></div>
             <span className="text-white/80">Or Continue with</span>
             <div className="h-px bg-white/30 flex-grow"></div>
           </div>
-          
+
           <div className="flex justify-center space-x-4 pb-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            <button 
+            <button
               onClick={() => {
                 // Open Google authentication popup
                 const width = 500;
@@ -734,7 +734,7 @@ const SplashScreen: React.FC = () => {
             >
               <FcGoogle size={24} />
             </button>
-            <button 
+            <button
               onClick={() => {
                 // Open Apple authentication popup
                 const width = 500;
@@ -757,11 +757,11 @@ const SplashScreen: React.FC = () => {
     </div>,
 
     // Screen 9: Subscription Screen
-    <div 
-      key="screen-9" 
+    <div
+      key="screen-9"
       className={`flex flex-col items-center justify-between h-full px-8 text-center bg-white ${
-        animating 
-          ? 'opacity-0 translate-x-20 scale-95' 
+        animating
+          ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
@@ -774,20 +774,20 @@ const SplashScreen: React.FC = () => {
           Skip for now
         </button>
       </div>
-      
+
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-2">
-          <img 
-            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-            alt="Hushhly Logo" 
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
             className="w-40 h-auto"
           />
         </div>
         <h2 className="text-meditation-lightBlue text-lg font-medium mb-8 animate-fade-in">Subscription</h2>
         <div>
-          <img 
-            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png" 
-            alt="Meditation Bear" 
+          <img
+            src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+            alt="Meditation Bear"
             className="w-48 h-auto mb-8 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
@@ -795,7 +795,7 @@ const SplashScreen: React.FC = () => {
         <p className="text-sm text-gray-600 mb-10 animate-slide-up">
           Choose the plan that's right for you
         </p>
-        <Button 
+        <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
         >
@@ -811,13 +811,13 @@ const SplashScreen: React.FC = () => {
       return (
         <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2">
           {[...Array(4)].map((_, index) => (
-            <div 
+            <div
               key={index}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index + 2 === currentScreen 
-                  ? 'bg-blue-500 scale-125' 
-                  : index + 2 < currentScreen 
-                    ? 'bg-blue-400 opacity-70' 
+                index + 2 === currentScreen
+                  ? 'bg-blue-500 scale-125'
+                  : index + 2 < currentScreen
+                    ? 'bg-blue-400 opacity-70'
                     : 'bg-gray-300'
               }`}
             />
@@ -839,7 +839,7 @@ const SplashScreen: React.FC = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Current screen content */}
       {screens[currentScreen]}
-      
+
       {/* Progress indicators */}
       {renderProgressIndicators()}
     </div>
