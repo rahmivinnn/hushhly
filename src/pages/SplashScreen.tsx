@@ -175,11 +175,17 @@ const SplashScreen: React.FC = () => {
         background: 'linear-gradient(180deg, #00a0d2 0%, #0076b5 50%, #3a5bb8 100%)'
       }}
     >
-      <div className="flex-grow flex items-center justify-center">
+      <div className="flex-grow flex flex-col items-center justify-center">
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto brightness-0 invert"
+          className="w-64 h-auto brightness-0 invert mb-8"
+        />
+        <img
+          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+          alt="Meditation Bear"
+          className="w-48 h-auto animate-pulse-subtle"
+          style={{ animationDuration: '3s' }}
         />
       </div>
     </div>,
@@ -193,11 +199,16 @@ const SplashScreen: React.FC = () => {
           : 'opacity-100 scale-100 rotate-0'
       } transition-all duration-700 ease-in-out bg-white`}
     >
-      <div className="flex-grow flex items-center justify-center">
+      <div className="flex-grow flex flex-col items-center justify-center">
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto animate-pulse-subtle"
+          className="w-64 h-auto mb-8"
+        />
+        <img
+          src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
+          alt="Meditation Bear"
+          className="w-48 h-auto animate-pulse-subtle"
           style={{ animationDuration: '3s' }}
         />
       </div>
