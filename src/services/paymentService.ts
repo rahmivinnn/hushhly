@@ -1,4 +1,6 @@
 import { toast } from "@/hooks/use-toast";
+import { promoCodeService } from './promoCodeService';
+import { PromoCode } from '../types/promoCode';
 
 // Payment gateway types
 export type PaymentMethod = 'credit_card' | 'apple_pay' | 'google_pay';
@@ -21,6 +23,9 @@ export interface SubscriptionDetails {
   autoRenew: boolean;
   status: 'active' | 'canceled' | 'expired' | 'pending';
   paymentId: string;
+  promoCodeId?: string;
+  originalPrice?: number;
+  finalPrice?: number;
 }
 
 export interface PaymentResult {
@@ -28,6 +33,8 @@ export interface PaymentResult {
   paymentId?: string;
   error?: string;
   subscriptionDetails?: SubscriptionDetails;
+  promoCodeApplied?: boolean;
+  promoCode?: PromoCode;
 }
 
 class PaymentService {
@@ -41,12 +48,42 @@ class PaymentService {
   async processPayment(
     plan: SubscriptionPlan,
     paymentDetails: PaymentDetails,
-    promoCode?: string
+    promoCode?: string,
+    userId?: string
   ): Promise<PaymentResult> {
     try {
+      // Get base price for the plan
+      const originalPrice = this.prices[plan];
+      let finalPrice = originalPrice;
+      let appliedPromoCode: PromoCode | undefined;
+      let promoCodeId: string | undefined;
+
+      // Apply promo code if provided and user ID is available
+      if (promoCode && userId) {
+        const validationResult = await promoCodeService.validatePromoCode(
+          promoCode,
+          plan === 'monthly' ? 'Monthly' : 'Annual',
+          userId
+        );
+
+        if (validationResult.isValid && validationResult.promoDetails) {
+          // Calculate discounted price
+          finalPrice = this.calculateDiscountedPrice(
+            originalPrice,
+            validationResult.promoDetails
+          );
+
+          appliedPromoCode = validationResult.promoDetails;
+          promoCodeId = validationResult.promoDetails.id;
+        }
+      }
+
       // In a real implementation, this would make an API call to a payment processor
-      // For now, we'll simulate the API call with a promise
-      
+      // with the final price after discount
+
+      // For Apple Pay, you would use PKPaymentRequest with the discounted amount
+      // For Google Play Billing, you would use BillingFlowParams with the discounted SKU
+
       // Simulate network request
       const result = await new Promise<PaymentResult>((resolve, reject) => {
         setTimeout(() => {
@@ -54,7 +91,7 @@ class PaymentService {
           if (this.validatePaymentDetails(paymentDetails)) {
             const paymentId = `pay_${Math.random().toString(36).substring(2, 15)}`;
             const now = new Date();
-            
+
             // Calculate subscription end date based on plan
             const endDate = new Date(now);
             if (plan === 'monthly') {
@@ -62,7 +99,15 @@ class PaymentService {
             } else {
               endDate.setFullYear(endDate.getFullYear() + 1);
             }
-            
+
+            // If promo code gives free months, adjust end date
+            if (appliedPromoCode &&
+                appliedPromoCode.discountType === 'free' &&
+                appliedPromoCode.duration === 'days' &&
+                appliedPromoCode.durationValue) {
+              endDate.setDate(endDate.getDate() + appliedPromoCode.durationValue);
+            }
+
             resolve({
               success: true,
               paymentId,
@@ -72,8 +117,13 @@ class PaymentService {
                 endDate,
                 autoRenew: true,
                 status: 'active',
-                paymentId
-              }
+                paymentId,
+                promoCodeId,
+                originalPrice,
+                finalPrice
+              },
+              promoCodeApplied: !!promoCodeId,
+              promoCode: appliedPromoCode
             });
           } else {
             reject({
@@ -83,7 +133,16 @@ class PaymentService {
           }
         }, 2000); // Simulate network delay
       });
-      
+
+      // Record promo code usage if payment was successful
+      if (result.success && userId && promoCodeId) {
+        await promoCodeService.recordPromoCodeUsage(
+          promoCodeId,
+          userId,
+          result.paymentId || ''
+        );
+      }
+
       return result;
     } catch (error) {
       console.error('Payment processing error:', error);
@@ -93,13 +152,13 @@ class PaymentService {
       };
     }
   }
-  
+
   // Verify payment status
   async verifyPayment(paymentId: string): Promise<boolean> {
     try {
       // In a real implementation, this would make an API call to verify payment status
       // For now, we'll simulate the API call with a promise
-      
+
       return await new Promise<boolean>((resolve) => {
         setTimeout(() => {
           // Simulate 95% success rate for payment verification
@@ -112,38 +171,83 @@ class PaymentService {
       return false;
     }
   }
-  
+
   // Calculate price with promo code applied
-  calculatePrice(plan: SubscriptionPlan, promoCode?: string): number {
-    // In a real implementation, this would validate the promo code and apply discount
-    // For now, we'll just return the base price
-    return this.prices[plan];
+  async calculatePrice(plan: SubscriptionPlan, promoCode?: string, userId?: string): Promise<number> {
+    const originalPrice = this.prices[plan];
+
+    if (!promoCode || !userId) {
+      return originalPrice;
+    }
+
+    // Validate promo code
+    const validationResult = await promoCodeService.validatePromoCode(
+      promoCode,
+      plan === 'monthly' ? 'Monthly' : 'Annual',
+      userId
+    );
+
+    if (validationResult.isValid && validationResult.promoDetails) {
+      // Calculate discounted price
+      return this.calculateDiscountedPrice(originalPrice, validationResult.promoDetails);
+    }
+
+    return originalPrice;
   }
-  
+
+  // Calculate discounted price based on promo code
+  calculateDiscountedPrice(originalPrice: number, promoCode: PromoCode): number {
+    if (!promoCode) return originalPrice;
+
+    if (promoCode.discountType === 'free') return 0;
+
+    if (promoCode.discountType === 'percentage') {
+      const discountAmount = (originalPrice * promoCode.discountValue) / 100;
+      return Math.max(0, originalPrice - discountAmount);
+    }
+
+    if (promoCode.discountType === 'fixed') {
+      return Math.max(0, originalPrice - promoCode.discountValue);
+    }
+
+    return originalPrice;
+  }
+
   // Save subscription to user profile
-  saveSubscription(userId: string, subscriptionDetails: SubscriptionDetails): boolean {
+  async saveSubscription(userId: string, subscriptionDetails: SubscriptionDetails): Promise<boolean> {
     try {
+      // In a real implementation, this would save to a database
+      // For now, we'll use localStorage
+
       // Get current user data
       const userData = localStorage.getItem('user');
       if (!userData) {
         return false;
       }
-      
+
       // Update user data with subscription details
       const user = JSON.parse(userData);
       user.subscription = subscriptionDetails;
       user.isPremium = subscriptionDetails.status === 'active';
-      
+
       // Save updated user data
       localStorage.setItem('user', JSON.stringify(user));
-      
+
+      // In a real implementation, you would also save to Firestore
+      // const userRef = doc(db, 'users', userId);
+      // await updateDoc(userRef, {
+      //   subscription: subscriptionDetails,
+      //   isPremium: subscriptionDetails.status === 'active',
+      //   updatedAt: serverTimestamp()
+      // });
+
       return true;
     } catch (error) {
       console.error('Error saving subscription:', error);
       return false;
     }
   }
-  
+
   // Cancel subscription
   async cancelSubscription(userId: string): Promise<boolean> {
     try {
@@ -152,26 +256,83 @@ class PaymentService {
       if (!userData) {
         return false;
       }
-      
+
       // Update user data with canceled subscription
       const user = JSON.parse(userData);
       if (user.subscription) {
+        // Store the original subscription details
+        const originalSubscription = { ...user.subscription };
+
+        // Update subscription status
         user.subscription.status = 'canceled';
         user.subscription.autoRenew = false;
-        
+
         // Save updated user data
         localStorage.setItem('user', JSON.stringify(user));
-        
+
+        // In a real implementation, you would also update Firestore
+        // const userRef = doc(db, 'users', userId);
+        // await updateDoc(userRef, {
+        //   'subscription.status': 'canceled',
+        //   'subscription.autoRenew': false,
+        //   updatedAt: serverTimestamp()
+        // });
+
+        // If there was a promo code, update its usage status
+        if (originalSubscription.promoCodeId) {
+          // In a real implementation, you would update the promo code usage
+          // const usageQuery = query(
+          //   collection(db, 'promoCodeUsages'),
+          //   where('promoCodeId', '==', originalSubscription.promoCodeId),
+          //   where('userId', '==', userId),
+          //   where('isActive', '==', true)
+          // );
+          //
+          // const usageSnapshot = await getDocs(usageQuery);
+          // if (!usageSnapshot.empty) {
+          //   const usageDoc = usageSnapshot.docs[0];
+          //   await updateDoc(doc(db, 'promoCodeUsages', usageDoc.id), {
+          //     isActive: false,
+          //     cancelledAt: serverTimestamp()
+          //   });
+          // }
+        }
+
+        // Offer a win-back promo code
+        this.offerWinbackPromoCode(userId);
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Error canceling subscription:', error);
       return false;
     }
   }
-  
+
+  // Offer a win-back promo code after cancellation
+  private async offerWinbackPromoCode(userId: string): Promise<void> {
+    try {
+      // In a real implementation, you would check if the user is eligible for a win-back offer
+      // and add the 'cancellation' action to their profile
+
+      // const userRef = doc(db, 'users', userId);
+      // await updateDoc(userRef, {
+      //   actions: arrayUnion('cancellation'),
+      //   updatedAt: serverTimestamp()
+      // });
+
+      // For now, we'll just simulate this by showing a toast
+      toast({
+        title: "Special Offer",
+        description: "Use code BREATHEAGAIN for 1 month free when you resubscribe!"
+      });
+    } catch (error) {
+      console.error('Error offering win-back promo code:', error);
+    }
+  }
+
   // Check if user has active subscription
   hasActiveSubscription(userId: string): boolean {
     try {
@@ -180,18 +341,18 @@ class PaymentService {
       if (!userData) {
         return false;
       }
-      
+
       // Check if user has active subscription
       const user = JSON.parse(userData);
-      return user.isPremium === true && 
-             user.subscription?.status === 'active' && 
+      return user.isPremium === true &&
+             user.subscription?.status === 'active' &&
              new Date(user.subscription.endDate) > new Date();
     } catch (error) {
       console.error('Error checking subscription:', error);
       return false;
     }
   }
-  
+
   // Get subscription details
   getSubscriptionDetails(userId: string): SubscriptionDetails | null {
     try {
@@ -200,7 +361,7 @@ class PaymentService {
       if (!userData) {
         return null;
       }
-      
+
       // Get subscription details
       const user = JSON.parse(userData);
       return user.subscription || null;
@@ -209,19 +370,19 @@ class PaymentService {
       return null;
     }
   }
-  
+
   // Private helper methods
   private validatePaymentDetails(details: PaymentDetails): boolean {
     // In a real implementation, this would validate payment details
     // For now, we'll just check if required fields are present based on payment method
-    
+
     if (details.method === 'credit_card') {
       return !!(details.cardNumber && details.cardExpiry && details.cardCVC);
     } else if (details.method === 'apple_pay' || details.method === 'google_pay') {
       // For mobile payment methods, we don't need additional validation
       return true;
     }
-    
+
     return false;
   }
 }

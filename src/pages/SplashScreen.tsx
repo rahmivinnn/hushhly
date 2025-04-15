@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
-import { usePromoCode } from '@/hooks/usePromoCode';
+import { usePromoCodeEnhanced } from '@/hooks/usePromoCodeEnhanced';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { paymentService } from '@/services/paymentService';
+import { useAuth } from '@/hooks/useAuth';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +21,16 @@ const SplashScreen: React.FC = () => {
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [promoCode, setPromoCode] = useState('');
-  const { applyPromoCode, removePromoCode, activePromo, calculateDiscountedPrice } = usePromoCode();
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
+  const { user } = useAuth();
+  const {
+    applyPromoCode,
+    removePromoCode,
+    activePromo,
+    isValidating,
+    calculateDiscountedPrice,
+    getFormattedDiscountText
+  } = usePromoCodeEnhanced();
 
   const prices = {
     annual: 59.99,
@@ -95,65 +106,96 @@ const SplashScreen: React.FC = () => {
     setShowPaymentModal(true);
   };
 
-  const handlePayment = (method: 'apple' | 'google') => {
+  const handlePayment = async (method: 'apple' | 'google') => {
+    if (!user) {
+      toast.error('Please sign in to subscribe');
+      return;
+    }
+
     // Show the payment sheet with the appropriate branding
     setShowPaymentSheet(true);
     setPaymentStep('processing');
+    setProcessingPayment(true);
 
-    // First step: Processing payment (connecting to payment gateway)
-    setTimeout(() => {
+    try {
+      // Process payment using the payment service
+      const paymentResult = await paymentService.processPayment(
+        selectedPlan,
+        { method: method === 'apple' ? 'apple_pay' : 'google_pay' },
+        activePromo?.code,
+        user.id
+      );
+
       // Second step: Verifying with biometric authentication (Face ID or fingerprint)
       setPaymentStep('verifying');
 
+      // Simulate biometric verification
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Verify the payment
+      const isVerified = await paymentService.verifyPayment(paymentResult.paymentId || '');
+
+      if (!isVerified) {
+        throw new Error('Payment verification failed');
+      }
+
+      // Third step: Payment successful
+      setPaymentStep('success');
+
+      // Save subscription details
+      if (paymentResult.subscriptionDetails) {
+        await paymentService.saveSubscription(user.id, paymentResult.subscriptionDetails);
+      }
+
+      // After successful payment, close the payment sheet and continue
       setTimeout(() => {
-        // Third step: Payment successful
-        setPaymentStep('success');
+        // Close payment UI and proceed
+        setShowPaymentSheet(false);
+        setShowPaymentModal(false);
 
-        // After successful payment, close the payment sheet and continue
-        setTimeout(() => {
-          // Store subscription information in local storage or context
-          const subscriptionData = {
-            plan: selectedPlan,
-            startDate: new Date().toISOString(),
-            paymentMethod: method,
-            active: true,
-            // For annual plan, set expiry to 1 year from now, for monthly plan, set to 1 month
-            expiryDate: new Date(
-              new Date().setMonth(
-                new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1)
-              )
-            ).toISOString(),
-          };
+        // Show success toast
+        toast.success(`Successfully subscribed to ${selectedPlan === 'annual' ? 'annual' : 'monthly'} plan!`);
 
-          // In a real app, you would store this in a secure way and sync with backend
-          localStorage.setItem('hushhly_subscription', JSON.stringify(subscriptionData));
+        // Continue to next screen
+        handleNext();
+      }, 1500);
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
 
-          // Close payment UI and proceed
-          setShowPaymentSheet(false);
-          setShowPaymentModal(false);
-
-          // Show success toast
-          toast.success(`Successfully subscribed to ${selectedPlan === 'annual' ? 'annual' : 'monthly'} plan!`);
-
-          // Continue to next screen
-          handleNext();
-        }, 1500);
-      }, 2000);
-    }, 2000);
+      // Reset payment UI
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    } finally {
+      setProcessingPayment(false);
+    }
   };
 
-  const handlePromoCodeSubmit = () => {
+  const handlePromoCodeSubmit = async () => {
     if (!promoCode) {
       toast.error('Please enter a promo code');
       return;
     }
 
-    const result = applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
+    if (!user) {
+      toast.error('Please sign in to use promo codes');
+      return;
+    }
 
-    if (result.isValid) {
-      toast.success(result.message);
-    } else {
-      toast.error(result.message);
+    setIsApplyingPromo(true);
+    try {
+      const result = await applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
+
+      if (result.isValid) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error applying promo code:', error);
+      toast.error('An error occurred while applying the promo code');
+    } finally {
+      setIsApplyingPromo(false);
     }
   };
 
@@ -336,13 +378,23 @@ const SplashScreen: React.FC = () => {
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               className="bg-white/20 text-white placeholder:text-white/60"
+              disabled={isApplyingPromo}
             />
             <Button
               onClick={handlePromoCodeSubmit}
               variant="secondary"
               className="whitespace-nowrap"
+              disabled={isApplyingPromo}
             >
-              Apply Code
+              {isApplyingPromo ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Verifying
+                </span>
+              ) : 'Apply Code'}
             </Button>
           </div>
           {activePromo && (
@@ -350,7 +402,10 @@ const SplashScreen: React.FC = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="font-semibold">{activePromo.code}</p>
-                  <p className="text-sm opacity-80">{activePromo.discount}</p>
+                  <p className="text-sm opacity-80">{activePromo.description}</p>
+                  <p className="text-xs text-green-400 mt-1">
+                    {getFormattedDiscountText(selectedPlan === 'annual' ? prices.annual : prices.monthly)}
+                  </p>
                 </div>
                 <Button
                   variant="ghost"
@@ -486,8 +541,31 @@ const SplashScreen: React.FC = () => {
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-bold text-gray-800">Complete Purchase</h3>
                   <p className="text-gray-600 mt-2">
-                    {selectedPlan === 'annual' ? 'Annual Plan - $59.99/year' : 'Monthly Plan - $7.99/month'}
+                    {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
+                    {activePromo ? (
+                      <>
+                        <span className="line-through text-gray-400 mx-2">
+                          ${selectedPlan === 'annual' ? prices.annual : prices.monthly}
+                        </span>
+                        <span className="text-green-600 font-medium">
+                          ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="ml-2">
+                        ${selectedPlan === 'annual' ? prices.annual : prices.monthly}
+                        {selectedPlan === 'annual' ? '/year' : '/month'}
+                      </span>
+                    )}
                   </p>
+                  {activePromo && (
+                    <div className="mt-2 text-sm text-green-600 flex items-center justify-center">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {activePromo.description}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-4">
                   <Button

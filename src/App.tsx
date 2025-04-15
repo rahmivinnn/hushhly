@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import React from 'react';
 import Index from "./pages/Index";
 import SplashScreen from "./pages/SplashScreen";
@@ -22,15 +22,15 @@ import EditProfile from "./pages/EditProfile";
 import Meditation101 from "./pages/Meditation101";
 import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SubscriptionManagement from "./pages/SubscriptionManagement";
+import AdminPromoCodesPage from "./pages/AdminPromoCodesPage";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <HashRouter>
-        <TooltipProvider>
-          <Routes>
+      <TooltipProvider>
+        <Routes>
             <Route path="/" element={<SplashScreen />} />
             <Route path="/splash" element={<SplashScreen />} />
             <Route path="/subscription" element={<SubscriptionScreen />} />
@@ -49,13 +49,13 @@ const App = () => (
             <Route path="/community" element={<Community />} />
             <Route path="/work" element={<Work />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/admin/promo-codes" element={<AdminPromoCodesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
           <Sonner />
         </TooltipProvider>
-      </HashRouter>
     </QueryClientProvider>
   </React.StrictMode>
 );
