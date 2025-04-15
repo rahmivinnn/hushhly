@@ -14,7 +14,9 @@ import { BalanceDisplay } from '@/components/ui/balance-display';
 import { balanceService } from '@/services/balanceService';
 import { faceIdService } from '@/services/faceIdService';
 import { applePayService } from '@/services/applePayService';
+import { biometricService } from '@/services/biometricService';
 import { FaceIDDialog } from '@/components/ui/face-id-dialog';
+import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +32,8 @@ const SplashScreen: React.FC = () => {
   const [faceIdFeatures, setFaceIdFeatures] = useState<any>(null);
   const [faceIdConfidence, setFaceIdConfidence] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState('');
+  const [verificationMethod, setVerificationMethod] = useState<'fingerprint' | 'screenlock'>('fingerprint');
+  const [showBiometricDialog, setShowBiometricDialog] = useState(false);
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const { user } = useAuthSimple();
   const {
@@ -493,6 +497,197 @@ const SplashScreen: React.FC = () => {
     return calculateDiscountedPrice(originalPrice);
   };
 
+  // Handle Apple Pay with Face ID
+  const handleApplePay = async () => {
+    // Show the payment sheet with Apple Pay branding
+    setShowPaymentSheet(true);
+    setPaymentStep('processing');
+    setProcessingPayment(true);
+
+    try {
+      // Get user ID
+      const userId = getCurrentUserId();
+
+      // Check if Apple Pay is available
+      const isApplePayAvailable = await applePayService.isAvailable();
+      if (!isApplePayAvailable) {
+        throw new Error('Apple Pay is not available on this device. Please use an iOS device with Apple Pay support.');
+      }
+
+      // Calculate price based on selected plan
+      let originalPrice: number, finalPrice: number;
+
+      if (selectedPlan === 'annual') {
+        // Annual plan: $59.99 per year
+        originalPrice = prices.annual;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+        // Show initializing payment message with annual amount
+        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/year...`);
+      } else {
+        // Monthly plan: $5.99 per month
+        originalPrice = prices.monthly;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+        // Show initializing payment message with monthly amount
+        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/month...`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // First step: Process payment with Apple Pay
+      const paymentDescription = `Subscription to ${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
+
+      // Store transaction details for verification
+      localStorage.setItem('pendingPaymentAmount', finalPrice.toString());
+      localStorage.setItem('pendingPaymentDescription', paymentDescription);
+      localStorage.setItem('pendingPaymentUserId', userId);
+      localStorage.setItem('pendingPaymentPlan', selectedPlan);
+
+      // Second step: Verify with Face ID
+      setPaymentStep('verifying');
+
+      // Check if Face ID is available
+      const isFaceIDAvailable = await faceIdService.isAvailable();
+      if (!isFaceIDAvailable) {
+        throw new Error('Face ID is not available on this device. Please use an iOS device with Face ID support.');
+      }
+
+      // Show Face ID verification message
+      toast.info('Please verify with Face ID to complete payment');
+
+      // Show the Face ID dialog
+      setShowFaceIDDialog(true);
+
+      // The verification will continue in the onFaceIDSuccess handler
+      return;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
+
+      // Reset payment UI
+      setShowFaceIDDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  // Handle Face ID error
+  const handleFaceIDError = async (error: string) => {
+    console.error('Face ID error:', error);
+    toast.error(error || 'Face ID verification failed');
+
+    // Close the Face ID dialog
+    setShowFaceIDDialog(false);
+
+    // Wait a moment before showing the retry option
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Ask if user wants to try again
+    const tryAgain = window.confirm('Would you like to try Face ID verification again?');
+
+    if (tryAgain) {
+      // Try again with Apple Pay
+      handleApplePay();
+      return;
+    }
+
+    // Reset payment UI if user doesn't want to try again
+    setShowPaymentSheet(false);
+    setPaymentStep('select');
+  };
+
+  // Handle successful Face ID authentication
+  const handleFaceIDSuccess = async (features?: any, confidence?: number) => {
+    // Store Face ID features and confidence for display
+    if (features) setFaceIdFeatures(features);
+    if (confidence !== undefined) setFaceIdConfidence(confidence);
+
+    // Trigger balance update
+    window.dispatchEvent(new Event('balance-updated'));
+
+    try {
+      // Get the pending payment details from localStorage
+      const amount = parseFloat(localStorage.getItem('pendingPaymentAmount') || '0');
+      const description = localStorage.getItem('pendingPaymentDescription') || '';
+      const userId = localStorage.getItem('pendingPaymentUserId') || getCurrentUserId();
+      const plan = localStorage.getItem('pendingPaymentPlan') as 'annual' | 'monthly' || selectedPlan;
+
+      if (!amount || !description) {
+        throw new Error('Payment information not found');
+      }
+
+      // Set the selected plan based on what was stored
+      setSelectedPlan(plan);
+
+      // Show success message
+      toast.success('Face ID verified');
+
+      // Add a small delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Show processing message
+      toast.info('Processing Apple Pay payment...');
+
+      // Process the actual payment with Apple Pay
+      const paymentResult = await applePayService.processPayment({
+        amount,
+        currency: 'USD',
+        description,
+        userId
+      });
+
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || 'Apple Pay payment failed');
+      }
+
+      // Add another delay to simulate backend processing
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Complete the payment process
+      setPaymentStep('success');
+
+      // Save subscription details
+      const subscriptionDetails = {
+        plan: plan, // Use the plan from localStorage
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + (plan === 'annual' ? 12 : 1))),
+        autoRenew: true,
+        status: 'active' as 'active',
+        paymentId: paymentResult.transactionId,
+        promoCodeId: activePromo?.id,
+        originalPrice: plan === 'annual' ? prices.annual : prices.monthly,
+        finalPrice: amount // Use the actual amount paid from localStorage
+      };
+
+      await paymentService.saveSubscription(userId, subscriptionDetails);
+
+      // Show success message
+      toast.success('Payment successful!');
+
+      // Add a delay before closing the payment UI
+      setTimeout(() => {
+        // Close payment UI and proceed
+        setShowFaceIDDialog(false);
+        setShowPaymentSheet(false);
+        setShowPaymentModal(false);
+
+        // Navigate to the next screen
+        setCurrentScreen(currentScreen + 1);
+      }, 3000);
+    } catch (error) {
+      console.error('Face ID success handler error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment processing');
+
+      // Reset payment UI
+      setShowFaceIDDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    }
+  };
+
   // Define the content for each screen
   const screens = [
     // Screen 0: Clean blue gradient background with Hushhly logo in center
@@ -808,39 +1003,28 @@ const SplashScreen: React.FC = () => {
 
                           {/* Main icon container */}
                           <div className="animate-pulse w-20 h-20 rounded-full bg-white/20 flex items-center justify-center relative z-10">
-                            {isAndroid() ? (
-                              /* Fingerprint icon for Android - Gojek style */
-                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
-                              </svg>
-                            ) : (
-                              /* Face ID icon for iOS - Gojek style */
-                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
-                              </svg>
-                            )}
+                            {/* Apple Face ID icon */}
+                            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 9h.01M15 9h.01M8 13a4 4 0 008 0" />
+                              <rect width="20" height="20" x="2" y="2" rx="5" />
+                            </svg>
                           </div>
                         </div>
                       </div>
 
-                      {/* Gojek-style verification text */}
+                      {/* Apple Pay verification text */}
                       <h3 className="text-xl font-semibold text-white mb-1">
-                        {isAndroid() ? 'Touch Fingerprint Sensor' : 'Look at Your Device'}
+                        Look at Your Device
                       </h3>
                       <p className="text-sm text-white/80 mt-2">
-                        {isAndroid()
-                          ? 'Use your fingerprint to verify this payment'
-                          : 'Use Face ID to verify this payment'}
+                        Use Face ID to verify this Apple Pay payment
                       </p>
 
-                      {/* Gojek-style security badge */}
+                      {/* Apple Pay security badge */}
                       <div className="mt-6 flex items-center justify-center">
                         <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                          <span className="text-xs text-white/80">Secured by Hushhly Pay</span>
+                          <FaApple size={12} className="text-white" />
+                          <span className="text-xs text-white/80">Secured by Apple Pay</span>
                         </div>
                       </div>
                     </div>
@@ -953,13 +1137,11 @@ const SplashScreen: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Gojek-style security badge */}
+                      {/* Apple Pay security badge */}
                       <div className="mt-6 flex items-center justify-center">
                         <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                          <span className="text-xs text-white/80">Secured by Hushhly Pay</span>
+                          <FaApple size={12} className="text-white" />
+                          <span className="text-xs text-white/80">Secured by Apple Pay</span>
                         </div>
                       </div>
                     </div>
@@ -1517,6 +1699,14 @@ const SplashScreen: React.FC = () => {
     }
   }, [currentScreen, navigate, totalScreens]);
 
+
+
+
+
+
+
+
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Current screen content */}
@@ -1524,187 +1714,28 @@ const SplashScreen: React.FC = () => {
 
       {/* Progress indicators */}
       {renderProgressIndicators()}
+
+      {/* Face ID Authentication Dialog */}
+      <FaceIDDialog
+        isOpen={showFaceIDDialog}
+        onClose={() => setShowFaceIDDialog(false)}
+        onSuccess={handleFaceIDSuccess}
+        onError={handleFaceIDError}
+        title="Verify Apple Pay"
+        description="Please authenticate with Face ID to complete your payment"
+      />
+
+      {/* Fingerprint Authentication Dialog */}
+      <FingerprintDialog
+        isOpen={showBiometricDialog}
+        onClose={() => setShowBiometricDialog(false)}
+        onSuccess={handleBiometricSuccess}
+        onError={handleBiometricError}
+        title="Verify Payment"
+        description="Please authenticate with your fingerprint to complete the payment"
+      />
     </div>
   );
 };
-
-  // Handle Apple Pay with Face ID
-  const handleApplePay = async () => {
-    // Show the payment sheet with Apple Pay branding
-    setShowPaymentSheet(true);
-    setPaymentStep('processing');
-    setProcessingPayment(true);
-
-    try {
-      // Get user ID
-      const userId = getCurrentUserId();
-
-      // Check if Apple Pay is available
-      const isApplePayAvailable = await applePayService.isAvailable();
-      if (!isApplePayAvailable) {
-        throw new Error('Apple Pay is not available on this device. Please use an iOS device with Apple Pay support.');
-      }
-
-      // Calculate price based on selected plan
-      let originalPrice, finalPrice;
-
-      if (selectedPlan === 'annual') {
-        // Annual plan: $59.99 per year
-        originalPrice = prices.annual;
-        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
-
-        // Show initializing payment message with annual amount
-        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/year...`);
-      } else {
-        // Monthly plan: $5.99 per month
-        originalPrice = prices.monthly;
-        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
-
-        // Show initializing payment message with monthly amount
-        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/month...`);
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // First step: Process payment with Apple Pay
-      const paymentDescription = `Subscription to ${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
-
-      // Store transaction details for verification
-      localStorage.setItem('pendingPaymentAmount', finalPrice.toString());
-      localStorage.setItem('pendingPaymentDescription', paymentDescription);
-      localStorage.setItem('pendingPaymentUserId', userId);
-      localStorage.setItem('pendingPaymentPlan', selectedPlan);
-
-      // Second step: Verify with Face ID
-      setPaymentStep('verifying');
-
-      // Check if Face ID is available
-      const isFaceIDAvailable = await faceIdService.isAvailable();
-      if (!isFaceIDAvailable) {
-        throw new Error('Face ID is not available on this device. Please use an iOS device with Face ID support.');
-      }
-
-      // Show Face ID verification message
-      toast.info('Please verify with Face ID to complete payment');
-
-      // Show the Face ID dialog
-      setShowFaceIDDialog(true);
-
-      // The verification will continue in the onFaceIDSuccess handler
-      return;
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
-
-      // Reset payment UI
-      setShowFaceIDDialog(false);
-      setShowPaymentSheet(false);
-      setPaymentStep('select');
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
-
-  // Handle successful Face ID authentication
-  const handleFaceIDSuccess = async (features?: any, confidence?: number) => {
-    // Store Face ID features and confidence for display
-    if (features) setFaceIdFeatures(features);
-    if (confidence !== undefined) setFaceIdConfidence(confidence);
-
-    // Trigger balance update
-    window.dispatchEvent(new Event('balance-updated'));
-
-    try {
-      // Get the pending payment details from localStorage
-      const amount = parseFloat(localStorage.getItem('pendingPaymentAmount') || '0');
-      const description = localStorage.getItem('pendingPaymentDescription') || '';
-      const userId = localStorage.getItem('pendingPaymentUserId') || getCurrentUserId();
-      const plan = localStorage.getItem('pendingPaymentPlan') as 'annual' | 'monthly' || selectedPlan;
-
-      if (!amount || !description) {
-        throw new Error('Payment information not found');
-      }
-
-      // Set the selected plan based on what was stored
-      setSelectedPlan(plan);
-
-      // Show success message
-      toast.success('Face ID verified');
-
-      // Add a small delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Show processing message
-      toast.info('Processing Apple Pay payment...');
-
-      // Process the actual payment with Apple Pay
-      const paymentResult = await applePayService.processPayment({
-        amount,
-        currency: 'USD',
-        description,
-        userId
-      });
-
-      if (!paymentResult.success) {
-        throw new Error(paymentResult.error || 'Apple Pay payment failed');
-      }
-
-      // Add another delay to simulate backend processing
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Complete the payment process
-      setPaymentStep('success');
-
-      // Save subscription details
-      const subscriptionDetails = {
-        plan: plan, // Use the plan from localStorage
-        startDate: new Date(),
-        endDate: new Date(new Date().setMonth(new Date().getMonth() + (plan === 'annual' ? 12 : 1))),
-        autoRenew: true,
-        status: 'active',
-        paymentId: paymentResult.transactionId,
-        promoCodeId: activePromo?.id,
-        originalPrice: plan === 'annual' ? prices.annual : prices.monthly,
-        finalPrice: amount // Use the actual amount paid from localStorage
-      };
-
-      await paymentService.saveSubscription(userId, subscriptionDetails);
-
-      // Show success message
-      toast.success('Payment successful!');
-
-      // Add a delay before closing the payment UI
-      setTimeout(() => {
-        // Close payment UI and proceed
-        setShowFaceIDDialog(false);
-        setShowPaymentSheet(false);
-        setShowPaymentModal(false);
-
-        // Navigate to the next screen
-        setCurrentScreen(currentScreen + 1);
-      }, 3000);
-    } catch (error) {
-      console.error('Face ID success handler error:', error);
-      toast.error(error instanceof Error ? error.message : 'An error occurred during payment processing');
-
-      // Reset payment UI
-      setShowFaceIDDialog(false);
-      setShowPaymentSheet(false);
-      setPaymentStep('select');
-    }
-  };
-
-  // Handle Face ID error
-  const handleFaceIDError = async (error: string) => {
-    console.error('Face ID error:', error);
-    toast.error(error || 'Face ID verification failed');
-
-    // Close the Face ID dialog
-    setShowFaceIDDialog(false);
-
-    // Reset payment UI
-    setShowPaymentSheet(false);
-    setPaymentStep('select');
-  };
 
 export default SplashScreen;

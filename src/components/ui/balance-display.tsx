@@ -11,7 +11,7 @@ interface BalanceDisplayProps {
 }
 
 export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
-  showAddFunds = true,
+  showAddFunds = false, // Default to false to hide Add Funds button
   compact = false,
   className = ''
 }) => {

@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 interface FaceIDDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (features?: FaceFeatures, confidence?: number) => void;
   onError: (error: string) => void;
   title?: string;
   description?: string;
@@ -56,10 +56,10 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
         if (result.confidence) {
           setConfidence(result.confidence);
         }
-        
+
         // Wait a moment to show the success state before closing
         setTimeout(() => {
-          onSuccess();
+          onSuccess(result.features, result.confidence);
         }, 1500);
       } else {
         setError(result.error || 'Authentication failed');
@@ -124,15 +124,15 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
               "relative",
               success ? "text-green-600" : error ? "text-red-600" : "text-blue-600"
             )}>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="64" 
-                height="64" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="1.5" 
-                strokeLinecap="round" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="64"
+                height="64"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
                 strokeLinejoin="round"
                 className={cn(
                   authenticating && "animate-pulse"
@@ -143,36 +143,36 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
                 <path d="M8 13a4 4 0 0 0 8 0" />
                 <rect width="20" height="20" x="2" y="2" rx="5" />
               </svg>
-              
+
               {/* Success checkmark */}
               {success && (
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                   className="absolute -bottom-1 -right-1 bg-white rounded-full text-green-600"
                 >
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
               )}
-              
+
               {/* Error X */}
               {error && (
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                   className="absolute -bottom-1 -right-1 bg-white rounded-full text-red-600"
                 >
@@ -197,20 +197,20 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
           ) : (
             <div className="text-center">
               <p className="text-lg font-medium text-gray-800 mb-1">
-                {success 
-                  ? 'Authentication Successful' 
-                  : authenticating 
-                    ? 'Scanning Face...' 
+                {success
+                  ? 'Authentication Successful'
+                  : authenticating
+                    ? 'Scanning Face...'
                     : 'Ready for Face ID'}
               </p>
               <p className="text-sm text-gray-500">
-                {success 
-                  ? 'Proceeding with payment...' 
-                  : authenticating 
-                    ? 'Please look directly at your device' 
+                {success
+                  ? 'Proceeding with payment...'
+                  : authenticating
+                    ? 'Please look directly at your device'
                     : 'Look at your device camera'}
               </p>
-              
+
               {/* Feature detection details (only show in success state) */}
               {success && features && (
                 <div className="mt-4 text-xs text-left bg-gray-50 p-3 rounded-lg">
