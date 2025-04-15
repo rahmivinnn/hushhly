@@ -37,16 +37,16 @@ export const balanceService = {
     try {
       // Coba ambil data dari localStorage
       const storedData = localStorage.getItem(BALANCE_STORAGE_KEY);
-      
+
       if (storedData) {
         const balances = JSON.parse(storedData) as Record<string, UserBalance>;
-        
+
         // Jika data pengguna sudah ada, kembalikan
         if (balances[userId]) {
           return balances[userId];
         }
       }
-      
+
       // Jika tidak ada data, buat data baru
       const newBalance: UserBalance = {
         userId,
@@ -55,14 +55,14 @@ export const balanceService = {
         lastUpdated: Date.now(),
         transactions: []
       };
-      
+
       // Simpan data baru
       this.saveUserBalance(userId, newBalance);
-      
+
       return newBalance;
     } catch (error) {
       console.error('Error getting user balance:', error);
-      
+
       // Kembalikan data default jika terjadi error
       return {
         userId,
@@ -73,7 +73,7 @@ export const balanceService = {
       };
     }
   },
-  
+
   /**
    * Menyimpan data saldo pengguna
    * @param userId ID pengguna
@@ -84,17 +84,17 @@ export const balanceService = {
       // Coba ambil data dari localStorage
       const storedData = localStorage.getItem(BALANCE_STORAGE_KEY);
       let balances: Record<string, UserBalance> = {};
-      
+
       if (storedData) {
         balances = JSON.parse(storedData);
       }
-      
+
       // Update data pengguna
       balances[userId] = {
         ...balanceData,
         lastUpdated: Date.now()
       };
-      
+
       // Simpan kembali ke localStorage
       localStorage.setItem(BALANCE_STORAGE_KEY, JSON.stringify(balances));
     } catch (error) {
@@ -102,7 +102,7 @@ export const balanceService = {
       toast.error('Gagal menyimpan data saldo');
     }
   },
-  
+
   /**
    * Menambah saldo pengguna
    * @param userId ID pengguna
@@ -114,7 +114,7 @@ export const balanceService = {
     try {
       // Dapatkan data saldo pengguna
       const balanceData = this.getUserBalance(userId);
-      
+
       // Buat transaksi baru
       const transaction: Transaction = {
         id: `TRX${Date.now()}${Math.floor(Math.random() * 1000)}`,
@@ -124,30 +124,33 @@ export const balanceService = {
         timestamp: Date.now(),
         status: 'pending'
       };
-      
+
       // Tambahkan transaksi ke daftar transaksi
       balanceData.transactions.unshift(transaction);
-      
+
       // Simpan perubahan
       this.saveUserBalance(userId, balanceData);
-      
+
       // Simulasi proses backend
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Update status transaksi menjadi completed
       const updatedBalanceData = this.getUserBalance(userId);
       const transactionIndex = updatedBalanceData.transactions.findIndex(t => t.id === transaction.id);
-      
+
       if (transactionIndex !== -1) {
         updatedBalanceData.transactions[transactionIndex].status = 'completed';
         updatedBalanceData.balance += amount;
-        
+
         // Simpan perubahan
         this.saveUserBalance(userId, updatedBalanceData);
-        
+
+        // Dispatch custom event untuk memicu update UI
+        window.dispatchEvent(new Event('balance-updated'));
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Error adding balance:', error);
@@ -155,7 +158,7 @@ export const balanceService = {
       return false;
     }
   },
-  
+
   /**
    * Mengurangi saldo pengguna (untuk pembayaran)
    * @param userId ID pengguna
@@ -165,23 +168,23 @@ export const balanceService = {
    * @returns Status keberhasilan dan detail transaksi
    */
   async deductBalance(
-    userId: string, 
-    amount: number, 
+    userId: string,
+    amount: number,
     description: string,
     paymentMethod?: string
   ): Promise<{ success: boolean; transaction?: Transaction; error?: string }> {
     try {
       // Dapatkan data saldo pengguna
       const balanceData = this.getUserBalance(userId);
-      
+
       // Cek apakah saldo mencukupi
       if (balanceData.balance < amount) {
-        return { 
-          success: false, 
-          error: 'Saldo tidak mencukupi' 
+        return {
+          success: false,
+          error: 'Saldo tidak mencukupi'
         };
       }
-      
+
       // Buat transaksi baru
       const transaction: Transaction = {
         id: `TRX${Date.now()}${Math.floor(Math.random() * 1000)}`,
@@ -192,46 +195,49 @@ export const balanceService = {
         status: 'pending',
         paymentMethod
       };
-      
+
       // Tambahkan transaksi ke daftar transaksi
       balanceData.transactions.unshift(transaction);
-      
+
       // Simpan perubahan
       this.saveUserBalance(userId, balanceData);
-      
+
       // Simulasi proses backend
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Update status transaksi menjadi completed
       const updatedBalanceData = this.getUserBalance(userId);
       const transactionIndex = updatedBalanceData.transactions.findIndex(t => t.id === transaction.id);
-      
+
       if (transactionIndex !== -1) {
         updatedBalanceData.transactions[transactionIndex].status = 'completed';
         updatedBalanceData.balance -= amount;
-        
+
         // Simpan perubahan
         this.saveUserBalance(userId, updatedBalanceData);
-        
-        return { 
-          success: true, 
-          transaction: updatedBalanceData.transactions[transactionIndex] 
+
+        // Dispatch custom event untuk memicu update UI
+        window.dispatchEvent(new Event('balance-updated'));
+
+        return {
+          success: true,
+          transaction: updatedBalanceData.transactions[transactionIndex]
         };
       }
-      
-      return { 
-        success: false, 
-        error: 'Gagal memproses transaksi' 
+
+      return {
+        success: false,
+        error: 'Gagal memproses transaksi'
       };
     } catch (error) {
       console.error('Error deducting balance:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Gagal mengurangi saldo' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Gagal mengurangi saldo'
       };
     }
   },
-  
+
   /**
    * Mendapatkan riwayat transaksi pengguna
    * @param userId ID pengguna
@@ -246,7 +252,7 @@ export const balanceService = {
       return [];
     }
   },
-  
+
   /**
    * Format saldo dengan format mata uang
    * @param amount Jumlah saldo

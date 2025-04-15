@@ -123,8 +123,8 @@ class PaymentService {
       // Convert price to IDR (assuming prices are in USD)
       const priceInIDR = Math.round(finalPrice * 15000); // Approximate USD to IDR conversion
 
-      // Use real balance deduction
-      const userIdToUse = userId || `temp_user_${Date.now()}`;
+      // Use real balance deduction with consistent user ID
+      const userIdToUse = userId || this.getTempUserId();
       const paymentDescription = `Subscription to ${plan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
 
       // Process the actual payment by deducting from user balance
@@ -389,6 +389,20 @@ class PaymentService {
       console.error('Error getting subscription details:', error);
       return null;
     }
+  }
+
+  // Get consistent temporary user ID
+  private getTempUserId(): string {
+    // Check if we already have a temporary ID in localStorage
+    let tempId = localStorage.getItem('temp_user_id');
+
+    // If not, create a new one and store it
+    if (!tempId) {
+      tempId = `temp_user_${Date.now()}`;
+      localStorage.setItem('temp_user_id', tempId);
+    }
+
+    return tempId;
   }
 
   // Private helper methods

@@ -21,21 +21,33 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingFunds, setIsAddingFunds] = useState(false);
 
+  // Get consistent temporary user ID
+  const getTempUserId = () => {
+    // Check if we already have a temporary ID in localStorage
+    let tempId = localStorage.getItem('temp_user_id');
+
+    // If not, create a new one and store it
+    if (!tempId) {
+      tempId = `temp_user_${Date.now()}`;
+      localStorage.setItem('temp_user_id', tempId);
+    }
+
+    return tempId;
+  };
+
+  // Get current user ID (real or temporary)
+  const getCurrentUserId = () => {
+    return user?.id || getTempUserId();
+  };
+
   // Load user balance
   useEffect(() => {
     const loadBalance = () => {
       try {
-        if (user?.id) {
-          const userBalance = balanceService.getUserBalance(user.id);
-          setBalance(userBalance.balance);
-          setCurrency(userBalance.currency);
-        } else {
-          // For anonymous users, create a temporary ID
-          const tempUserId = `temp_user_${Date.now()}`;
-          const userBalance = balanceService.getUserBalance(tempUserId);
-          setBalance(userBalance.balance);
-          setCurrency(userBalance.currency);
-        }
+        const userId = getCurrentUserId();
+        const userBalance = balanceService.getUserBalance(userId);
+        setBalance(userBalance.balance);
+        setCurrency(userBalance.currency);
       } catch (error) {
         console.error('Error loading balance:', error);
         toast.error('Failed to load balance');
@@ -45,33 +57,43 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
     };
 
     loadBalance();
-    
-    // Refresh balance every 5 seconds
-    const intervalId = setInterval(loadBalance, 5000);
-    
-    return () => clearInterval(intervalId);
+
+    // Refresh balance every 1 second for more real-time updates
+    const intervalId = setInterval(loadBalance, 1000);
+
+    // Listen for custom event for balance updates
+    const handleBalanceUpdate = () => loadBalance();
+    window.addEventListener('balance-updated', handleBalanceUpdate);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('balance-updated', handleBalanceUpdate);
+    };
   }, [user]);
 
   // Handle adding funds
   const handleAddFunds = async () => {
     try {
       setIsAddingFunds(true);
-      
-      // Get user ID (or create temporary one)
-      const userId = user?.id || `temp_user_${Date.now()}`;
-      
+
+      // Get user ID (consistent temporary or real ID)
+      const userId = getCurrentUserId();
+
       // Add 500,000 IDR to balance
       const amount = 500000;
       const description = 'Top up balance';
-      
+
       // Process the transaction
       const success = await balanceService.addBalance(userId, amount, description);
-      
+
       if (success) {
         // Update local balance
         const userBalance = balanceService.getUserBalance(userId);
         setBalance(userBalance.balance);
-        
+
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new Event('balance-updated'));
+
         // Show success message
         toast.success(`Added ${balanceService.formatBalance(amount, currency)} to your balance`);
       } else {
@@ -112,7 +134,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
             {balanceService.formatBalance(balance, currency)}
           </p>
         </div>
-        
+
         {showAddFunds && (
           <Button
             size="sm"

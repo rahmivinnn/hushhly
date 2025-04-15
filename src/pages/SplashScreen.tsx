@@ -114,6 +114,25 @@ const SplashScreen: React.FC = () => {
     setShowPaymentModal(true);
   };
 
+  // Get consistent temporary user ID
+  const getTempUserId = () => {
+    // Check if we already have a temporary ID in localStorage
+    let tempId = localStorage.getItem('temp_user_id');
+
+    // If not, create a new one and store it
+    if (!tempId) {
+      tempId = `temp_user_${Date.now()}`;
+      localStorage.setItem('temp_user_id', tempId);
+    }
+
+    return tempId;
+  };
+
+  // Get current user ID (real or temporary)
+  const getCurrentUserId = () => {
+    return user?.id || getTempUserId();
+  };
+
   const handlePayment = async (method: 'apple' | 'google') => {
     // No need to check for user login here - we assume they're already logged in
     // Just proceed directly to payment processing
@@ -124,9 +143,8 @@ const SplashScreen: React.FC = () => {
     setProcessingPayment(true);
 
     try {
-      // Process payment using the payment service
-      // Generate a temporary user ID if user is not logged in
-      const userId = user?.id || `temp_user_${Date.now()}`;
+      // Process payment using the payment service with consistent user ID
+      const userId = getCurrentUserId();
 
       const paymentResult = await paymentService.processPayment(
         selectedPlan,
@@ -253,6 +271,8 @@ const SplashScreen: React.FC = () => {
 
   // Handle successful biometric authentication
   const handleBiometricSuccess = async () => {
+    // Trigger balance update
+    window.dispatchEvent(new Event('balance-updated'));
     try {
       // Show success message
       toast.success('Fingerprint verified');
@@ -316,6 +336,8 @@ const SplashScreen: React.FC = () => {
 
   // Handle biometric authentication error
   const handleBiometricError = async (error: string) => {
+    // Trigger balance update
+    window.dispatchEvent(new Event('balance-updated'));
     // Show error message
     toast.error(error || 'Fingerprint verification failed');
 
@@ -386,14 +408,16 @@ const SplashScreen: React.FC = () => {
 
   // Complete the payment process after successful verification
   const completePaymentProcess = async (paymentResult: any) => {
+    // Trigger balance update
+    window.dispatchEvent(new Event('balance-updated'));
     try {
       // Third step: Payment successful
       setPaymentStep('success');
 
       // Save subscription details
       if (paymentResult.subscriptionDetails) {
-        // Generate a temporary user ID if user is not logged in
-        const userId = user?.id || `temp_user_${Date.now()}`;
+        // Use consistent user ID
+        const userId = getCurrentUserId();
         await paymentService.saveSubscription(userId, paymentResult.subscriptionDetails);
       }
 
