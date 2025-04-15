@@ -17,7 +17,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
 }) => {
   const { user } = useAuthSimple();
   const [balance, setBalance] = useState(0);
-  const [currency, setCurrency] = useState('IDR');
+  const [currency, setCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingFunds, setIsAddingFunds] = useState(false);
 
@@ -79,8 +79,8 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
       // Get user ID (consistent temporary or real ID)
       const userId = getCurrentUserId();
 
-      // Add 500,000 IDR to balance
-      const amount = 500000;
+      // Add $100 USD to balance
+      const amount = 100;
       const description = 'Top up balance';
 
       // Process the transaction

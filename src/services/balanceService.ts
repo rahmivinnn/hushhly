@@ -22,7 +22,7 @@ export interface Transaction {
 
 // Kunci untuk menyimpan data di localStorage
 const BALANCE_STORAGE_KEY = 'hushhly_user_balance';
-const DEFAULT_BALANCE = 1000000; // 1 juta rupiah sebagai saldo default
+const DEFAULT_BALANCE = 1000; // 1000 USD sebagai saldo default
 
 /**
  * Service untuk mengelola saldo pengguna
@@ -51,7 +51,7 @@ export const balanceService = {
       const newBalance: UserBalance = {
         userId,
         balance: DEFAULT_BALANCE,
-        currency: 'IDR',
+        currency: 'USD',
         lastUpdated: Date.now(),
         transactions: []
       };
@@ -67,7 +67,7 @@ export const balanceService = {
       return {
         userId,
         balance: DEFAULT_BALANCE,
-        currency: 'IDR',
+        currency: 'USD',
         lastUpdated: Date.now(),
         transactions: []
       };
@@ -259,9 +259,9 @@ export const balanceService = {
    * @param currency Mata uang
    * @returns String saldo dengan format mata uang
    */
-  formatBalance(amount: number, currency: string = 'IDR'): string {
+  formatBalance(amount: number, currency: string = 'USD'): string {
     try {
-      return new Intl.NumberFormat('id-ID', {
+      return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency,
         minimumFractionDigits: 0,

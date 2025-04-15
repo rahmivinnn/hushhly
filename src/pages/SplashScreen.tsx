@@ -879,13 +879,7 @@ const SplashScreen: React.FC = () => {
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs text-white/60">Amount (USD)</span>
                           <span className="text-sm text-white font-medium">
-                            ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-white/60">Amount (IDR)</span>
-                          <span className="text-sm text-white font-medium">
-                            {balanceService.formatBalance(Math.round(getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly) * 15000))}
+                            {balanceService.formatBalance(getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly))}
                           </span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
@@ -1063,17 +1057,6 @@ const SplashScreen: React.FC = () => {
                   {/* Balance Display */}
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <BalanceDisplay />
-                    <div className="mt-2 flex justify-end">
-                      <button
-                        onClick={() => navigate('/transaction-history')}
-                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
-                      >
-                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        View Transactions
-                      </button>
-                    </div>
                   </div>
 
                   {/* Payment Method Options */}
@@ -1562,24 +1545,35 @@ const SplashScreen: React.FC = () => {
         throw new Error('Apple Pay is not available on this device. Please use an iOS device with Apple Pay support.');
       }
 
-      // Calculate price
-      const originalPrice = selectedPlan === 'annual' ? prices.annual : prices.monthly;
-      const finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+      // Calculate price based on selected plan
+      let originalPrice, finalPrice;
 
-      // Convert price to IDR (assuming prices are in USD)
-      const priceInIDR = Math.round(finalPrice * 15000); // Approximate USD to IDR conversion
+      if (selectedPlan === 'annual') {
+        // Annual plan: $59.99 per year
+        originalPrice = prices.annual;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
 
-      // Show initializing payment message
-      toast.info('Initializing Apple Pay...');
+        // Show initializing payment message with annual amount
+        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/year...`);
+      } else {
+        // Monthly plan: $5.99 per month
+        originalPrice = prices.monthly;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+        // Show initializing payment message with monthly amount
+        toast.info(`Initializing Apple Pay for $${finalPrice.toFixed(2)}/month...`);
+      }
+
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // First step: Process payment with Apple Pay
       const paymentDescription = `Subscription to ${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
 
       // Store transaction details for verification
-      localStorage.setItem('pendingPaymentAmount', priceInIDR.toString());
+      localStorage.setItem('pendingPaymentAmount', finalPrice.toString());
       localStorage.setItem('pendingPaymentDescription', paymentDescription);
       localStorage.setItem('pendingPaymentUserId', userId);
+      localStorage.setItem('pendingPaymentPlan', selectedPlan);
 
       // Second step: Verify with Face ID
       setPaymentStep('verifying');
@@ -1622,13 +1616,17 @@ const SplashScreen: React.FC = () => {
 
     try {
       // Get the pending payment details from localStorage
-      const amount = parseInt(localStorage.getItem('pendingPaymentAmount') || '0');
+      const amount = parseFloat(localStorage.getItem('pendingPaymentAmount') || '0');
       const description = localStorage.getItem('pendingPaymentDescription') || '';
       const userId = localStorage.getItem('pendingPaymentUserId') || getCurrentUserId();
+      const plan = localStorage.getItem('pendingPaymentPlan') as 'annual' | 'monthly' || selectedPlan;
 
       if (!amount || !description) {
         throw new Error('Payment information not found');
       }
+
+      // Set the selected plan based on what was stored
+      setSelectedPlan(plan);
 
       // Show success message
       toast.success('Face ID verified');
@@ -1642,7 +1640,7 @@ const SplashScreen: React.FC = () => {
       // Process the actual payment with Apple Pay
       const paymentResult = await applePayService.processPayment({
         amount,
-        currency: 'IDR',
+        currency: 'USD',
         description,
         userId
       });
@@ -1659,15 +1657,15 @@ const SplashScreen: React.FC = () => {
 
       // Save subscription details
       const subscriptionDetails = {
-        plan: selectedPlan,
+        plan: plan, // Use the plan from localStorage
         startDate: new Date(),
-        endDate: new Date(new Date().setMonth(new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1))),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + (plan === 'annual' ? 12 : 1))),
         autoRenew: true,
         status: 'active',
         paymentId: paymentResult.transactionId,
         promoCodeId: activePromo?.id,
-        originalPrice: selectedPlan === 'annual' ? prices.annual : prices.monthly,
-        finalPrice: activePromo ? getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly) : (selectedPlan === 'annual' ? prices.annual : prices.monthly)
+        originalPrice: plan === 'annual' ? prices.annual : prices.monthly,
+        finalPrice: amount // Use the actual amount paid from localStorage
       };
 
       await paymentService.saveSubscription(userId, subscriptionDetails);
