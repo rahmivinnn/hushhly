@@ -23,12 +23,8 @@ export const usePromoCodeEnhanced = (): UsePromoCodeReturn => {
   }, []);
 
   const applyPromoCode = async (code: string, plan: SubscriptionTier): Promise<PromoCodeValidationResult> => {
-    if (!user?.id) {
-      return {
-        isValid: false,
-        message: 'You must be logged in to apply a promo code'
-      };
-    }
+    // Generate a temporary user ID if user is not logged in
+    const userId = user?.id || `temp_user_${Date.now()}`;
 
     setIsValidating(true);
 
@@ -36,7 +32,7 @@ export const usePromoCodeEnhanced = (): UsePromoCodeReturn => {
       const validationResult = await promoCodeService.validatePromoCode(
         code,
         plan,
-        user.id
+        userId
       );
 
       if (validationResult.isValid && validationResult.promoDetails) {

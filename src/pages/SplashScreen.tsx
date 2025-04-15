@@ -121,11 +121,14 @@ const SplashScreen: React.FC = () => {
 
     try {
       // Process payment using the payment service
+      // Generate a temporary user ID if user is not logged in
+      const userId = user?.id || `temp_user_${Date.now()}`;
+
       const paymentResult = await paymentService.processPayment(
         selectedPlan,
         { method: method === 'apple' ? 'apple_pay' : 'google_pay' },
         activePromo?.code,
-        user.id
+        userId
       );
 
       if (!paymentResult.success) {
@@ -241,8 +244,10 @@ const SplashScreen: React.FC = () => {
       setPaymentStep('success');
 
       // Save subscription details
-      if (paymentResult.subscriptionDetails && user) {
-        await paymentService.saveSubscription(user.id, paymentResult.subscriptionDetails);
+      if (paymentResult.subscriptionDetails) {
+        // Generate a temporary user ID if user is not logged in
+        const userId = user?.id || `temp_user_${Date.now()}`;
+        await paymentService.saveSubscription(userId, paymentResult.subscriptionDetails);
       }
 
       // After successful payment, close the payment sheet and continue
@@ -274,10 +279,7 @@ const SplashScreen: React.FC = () => {
       return;
     }
 
-    if (!user) {
-      toast.error('Please sign in to use promo codes');
-      return;
-    }
+    // No need to check for user login - we'll handle anonymous users
 
     setIsApplyingPromo(true);
     try {
