@@ -346,29 +346,30 @@ const SplashScreen: React.FC = () => {
     // Screen 2: Subscription Screen
     <div
       key="screen-2"
-      className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative overflow-auto ${
+      className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-4 flex flex-col relative overflow-auto ${
         animating
           ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
+      style={{ maxHeight: '100vh' }}
     >
-      {/* Header with Logo and Exit button - More compact */}
-      <div className="flex items-center mb-4 sticky top-0 z-10 bg-gradient-to-b from-blue-400 to-transparent pt-2">
+      {/* Header with Logo and Exit button - Ultra compact */}
+      <div className="flex items-center mb-2 sticky top-0 z-10 bg-gradient-to-b from-blue-400 to-transparent pt-1">
         <div className="flex-1"></div>
         <div className="flex-grow flex justify-center">
           <img
             src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
             alt="Hushhly Logo"
-            className="w-24 h-auto brightness-0 invert"
+            className="w-20 h-auto brightness-0 invert"
           />
         </div>
         <div className="flex-1 flex justify-end">
           <button
             onClick={handleNext}
-            className="p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+            className="p-1 text-white hover:bg-white/20 rounded-full transition-colors"
             aria-label="Exit"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -376,20 +377,20 @@ const SplashScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content - More compact */}
-      <div className="text-center text-white mb-4">
-        <h1 className="text-2xl font-bold mb-2">Unlock Premium Features</h1>
-        <p className="text-base opacity-90 leading-relaxed">
+      {/* Main Content - Ultra compact */}
+      <div className="text-center text-white mb-2">
+        <h1 className="text-xl font-bold mb-1">Unlock Premium Features</h1>
+        <p className="text-sm opacity-90 leading-relaxed">
           Get unlimited access to all meditations, stories, and personalized content
         </p>
       </div>
 
-      {/* Subscription Options */}
-      <div className="space-y-4 flex-1">
-        {/* Annual Plan - More compact */}
+      {/* Subscription Options - Ultra compact */}
+      <div className="space-y-3 flex-1">
+        {/* Annual Plan - Ultra compact */}
         <button
           onClick={() => handleSubscriptionSelect('annual')}
-          className={`w-full p-4 rounded-xl ${
+          className={`w-full p-3 rounded-lg ${
             selectedPlan === 'annual'
               ? 'bg-white text-blue-600 shadow-lg transform scale-105'
               : 'bg-white/20 text-white hover:bg-white/30'
@@ -397,7 +398,7 @@ const SplashScreen: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-left">
-              <div className="font-bold text-lg mb-0.5">Premium Annual</div>
+              <div className="font-bold text-base mb-0.5">Premium Annual</div>
               <div className="text-sm opacity-80">
                 {activePromo ? (
                   <span className="flex items-center gap-1">
@@ -419,10 +420,10 @@ const SplashScreen: React.FC = () => {
           </div>
         </button>
 
-        {/* Monthly Plan - More compact */}
+        {/* Monthly Plan - Ultra compact */}
         <button
           onClick={() => handleSubscriptionSelect('monthly')}
-          className={`w-full p-4 rounded-xl ${
+          className={`w-full p-3 rounded-lg ${
             selectedPlan === 'monthly'
               ? 'bg-white text-blue-600 shadow-lg transform scale-105'
               : 'bg-white/20 text-white hover:bg-white/30'
@@ -430,7 +431,7 @@ const SplashScreen: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-left">
-              <div className="font-bold text-lg mb-0.5">Monthly</div>
+              <div className="font-bold text-base mb-0.5">Monthly</div>
               <div className="text-sm opacity-80">
                 {activePromo ? (
                   <span className="flex items-center gap-1">
@@ -542,11 +543,11 @@ const SplashScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Action Buttons - Fixed at bottom for better visibility on small screens */}
-      <div className="mt-6 mb-4 sticky bottom-0 pb-2 pt-4 bg-gradient-to-t from-blue-600 to-transparent">
+      {/* Action Buttons - Fixed at bottom with higher z-index for guaranteed visibility */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-blue-600 via-blue-600 to-transparent pb-6 pt-8">
         <Button
           onClick={handleContinue}
-          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-4 text-lg font-semibold rounded-xl shadow-lg transform transition hover:scale-105"
+          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-3 text-lg font-semibold rounded-xl shadow-lg transform transition hover:scale-105"
         >
           Continue
         </Button>
@@ -554,6 +555,9 @@ const SplashScreen: React.FC = () => {
           <p className="text-white/80 text-xs">Cancel anytime · Money back guarantee</p>
         </div>
       </div>
+
+      {/* Spacer to prevent content from being hidden behind fixed button */}
+      <div className="h-24"></div>
 
       {/* Payment Modal */}
       {/* Fingerprint Authentication Dialog */}
