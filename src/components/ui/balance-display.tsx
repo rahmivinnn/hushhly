@@ -135,16 +135,7 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({
           </p>
         </div>
 
-        {showAddFunds && (
-          <Button
-            size="sm"
-            onClick={handleAddFunds}
-            disabled={isAddingFunds}
-            className="ml-4"
-          >
-            {isAddingFunds ? 'Adding...' : 'Add Funds'}
-          </Button>
-        )}
+        {/* Add Funds button removed */}
       </div>
     </div>
   );
