@@ -8,7 +8,7 @@ import { usePromoCodeEnhanced } from '@/hooks/usePromoCodeEnhanced';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { paymentService } from '@/services/paymentService';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthSimple } from '@/hooks/useAuthSimple';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const SplashScreen: React.FC = () => {
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
-  const { user } = useAuth();
+  const { user } = useAuthSimple();
   const {
     applyPromoCode,
     removePromoCode,

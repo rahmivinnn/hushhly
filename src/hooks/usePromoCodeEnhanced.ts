@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PromoCode, PromoCodeValidationResult, SubscriptionTier } from '../types/promoCode';
 import { promoCodeService } from '../services/promoCodeService';
-import { useAuth } from './useAuth';
+import { useAuthSimple } from './useAuthSimple';
 
 interface UsePromoCodeReturn {
   applyPromoCode: (code: string, plan: SubscriptionTier) => Promise<PromoCodeValidationResult>;
@@ -15,7 +15,7 @@ interface UsePromoCodeReturn {
 export const usePromoCodeEnhanced = (): UsePromoCodeReturn => {
   const [activePromo, setActivePromo] = useState<PromoCode | null>(null);
   const [isValidating, setIsValidating] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { user } = useAuthSimple();
 
   // Initialize promo code service with sample data
   useEffect(() => {

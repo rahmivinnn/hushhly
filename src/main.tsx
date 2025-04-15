@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
 import { Toaster } from 'sonner';
-import { AuthProvider } from './hooks/useAuth';
 
 // Make sure we have a valid DOM element
 const rootElement = document.getElementById("root");
@@ -18,10 +17,8 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <Toaster position="top-center" />
-      </AuthProvider>
+      <App />
+      <Toaster position="top-center" />
     </BrowserRouter>
   </React.StrictMode>
 );

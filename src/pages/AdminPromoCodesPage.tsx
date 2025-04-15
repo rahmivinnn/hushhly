@@ -4,13 +4,13 @@ import { Input } from '@/components/ui/input';
 import { promoCodeService } from '@/services/promoCodeService';
 import { PromoCode, SubscriptionTier, DiscountType, DurationType } from '@/types/promoCode';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthSimple } from '@/hooks/useAuthSimple';
 
 const AdminPromoCodesPage: React.FC = () => {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { user } = useAuthSimple();
 
   // New promo code form state
   const [newPromoCode, setNewPromoCode] = useState<{
@@ -67,13 +67,13 @@ const AdminPromoCodesPage: React.FC = () => {
     setNewPromoCode(prev => {
       const tiers = [...prev.subscriptionTiers];
       const index = tiers.indexOf(tier);
-      
+
       if (index === -1) {
         tiers.push(tier);
       } else {
         tiers.splice(index, 1);
       }
-      
+
       return { ...prev, subscriptionTiers: tiers };
     });
   };
@@ -81,7 +81,7 @@ const AdminPromoCodesPage: React.FC = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error('You must be logged in to add promo codes');
       return;
@@ -90,11 +90,11 @@ const AdminPromoCodesPage: React.FC = () => {
     try {
       // Prepare conditions array
       const conditions = [];
-      
+
       if (newPromoCode.maxUses) {
         conditions.push({ type: 'maxUses', value: newPromoCode.maxUses });
       }
-      
+
       if (newPromoCode.startDate && newPromoCode.endDate) {
         conditions.push({
           type: 'dateRange',
@@ -104,19 +104,19 @@ const AdminPromoCodesPage: React.FC = () => {
           }
         });
       }
-      
+
       if (newPromoCode.userType) {
         conditions.push({ type: 'userType', value: newPromoCode.userType });
       }
-      
+
       if (newPromoCode.userTag) {
         conditions.push({ type: 'userTag', value: newPromoCode.userTag });
       }
-      
+
       if (newPromoCode.userAction) {
         conditions.push({ type: 'userAction', value: newPromoCode.userAction });
       }
-      
+
       // Create promo code object
       const promoCode: Partial<PromoCode> = {
         code: newPromoCode.code.toUpperCase(),
@@ -132,11 +132,11 @@ const AdminPromoCodesPage: React.FC = () => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       // In a real implementation, this would call an API to create the promo code
       // For now, we'll just add it to the local state
       setPromoCodes(prev => [...prev, { id: `promo_${Date.now()}`, ...promoCode } as PromoCode]);
-      
+
       // Reset form
       setNewPromoCode({
         code: '',
@@ -147,7 +147,7 @@ const AdminPromoCodesPage: React.FC = () => {
         discountValue: 0,
         duration: 'one-time',
       });
-      
+
       setShowAddForm(false);
       toast.success('Promo code added successfully');
     } catch (error) {
@@ -158,12 +158,12 @@ const AdminPromoCodesPage: React.FC = () => {
 
   // Toggle promo code active status
   const togglePromoCodeStatus = (id: string, isActive: boolean) => {
-    setPromoCodes(prev => 
-      prev.map(code => 
+    setPromoCodes(prev =>
+      prev.map(code =>
         code.id === id ? { ...code, isActive: !isActive } : code
       )
     );
-    
+
     toast.success(`Promo code ${isActive ? 'deactivated' : 'activated'}`);
   };
 
@@ -175,7 +175,7 @@ const AdminPromoCodesPage: React.FC = () => {
           {showAddForm ? 'Cancel' : 'Add New Promo Code'}
         </Button>
       </div>
-      
+
       {showAddForm && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-xl font-semibold mb-4">Add New Promo Code</h2>
@@ -191,7 +191,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <Input
@@ -202,7 +202,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Discount Display Text</label>
                 <Input
@@ -213,7 +213,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Discount Type</label>
                 <select
@@ -228,7 +228,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   <option value="free">Free</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Discount Value</label>
                 <Input
@@ -240,7 +240,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Duration</label>
                 <select
@@ -256,7 +256,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   <option value="lifetime">Lifetime</option>
                 </select>
               </div>
-              
+
               {(newPromoCode.duration === 'days' || newPromoCode.duration === 'months') && (
                 <div>
                   <label className="block text-sm font-medium mb-1">Duration Value</label>
@@ -270,7 +270,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   />
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Max Uses</label>
                 <Input
@@ -281,7 +281,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   placeholder="Leave empty for unlimited"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Valid From</label>
                 <Input
@@ -291,7 +291,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Valid Until</label>
                 <Input
@@ -301,7 +301,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">User Type</label>
                 <select
@@ -317,7 +317,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   <option value="beta">Beta Users</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">User Tag</label>
                 <Input
@@ -327,7 +327,7 @@ const AdminPromoCodesPage: React.FC = () => {
                   placeholder="e.g. parent, new_mom, etc."
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">User Action</label>
                 <select
@@ -343,7 +343,7 @@ const AdminPromoCodesPage: React.FC = () => {
                 </select>
               </div>
             </div>
-            
+
             <div className="mt-4">
               <label className="block text-sm font-medium mb-2">Applicable Plans</label>
               <div className="flex flex-wrap gap-2">
@@ -360,7 +360,7 @@ const AdminPromoCodesPage: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="flex justify-end mt-6">
               <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
                 Add Promo Code
@@ -369,7 +369,7 @@ const AdminPromoCodesPage: React.FC = () => {
           </form>
         </div>
       )}
-      
+
       {loading ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500 border-t-transparent mx-auto"></div>
