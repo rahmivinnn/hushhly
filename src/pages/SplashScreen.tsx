@@ -9,11 +9,12 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { paymentService } from '@/services/paymentService';
 import { useAuthSimple } from '@/hooks/useAuthSimple';
-import { biometricService } from '@/services/biometricService';
-import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
 import { isAndroid, isIOS } from '@/utils/deviceUtils';
 import { BalanceDisplay } from '@/components/ui/balance-display';
 import { balanceService } from '@/services/balanceService';
+import { faceIdService } from '@/services/faceIdService';
+import { applePayService } from '@/services/applePayService';
+import { FaceIDDialog } from '@/components/ui/face-id-dialog';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -24,11 +25,10 @@ const SplashScreen: React.FC = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
-  const [showBiometricDialog, setShowBiometricDialog] = useState(false);
+  const [showFaceIDDialog, setShowFaceIDDialog] = useState(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
-  const [verificationMethod, setVerificationMethod] = useState<'fingerprint' | 'screenlock'>(
-    (localStorage.getItem('verificationMethod') as 'fingerprint' | 'screenlock') || 'fingerprint'
-  );
+  const [faceIdFeatures, setFaceIdFeatures] = useState<any>(null);
+  const [faceIdConfidence, setFaceIdConfidence] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState('');
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const { user } = useAuthSimple();
@@ -751,14 +751,14 @@ const SplashScreen: React.FC = () => {
       <div className="h-24"></div>
 
       {/* Payment Modal */}
-      {/* Fingerprint Authentication Dialog */}
-      <FingerprintDialog
-        isOpen={showBiometricDialog}
-        onClose={() => setShowBiometricDialog(false)}
-        onSuccess={handleBiometricSuccess}
-        onError={handleBiometricError}
-        title="Verify Payment"
-        description="Please authenticate with your fingerprint to complete the payment"
+      {/* Face ID Authentication Dialog */}
+      <FaceIDDialog
+        isOpen={showFaceIDDialog}
+        onClose={() => setShowFaceIDDialog(false)}
+        onSuccess={handleFaceIDSuccess}
+        onError={handleFaceIDError}
+        title="Verify Apple Pay"
+        description="Please authenticate with Face ID to complete your payment"
       />
 
       {showPaymentModal && (
@@ -868,7 +868,7 @@ const SplashScreen: React.FC = () => {
                         Your {selectedPlan === 'annual' ? 'annual' : 'monthly'} subscription is now active
                       </p>
 
-                      {/* Real transaction details */}
+                      {/* Apple Pay transaction details */}
                       <div className="mt-6 bg-white/10 rounded-lg p-3 text-left">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs text-white/60">Plan</span>
@@ -891,12 +891,18 @@ const SplashScreen: React.FC = () => {
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs text-white/60">Payment Method</span>
                           <span className="text-sm text-white font-medium flex items-center">
-                            {paymentStep === 'success' && (
-                              <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                              </svg>
-                            )}
-                            Balance Deduction
+                            <FaApple size={14} className="mr-1" />
+                            Apple Pay
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Authentication</span>
+                          <span className="text-sm text-white font-medium flex items-center">
+                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 9h.01M15 9h.01M8 13a4 4 0 008 0" />
+                              <rect width="20" height="20" x="2" y="2" rx="5" />
+                            </svg>
+                            Face ID
                           </span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
@@ -908,10 +914,50 @@ const SplashScreen: React.FC = () => {
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-white/60">Transaction ID</span>
                           <span className="text-sm text-white font-medium">
-                            {`TRX${Date.now().toString().substring(5)}`}
+                            {`AP${Date.now().toString().substring(5)}`}
                           </span>
                         </div>
                       </div>
+
+                      {/* Face ID verification details */}
+                      {faceIdFeatures && (
+                        <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs text-white/60">Face ID Details</span>
+                            <span className="text-xs text-white/80 bg-green-500/30 px-2 py-0.5 rounded-full">
+                              Verified
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                            <div className="flex items-center">
+                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.eyes ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                              <span className="text-white/80">Eyes: {faceIdFeatures.eyes ? 'Detected' : 'Not Detected'}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.nose ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                              <span className="text-white/80">Nose: {faceIdFeatures.nose ? 'Detected' : 'Not Detected'}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.mouth ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                              <span className="text-white/80">Mouth: {faceIdFeatures.mouth ? 'Detected' : 'Not Detected'}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.skinTexture ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                              <span className="text-white/80">Skin: {faceIdFeatures.skinTexture ? 'Detected' : 'Not Detected'}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.depthMap ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                              <span className="text-white/80">Depth: {faceIdFeatures.depthMap ? 'Detected' : 'Not Detected'}</span>
+                            </div>
+                            {faceIdConfidence !== null && (
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdConfidence > 0.9 ? 'bg-green-500' : faceIdConfidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Confidence: {Math.round(faceIdConfidence * 100)}%</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Gojek-style security badge */}
                       <div className="mt-6 flex items-center justify-center">
@@ -1033,72 +1079,29 @@ const SplashScreen: React.FC = () => {
                   {/* Payment Method Options */}
                   <div className="space-y-3">
                     <Button
-                      onClick={() => handlePayment('balance')}
-                      className="w-full bg-green-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
+                      onClick={handleApplePay}
+                      className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      <span>Pay with Balance</span>
+                      <FaApple size={24} />
+                      <span className="text-lg">Pay with Apple Pay</span>
                     </Button>
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">Other Payment Methods</span>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={() => handlePayment('apple')}
-                      className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
-                    >
-                      <FaApple size={20} />
-                      <span>Pay with Apple Pay</span>
-                    </Button>
-                    <Button
-                      onClick={() => handlePayment('google')}
-                      className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
-                    >
-                      <FcGoogle size={20} />
-                      <span>Pay with Google Pay</span>
-                    </Button>
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                      Secure payment with advanced Face ID verification
+                    </p>
                   </div>
 
-                  {/* Verification Method Options */}
-                  <div className="mt-2 pt-3 border-t border-gray-200">
-                    <p className="text-sm text-gray-600 mb-2 text-center">Verification Method</p>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => {
-                          // Set verification method to fingerprint
-                          localStorage.setItem('verificationMethod', 'fingerprint');
-                          setVerificationMethod('fingerprint');
-                          toast.info('Will verify with fingerprint');
-                        }}
-                        variant={verificationMethod !== 'screenlock' ? 'default' : 'outline'}
-                        className="flex-1 text-sm py-2 flex items-center justify-center gap-1"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
-                        </svg>
-                        Fingerprint
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          // Set verification method to screen lock
-                          localStorage.setItem('verificationMethod', 'screenlock');
-                          setVerificationMethod('screenlock');
-                          toast.info('Will verify with screen lock');
-                        }}
-                        variant={verificationMethod === 'screenlock' ? 'default' : 'outline'}
-                        className="flex-1 text-sm py-2 flex items-center justify-center gap-1"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Screen Lock
-                      </Button>
+                  {/* Face ID Security Information */}
+                  <div className="mt-4 pt-3 border-t border-gray-200">
+                    <p className="text-sm text-gray-600 mb-2 text-center">Advanced Face ID Security</p>
+                    <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
+                      <p className="mb-2">Your payment is secured with Apple's advanced Face ID technology that:</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>Detects precise facial features (eyes, nose, mouth)</li>
+                        <li>Analyzes skin texture and depth mapping</li>
+                        <li>Ensures real-time identity verification</li>
+                        <li>Follows Apple Pay security protocols</li>
+                        <li>Processes payment only after successful verification</li>
+                      </ul>
                     </div>
                   </div>
 
@@ -1541,5 +1544,169 @@ const SplashScreen: React.FC = () => {
     </div>
   );
 };
+
+  // Handle Apple Pay with Face ID
+  const handleApplePay = async () => {
+    // Show the payment sheet with Apple Pay branding
+    setShowPaymentSheet(true);
+    setPaymentStep('processing');
+    setProcessingPayment(true);
+
+    try {
+      // Get user ID
+      const userId = getCurrentUserId();
+
+      // Check if Apple Pay is available
+      const isApplePayAvailable = await applePayService.isAvailable();
+      if (!isApplePayAvailable) {
+        throw new Error('Apple Pay is not available on this device. Please use an iOS device with Apple Pay support.');
+      }
+
+      // Calculate price
+      const originalPrice = selectedPlan === 'annual' ? prices.annual : prices.monthly;
+      const finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+      // Convert price to IDR (assuming prices are in USD)
+      const priceInIDR = Math.round(finalPrice * 15000); // Approximate USD to IDR conversion
+
+      // Show initializing payment message
+      toast.info('Initializing Apple Pay...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // First step: Process payment with Apple Pay
+      const paymentDescription = `Subscription to ${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
+
+      // Store transaction details for verification
+      localStorage.setItem('pendingPaymentAmount', priceInIDR.toString());
+      localStorage.setItem('pendingPaymentDescription', paymentDescription);
+      localStorage.setItem('pendingPaymentUserId', userId);
+
+      // Second step: Verify with Face ID
+      setPaymentStep('verifying');
+
+      // Check if Face ID is available
+      const isFaceIDAvailable = await faceIdService.isAvailable();
+      if (!isFaceIDAvailable) {
+        throw new Error('Face ID is not available on this device. Please use an iOS device with Face ID support.');
+      }
+
+      // Show Face ID verification message
+      toast.info('Please verify with Face ID to complete payment');
+
+      // Show the Face ID dialog
+      setShowFaceIDDialog(true);
+
+      // The verification will continue in the onFaceIDSuccess handler
+      return;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
+
+      // Reset payment UI
+      setShowFaceIDDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  // Handle successful Face ID authentication
+  const handleFaceIDSuccess = async (features?: any, confidence?: number) => {
+    // Store Face ID features and confidence for display
+    if (features) setFaceIdFeatures(features);
+    if (confidence !== undefined) setFaceIdConfidence(confidence);
+
+    // Trigger balance update
+    window.dispatchEvent(new Event('balance-updated'));
+
+    try {
+      // Get the pending payment details from localStorage
+      const amount = parseInt(localStorage.getItem('pendingPaymentAmount') || '0');
+      const description = localStorage.getItem('pendingPaymentDescription') || '';
+      const userId = localStorage.getItem('pendingPaymentUserId') || getCurrentUserId();
+
+      if (!amount || !description) {
+        throw new Error('Payment information not found');
+      }
+
+      // Show success message
+      toast.success('Face ID verified');
+
+      // Add a small delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Show processing message
+      toast.info('Processing Apple Pay payment...');
+
+      // Process the actual payment with Apple Pay
+      const paymentResult = await applePayService.processPayment({
+        amount,
+        currency: 'IDR',
+        description,
+        userId
+      });
+
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || 'Apple Pay payment failed');
+      }
+
+      // Add another delay to simulate backend processing
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Complete the payment process
+      setPaymentStep('success');
+
+      // Save subscription details
+      const subscriptionDetails = {
+        plan: selectedPlan,
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1))),
+        autoRenew: true,
+        status: 'active',
+        paymentId: paymentResult.transactionId,
+        promoCodeId: activePromo?.id,
+        originalPrice: selectedPlan === 'annual' ? prices.annual : prices.monthly,
+        finalPrice: activePromo ? getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly) : (selectedPlan === 'annual' ? prices.annual : prices.monthly)
+      };
+
+      await paymentService.saveSubscription(userId, subscriptionDetails);
+
+      // Show success message
+      toast.success('Payment successful!');
+
+      // Add a delay before closing the payment UI
+      setTimeout(() => {
+        // Close payment UI and proceed
+        setShowFaceIDDialog(false);
+        setShowPaymentSheet(false);
+        setShowPaymentModal(false);
+
+        // Navigate to the next screen
+        setCurrentScreen(currentScreen + 1);
+      }, 3000);
+    } catch (error) {
+      console.error('Face ID success handler error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment processing');
+
+      // Reset payment UI
+      setShowFaceIDDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    }
+  };
+
+  // Handle Face ID error
+  const handleFaceIDError = async (error: string) => {
+    console.error('Face ID error:', error);
+    toast.error(error || 'Face ID verification failed');
+
+    // Close the Face ID dialog
+    setShowFaceIDDialog(false);
+
+    // Reset payment UI
+    setShowPaymentSheet(false);
+    setPaymentStep('select');
+  };
 
 export default SplashScreen;
