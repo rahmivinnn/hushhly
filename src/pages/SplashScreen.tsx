@@ -148,9 +148,9 @@ const SplashScreen: React.FC = () => {
     >
       <div className="flex-grow flex items-center justify-center">
         <img
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          src="/lovable-uploads/hushhly-white-logo-new.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto brightness-0 invert"
+          className="w-64 h-auto"
         />
       </div>
     </div>,
