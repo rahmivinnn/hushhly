@@ -275,7 +275,7 @@ const SplashScreen: React.FC = () => {
 
   const handlePromoCodeSubmit = async () => {
     if (!promoCode) {
-      toast.error('Please enter a promo code');
+      // Don't show error, just return silently
       return;
     }
 
@@ -346,20 +346,20 @@ const SplashScreen: React.FC = () => {
     // Screen 2: Subscription Screen
     <div
       key="screen-2"
-      className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative ${
+      className={`min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative overflow-auto ${
         animating
           ? 'opacity-0 translate-x-20 scale-95'
           : 'opacity-100 translate-x-0 scale-100'
       } transition-all duration-500 ease-out`}
     >
-      {/* Header with Logo and Exit button */}
-      <div className="flex items-center mb-6">
+      {/* Header with Logo and Exit button - More compact */}
+      <div className="flex items-center mb-4 sticky top-0 z-10 bg-gradient-to-b from-blue-400 to-transparent pt-2">
         <div className="flex-1"></div>
         <div className="flex-grow flex justify-center">
           <img
             src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
             alt="Hushhly Logo"
-            className="w-32 h-auto brightness-0 invert"
+            className="w-24 h-auto brightness-0 invert"
           />
         </div>
         <div className="flex-1 flex justify-end">
@@ -368,7 +368,7 @@ const SplashScreen: React.FC = () => {
             className="p-2 text-white hover:bg-white/20 rounded-full transition-colors"
             aria-label="Exit"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -376,20 +376,20 @@ const SplashScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="text-center text-white mb-8">
-        <h1 className="text-3xl font-bold mb-3">Unlock Premium Features</h1>
-        <p className="text-lg opacity-90 leading-relaxed">
+      {/* Main Content - More compact */}
+      <div className="text-center text-white mb-4">
+        <h1 className="text-2xl font-bold mb-2">Unlock Premium Features</h1>
+        <p className="text-base opacity-90 leading-relaxed">
           Get unlimited access to all meditations, stories, and personalized content
         </p>
       </div>
 
       {/* Subscription Options */}
       <div className="space-y-4 flex-1">
-        {/* Annual Plan */}
+        {/* Annual Plan - More compact */}
         <button
           onClick={() => handleSubscriptionSelect('annual')}
-          className={`w-full p-6 rounded-2xl ${
+          className={`w-full p-4 rounded-xl ${
             selectedPlan === 'annual'
               ? 'bg-white text-blue-600 shadow-lg transform scale-105'
               : 'bg-white/20 text-white hover:bg-white/30'
@@ -397,35 +397,32 @@ const SplashScreen: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-left">
-              <div className="font-bold text-xl mb-1">Premium {selectedPlan === 'annual' ? 'Annual' : 'Monthly'}</div>
-              <div className="text-base opacity-80">
+              <div className="font-bold text-lg mb-0.5">Premium Annual</div>
+              <div className="text-sm opacity-80">
                 {activePromo ? (
-                  <span className="flex items-center gap-2">
-                    <span className="line-through">${selectedPlan === 'annual' ? prices.annual : prices.monthly}/
-                      {selectedPlan === 'annual' ? 'year' : 'month'}</span>
+                  <span className="flex items-center gap-1">
+                    <span className="line-through">${prices.annual}/year</span>
                     <span className="text-green-400 no-underline">
-                      ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}/
-                      {selectedPlan === 'annual' ? 'year' : 'month'}
+                      ${getDiscountedPrice(prices.annual).toFixed(2)}/year
                     </span>
                   </span>
                 ) : (
-                  <span>${selectedPlan === 'annual' ? prices.annual : prices.monthly}/
-                    {selectedPlan === 'annual' ? 'year' : 'month'}</span>
+                  <span>${prices.annual}/year</span>
                 )}
               </div>
             </div>
             {selectedPlan === 'annual' && (
-              <div className="text-sm font-bold px-3 py-2 bg-blue-100 text-blue-600 rounded-full">
+              <div className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded-full">
                 Best value
               </div>
             )}
           </div>
         </button>
 
-        {/* Monthly Plan */}
+        {/* Monthly Plan - More compact */}
         <button
           onClick={() => handleSubscriptionSelect('monthly')}
-          className={`w-full p-6 rounded-2xl ${
+          className={`w-full p-4 rounded-xl ${
             selectedPlan === 'monthly'
               ? 'bg-white text-blue-600 shadow-lg transform scale-105'
               : 'bg-white/20 text-white hover:bg-white/30'
@@ -433,73 +430,111 @@ const SplashScreen: React.FC = () => {
         >
           <div className="flex justify-between items-center">
             <div className="text-left">
-              <div className="font-bold text-xl mb-1">Monthly</div>
-              <div className="text-base opacity-80">$7.99/month</div>
-              <div className="text-sm mt-2 opacity-90">Flexible monthly billing</div>
+              <div className="font-bold text-lg mb-0.5">Monthly</div>
+              <div className="text-sm opacity-80">
+                {activePromo ? (
+                  <span className="flex items-center gap-1">
+                    <span className="line-through">${prices.monthly}/month</span>
+                    <span className="text-green-400 no-underline">
+                      ${getDiscountedPrice(prices.monthly).toFixed(2)}/month
+                    </span>
+                  </span>
+                ) : (
+                  <span>${prices.monthly}/month</span>
+                )}
+              </div>
+              <div className="text-xs mt-1 opacity-90">Flexible monthly billing</div>
             </div>
           </div>
         </button>
 
-        {/* Features List */}
-        <div className="mt-8 space-y-3">
+        {/* Features List - More compact */}
+        <div className="mt-4 space-y-2">
           <div className="flex items-center text-white">
-            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
-            <span>Unlimited access to all meditations</span>
+            <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs">✓</div>
+            <span className="text-sm">Unlimited access to all meditations</span>
           </div>
           <div className="flex items-center text-white">
-            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
-            <span>Personalized meditation plans</span>
+            <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs">✓</div>
+            <span className="text-sm">Personalized meditation plans</span>
           </div>
           <div className="flex items-center text-white">
-            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3">✓</div>
-            <span>Offline downloads</span>
+            <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs">✓</div>
+            <span className="text-sm">Offline downloads</span>
           </div>
         </div>
 
-        {/* Promo Code Section */}
-        <div className="mt-6 space-y-4">
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Enter promo code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-              className="bg-white/20 text-white placeholder:text-white/60"
-              disabled={isApplyingPromo}
-            />
-            <Button
-              onClick={handlePromoCodeSubmit}
-              variant="secondary"
-              className="whitespace-nowrap"
-              disabled={isApplyingPromo}
-            >
-              {isApplyingPromo ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Verifying
-                </span>
-              ) : 'Apply Code'}
-            </Button>
-          </div>
-          {activePromo && (
-            <div className="text-white bg-white/20 p-3 rounded-lg">
+        {/* Promo Code Section - More compact and optional */}
+        <div className="mt-4">
+          {!activePromo ? (
+            <div className="flex items-center">
+              <button
+                onClick={() => document.getElementById('promoCodeInput')?.focus()}
+                className="text-sm text-white/80 hover:text-white flex items-center"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Have a promo code?
+              </button>
+
+              <div className="ml-2 flex-grow max-w-[200px]">
+                <div className="flex items-center">
+                  <Input
+                    id="promoCodeInput"
+                    type="text"
+                    placeholder="Enter code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    className="bg-white/20 text-white placeholder:text-white/60 h-8 text-sm"
+                    disabled={isApplyingPromo}
+                    onKeyDown={(e) => e.key === 'Enter' && handlePromoCodeSubmit()}
+                  />
+                  {promoCode && (
+                    <Button
+                      onClick={handlePromoCodeSubmit}
+                      variant="ghost"
+                      className="h-8 px-2 ml-1"
+                      disabled={isApplyingPromo}
+                    >
+                      {isApplyingPromo ? (
+                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      ) : (
+                        <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-white bg-white/20 p-2 rounded-lg">
               <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">{activePromo.code}</p>
-                  <p className="text-sm opacity-80">{activePromo.description}</p>
-                  <p className="text-xs text-green-400 mt-1">
-                    {getFormattedDiscountText(selectedPlan === 'annual' ? prices.annual : prices.monthly)}
-                  </p>
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  <div>
+                    <p className="font-semibold text-sm">{activePromo.code}</p>
+                    <p className="text-xs text-green-400">
+                      {getFormattedDiscountText(selectedPlan === 'annual' ? prices.annual : prices.monthly)}
+                    </p>
+                  </div>
                 </div>
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-white/80"
+                  size="sm"
+                  className="text-white/80 hover:text-white h-8 px-2"
                   onClick={removePromoCode}
                 >
-                  Remove
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </Button>
               </div>
             </div>
@@ -507,16 +542,16 @@ const SplashScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-6 space-y-4">
+      {/* Action Buttons - Fixed at bottom for better visibility on small screens */}
+      <div className="mt-6 mb-4 sticky bottom-0 pb-2 pt-4 bg-gradient-to-t from-blue-600 to-transparent">
         <Button
           onClick={handleContinue}
-          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-6 text-lg font-semibold rounded-xl shadow-lg transform transition hover:scale-105"
+          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-4 text-lg font-semibold rounded-xl shadow-lg transform transition hover:scale-105"
         >
           Continue
         </Button>
-        <div className="text-center">
-          <p className="text-white/80 text-sm">Cancel anytime · Money back guarantee</p>
+        <div className="text-center mt-2">
+          <p className="text-white/80 text-xs">Cancel anytime · Money back guarantee</p>
         </div>
       </div>
 
@@ -737,27 +772,29 @@ const SplashScreen: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <Button
                     onClick={() => handlePayment('apple')}
-                    className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
+                    className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
                   >
-                    <FaApple size={24} />
+                    <FaApple size={20} />
                     <span>Pay with Apple Pay</span>
                   </Button>
                   <Button
                     onClick={() => handlePayment('google')}
-                    className="w-full bg-blue-600 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
+                    className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
                   >
-                    <FcGoogle size={24} />
+                    <FcGoogle size={20} />
                     <span>Pay with Google Pay</span>
                   </Button>
-                  <button
-                    onClick={() => setShowPaymentModal(false)}
-                    className="w-full text-gray-600 py-2 hover:text-gray-800 transition-colors"
-                  >
-                    Cancel
-                  </button>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setShowPaymentModal(false)}
+                      className="text-gray-600 py-2 px-4 hover:text-gray-800 transition-colors text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </>
             )}
