@@ -24,6 +24,9 @@ const SplashScreen: React.FC = () => {
   const [paymentStep, setPaymentStep] = useState<'select' | 'processing' | 'verifying' | 'success'>('select');
   const [showBiometricDialog, setShowBiometricDialog] = useState(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
+  const [verificationMethod, setVerificationMethod] = useState<'fingerprint' | 'screenlock'>(
+    (localStorage.getItem('verificationMethod') as 'fingerprint' | 'screenlock') || 'fingerprint'
+  );
   const [promoCode, setPromoCode] = useState('');
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const { user } = useAuthSimple();
@@ -149,7 +152,17 @@ const SplashScreen: React.FC = () => {
       // Check if we should use biometric authentication
       const isBiometricAvailable = await biometricService.isAvailable();
 
-      if (isBiometricAvailable) {
+      // If user selected fingerprint but it's not available, show a message
+      if (verificationMethod === 'fingerprint' && !isBiometricAvailable) {
+        toast.error('Fingerprint authentication is not available on this device');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        toast.info('Switching to screen lock verification...');
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        localStorage.setItem('verificationMethod', 'screenlock');
+        setVerificationMethod('screenlock');
+      }
+
+      if (verificationMethod === 'fingerprint' && isBiometricAvailable) {
         // For Android, show fingerprint dialog
         if (isAndroid()) {
           // Show a toast to instruct the user
@@ -192,12 +205,9 @@ const SplashScreen: React.FC = () => {
           await new Promise(resolve => setTimeout(resolve, 4000));
         }
       } else {
-        // Fallback to screen lock verification if biometrics not available
-        toast.info('Biometric authentication not available');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Show screen lock verification message
+        // Use screen lock verification (either by choice or as fallback)
         toast.info('Verifying with screen lock...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Use the screen lock authentication method
         const screenLockResult = await biometricService.authenticateWithScreenLock(
@@ -922,6 +932,7 @@ const SplashScreen: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-3">
+                  {/* Payment Method Options */}
                   <Button
                     onClick={() => handlePayment('apple')}
                     className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
@@ -936,6 +947,44 @@ const SplashScreen: React.FC = () => {
                     <FcGoogle size={20} />
                     <span>Pay with Google Pay</span>
                   </Button>
+
+                  {/* Verification Method Options */}
+                  <div className="mt-2 pt-3 border-t border-gray-200">
+                    <p className="text-sm text-gray-600 mb-2 text-center">Verification Method</p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => {
+                          // Set verification method to fingerprint
+                          localStorage.setItem('verificationMethod', 'fingerprint');
+                          setVerificationMethod('fingerprint');
+                          toast.info('Will verify with fingerprint');
+                        }}
+                        variant={verificationMethod !== 'screenlock' ? 'default' : 'outline'}
+                        className="flex-1 text-sm py-2 flex items-center justify-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
+                        </svg>
+                        Fingerprint
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          // Set verification method to screen lock
+                          localStorage.setItem('verificationMethod', 'screenlock');
+                          setVerificationMethod('screenlock');
+                          toast.info('Will verify with screen lock');
+                        }}
+                        variant={verificationMethod === 'screenlock' ? 'default' : 'outline'}
+                        className="flex-1 text-sm py-2 flex items-center justify-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Screen Lock
+                      </Button>
+                    </div>
+                  </div>
+
                   <div className="flex justify-center">
                     <button
                       onClick={() => setShowPaymentModal(false)}
