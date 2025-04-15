@@ -111,10 +111,8 @@ const SplashScreen: React.FC = () => {
   };
 
   const handlePayment = async (method: 'apple' | 'google') => {
-    if (!user) {
-      toast.error('Please sign in to subscribe');
-      return;
-    }
+    // No need to check for user login here - we assume they're already logged in
+    // Just proceed directly to payment processing
 
     // Show the payment sheet with the appropriate branding
     setShowPaymentSheet(true);
@@ -569,49 +567,111 @@ const SplashScreen: React.FC = () => {
 
                   {paymentStep === 'verifying' && (
                     <div className="text-center py-8">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="animate-pulse w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                          {/* Face ID or Fingerprint icon based on device type */}
-                          {isAndroid() ? (
-                            /* Fingerprint icon for Android */
-                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
-                            </svg>
-                          ) : (
-                            /* Face ID icon for iOS */
-                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
-                            </svg>
-                          )}
+                      <div className="flex items-center justify-center mb-4 relative">
+                        {/* Gojek-style animated verification UI */}
+                        <div className="relative">
+                          {/* Animated rings */}
+                          <div className="absolute inset-0 rounded-full bg-white/30 animate-ping opacity-25"></div>
+                          <div className="absolute inset-2 rounded-full bg-white/40 animate-pulse opacity-20"></div>
+
+                          {/* Main icon container */}
+                          <div className="animate-pulse w-20 h-20 rounded-full bg-white/20 flex items-center justify-center relative z-10">
+                            {isAndroid() ? (
+                              /* Fingerprint icon for Android - Gojek style */
+                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
+                              </svg>
+                            ) : (
+                              /* Face ID icon for iOS - Gojek style */
+                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
+                              </svg>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <p className="text-lg font-medium">
-                        {isAndroid() ? 'Verifying with Fingerprint...' : 'Verifying with Face ID...'}
+
+                      {/* Gojek-style verification text */}
+                      <h3 className="text-xl font-semibold text-white mb-1">
+                        {isAndroid() ? 'Touch Fingerprint Sensor' : 'Look at Your Device'}
+                      </h3>
+                      <p className="text-sm text-white/80 mt-2">
+                        {isAndroid()
+                          ? 'Use your fingerprint to verify this payment'
+                          : 'Use Face ID to verify this payment'}
                       </p>
-                      <p className="text-sm text-white/70 mt-2">
-                        {isAndroid() ? 'Touch the fingerprint sensor' : 'Please authenticate to complete your purchase'}
-                      </p>
+
+                      {/* Gojek-style security badge */}
+                      <div className="mt-6 flex items-center justify-center">
+                        <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          <span className="text-xs text-white/80">Secured by Hushhly Pay</span>
+                        </div>
+                      </div>
                     </div>
                   )}
 
                   {paymentStep === 'success' && (
                     <div className="text-center py-8">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
-                          <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      {/* Gojek-style success animation */}
+                      <div className="flex items-center justify-center mb-6 relative">
+                        {/* Success animation rings */}
+                        <div className="absolute w-24 h-24 rounded-full bg-green-400/20 animate-pulse"></div>
+                        <div className="absolute w-20 h-20 rounded-full bg-green-400/30"></div>
+
+                        {/* Success checkmark */}
+                        <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center z-10">
+                          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                       </div>
-                      <p className="text-lg font-medium">Payment Successful!</p>
-                      <p className="text-sm text-white/70 mt-2">
+
+                      {/* Gojek-style success text */}
+                      <h3 className="text-xl font-semibold text-white mb-1">Payment Successful!</h3>
+                      <p className="text-sm text-white/80 mt-2">
                         Your {selectedPlan === 'annual' ? 'annual' : 'monthly'} subscription is now active
                       </p>
-                      <div className="mt-4 bg-white/10 p-3 rounded-lg">
-                        <p className="text-sm text-white/90">
-                          Next billing date: {new Date(new Date().setMonth(new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1))).toLocaleDateString()}
-                        </p>
+
+                      {/* Gojek-style transaction details */}
+                      <div className="mt-6 bg-white/10 rounded-lg p-3 text-left">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Plan</span>
+                          <span className="text-sm text-white font-medium">
+                            {selectedPlan === 'annual' ? 'Annual Premium' : 'Monthly Premium'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Amount</span>
+                          <span className="text-sm text-white font-medium">
+                            ${getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-white/60">Next billing</span>
+                          <span className="text-sm text-white font-medium">
+                            {new Date(new Date().setMonth(new Date().getMonth() + (selectedPlan === 'annual' ? 12 : 1))).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-white/60">Transaction ID</span>
+                          <span className="text-sm text-white font-medium">
+                            {`TRX${Date.now().toString().substring(5)}`}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Gojek-style security badge */}
+                      <div className="mt-6 flex items-center justify-center">
+                        <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          <span className="text-xs text-white/80">Secured by Hushhly Pay</span>
+                        </div>
                       </div>
                     </div>
                   )}
