@@ -23,6 +23,7 @@ import Meditation101 from "./pages/Meditation101";
 import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SubscriptionManagement from "./pages/SubscriptionManagement";
 import AdminPromoCodesPage from "./pages/AdminPromoCodesPage";
+import TransactionHistory from "./pages/TransactionHistory";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/work" element={<Work />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/admin/promo-codes" element={<AdminPromoCodesPage />} />
+            <Route path="/transaction-history" element={<TransactionHistory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

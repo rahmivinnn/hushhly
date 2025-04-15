@@ -1,6 +1,7 @@
 import { toast } from "@/hooks/use-toast";
 import { promoCodeService } from './promoCodeService';
 import { PromoCode } from '../types/promoCode';
+import { balanceService } from './balanceService';
 
 // Payment gateway types
 export type PaymentMethod = 'credit_card' | 'apple_pay' | 'google_pay';
@@ -78,61 +79,80 @@ class PaymentService {
         }
       }
 
-      // In a real implementation, this would make an API call to a payment processor
-      // with the final price after discount
+      // Validate payment details first
+      if (!this.validatePaymentDetails(paymentDetails)) {
+        return {
+          success: false,
+          error: 'Invalid payment details'
+        };
+      }
 
-      // For Apple Pay, you would use PKPaymentRequest with the discounted amount
-      // For Google Play Billing, you would use BillingFlowParams with the discounted SKU
+      // Generate payment ID
+      const paymentId = `pay_${Math.random().toString(36).substring(2, 15)}`;
+      const now = new Date();
 
-      // Simulate network request
-      const result = await new Promise<PaymentResult>((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate successful payment (in real implementation, this would be the response from payment gateway)
-          if (this.validatePaymentDetails(paymentDetails)) {
-            const paymentId = `pay_${Math.random().toString(36).substring(2, 15)}`;
-            const now = new Date();
+      // Calculate subscription end date based on plan
+      const endDate = new Date(now);
+      if (plan === 'monthly') {
+        endDate.setMonth(endDate.getMonth() + 1);
+      } else {
+        endDate.setFullYear(endDate.getFullYear() + 1);
+      }
 
-            // Calculate subscription end date based on plan
-            const endDate = new Date(now);
-            if (plan === 'monthly') {
-              endDate.setMonth(endDate.getMonth() + 1);
-            } else {
-              endDate.setFullYear(endDate.getFullYear() + 1);
-            }
+      // If promo code gives free months, adjust end date
+      if (appliedPromoCode &&
+          appliedPromoCode.discountType === 'free' &&
+          appliedPromoCode.duration === 'days' &&
+          appliedPromoCode.durationValue) {
+        endDate.setDate(endDate.getDate() + appliedPromoCode.durationValue);
+      }
 
-            // If promo code gives free months, adjust end date
-            if (appliedPromoCode &&
-                appliedPromoCode.discountType === 'free' &&
-                appliedPromoCode.duration === 'days' &&
-                appliedPromoCode.durationValue) {
-              endDate.setDate(endDate.getDate() + appliedPromoCode.durationValue);
-            }
+      // Create subscription details
+      const subscriptionDetails: SubscriptionDetails = {
+        plan,
+        startDate: now,
+        endDate,
+        autoRenew: true,
+        status: 'pending', // Start as pending until payment is confirmed
+        paymentId,
+        promoCodeId,
+        originalPrice,
+        finalPrice
+      };
 
-            resolve({
-              success: true,
-              paymentId,
-              subscriptionDetails: {
-                plan,
-                startDate: now,
-                endDate,
-                autoRenew: true,
-                status: 'active',
-                paymentId,
-                promoCodeId,
-                originalPrice,
-                finalPrice
-              },
-              promoCodeApplied: !!promoCodeId,
-              promoCode: appliedPromoCode
-            });
-          } else {
-            reject({
-              success: false,
-              error: 'Invalid payment details'
-            });
-          }
-        }, 2000); // Simulate network delay
-      });
+      // Convert price to IDR (assuming prices are in USD)
+      const priceInIDR = Math.round(finalPrice * 15000); // Approximate USD to IDR conversion
+
+      // Use real balance deduction
+      const userIdToUse = userId || `temp_user_${Date.now()}`;
+      const paymentDescription = `Subscription to ${plan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
+
+      // Process the actual payment by deducting from user balance
+      const deductResult = await balanceService.deductBalance(
+        userIdToUse,
+        priceInIDR,
+        paymentDescription,
+        paymentDetails.method
+      );
+
+      if (!deductResult.success) {
+        return {
+          success: false,
+          error: deductResult.error || 'Payment failed'
+        };
+      }
+
+      // Payment successful, update subscription status
+      subscriptionDetails.status = 'active';
+
+      // Return successful result
+      const result: PaymentResult = {
+        success: true,
+        paymentId,
+        subscriptionDetails,
+        promoCodeApplied: !!promoCodeId,
+        promoCode: appliedPromoCode
+      };
 
       // Record promo code usage if payment was successful
       if (result.success && userId && promoCodeId) {

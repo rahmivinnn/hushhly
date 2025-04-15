@@ -12,6 +12,7 @@ import { useAuthSimple } from '@/hooks/useAuthSimple';
 import { biometricService } from '@/services/biometricService';
 import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
 import { isAndroid, isIOS } from '@/utils/deviceUtils';
+import { BalanceDisplay } from '@/components/ui/balance-display';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -931,22 +932,40 @@ const SplashScreen: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-4">
+                  {/* Balance Display */}
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <BalanceDisplay />
+                    <div className="mt-2 flex justify-end">
+                      <button
+                        onClick={() => navigate('/transaction-history')}
+                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
+                      >
+                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        View Transactions
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Payment Method Options */}
-                  <Button
-                    onClick={() => handlePayment('apple')}
-                    className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
-                  >
-                    <FaApple size={20} />
-                    <span>Pay with Apple Pay</span>
-                  </Button>
-                  <Button
-                    onClick={() => handlePayment('google')}
-                    className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
-                  >
-                    <FcGoogle size={20} />
-                    <span>Pay with Google Pay</span>
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => handlePayment('apple')}
+                      className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
+                    >
+                      <FaApple size={20} />
+                      <span>Pay with Apple Pay</span>
+                    </Button>
+                    <Button
+                      onClick={() => handlePayment('google')}
+                      className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
+                    >
+                      <FcGoogle size={20} />
+                      <span>Pay with Google Pay</span>
+                    </Button>
+                  </div>
 
                   {/* Verification Method Options */}
                   <div className="mt-2 pt-3 border-t border-gray-200">
