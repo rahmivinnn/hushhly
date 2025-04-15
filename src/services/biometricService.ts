@@ -141,7 +141,7 @@ class BiometricService {
             error: 'Fingerprint not recognized. Please try again.'
           });
         }
-      }, 1500); // Faster response like Gojek (1.5 seconds)
+      }, 3000); // Lebih lama untuk pengalaman yang lebih realistis (3 detik)
     });
   }
 
@@ -173,7 +173,7 @@ class BiometricService {
             error: errorMessage
           });
         }
-      }, 1200); // Even faster for Face ID (1.2 seconds)
+      }, 3500); // Lebih lama untuk Face ID (3.5 detik)
     });
   }
 }

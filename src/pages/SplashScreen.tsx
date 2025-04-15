@@ -142,19 +142,29 @@ const SplashScreen: React.FC = () => {
       // Second step: Verify with biometrics
       setPaymentStep('verifying');
 
+      // Simulate payment processing delay
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
       // Check if we should use biometric authentication
       const isBiometricAvailable = await biometricService.isAvailable();
 
       if (isBiometricAvailable) {
         // For Android, show fingerprint dialog
         if (isAndroid()) {
+          // Show a toast to instruct the user
+          toast.info('Please verify with your fingerprint');
+
+          // Show the fingerprint dialog
           setShowBiometricDialog(true);
 
           // The verification will continue in the onBiometricSuccess handler
           return;
         } else {
           // For iOS, use Face ID (handled in the UI animation)
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          toast.info('Please verify with Face ID');
+
+          // Longer delay for Face ID animation
+          await new Promise(resolve => setTimeout(resolve, 3000));
 
           // Verify with biometric service
           const biometricResult = await biometricService.authenticate(
@@ -162,12 +172,19 @@ const SplashScreen: React.FC = () => {
           );
 
           if (!biometricResult.success) {
-            throw new Error(biometricResult.error || 'Biometric verification failed');
+            throw new Error(biometricResult.error || 'Face ID verification failed');
           }
+
+          // Show success message
+          toast.success('Face ID verified');
+
+          // Additional delay after successful verification
+          await new Promise(resolve => setTimeout(resolve, 1500));
         }
       } else {
         // Fallback to traditional verification if biometrics not available
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        toast.info('Verifying payment...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
 
       // Verify the payment with backend
@@ -196,7 +213,20 @@ const SplashScreen: React.FC = () => {
   // Handle successful biometric authentication
   const handleBiometricSuccess = async () => {
     try {
+      // Show success message
+      toast.success('Fingerprint verified');
+
+      // Keep dialog visible briefly to show success state
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Close the dialog
       setShowBiometricDialog(false);
+
+      // Show verifying message
+      toast.info('Completing payment...');
+
+      // Add a delay to simulate backend verification
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Verify the payment with backend
       const paymentId = localStorage.getItem('pendingPaymentId');
@@ -251,6 +281,7 @@ const SplashScreen: React.FC = () => {
       }
 
       // After successful payment, close the payment sheet and continue
+      // Longer delay for a more realistic experience
       setTimeout(() => {
         // Close payment UI and proceed
         setShowBiometricDialog(false);
@@ -266,7 +297,7 @@ const SplashScreen: React.FC = () => {
         // Clean up local storage
         localStorage.removeItem('pendingPaymentId');
         localStorage.removeItem('pendingPaymentResult');
-      }, 1500);
+      }, 3000);
     } catch (error) {
       console.error('Error completing payment:', error);
       toast.error(error instanceof Error ? error.message : 'An error occurred while completing payment');

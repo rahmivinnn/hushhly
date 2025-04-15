@@ -26,19 +26,27 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [biometricType, setBiometricType] = useState<'fingerprint' | 'face' | 'none'>('none');
 
+  // Track success state
+  const [success, setSuccess] = useState<boolean>(false);
+
   useEffect(() => {
     if (isOpen) {
       // Reset state when dialog opens
       setError(null);
       setAuthenticating(false);
+      setSuccess(false);
 
       // Get the biometric type
       biometricService.getBiometricType().then(type => {
         setBiometricType(type);
       });
 
-      // Start authentication automatically
-      handleAuthenticate();
+      // Start authentication after a short delay
+      const timer = setTimeout(() => {
+        handleAuthenticate();
+      }, 500);
+
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -46,12 +54,19 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
     try {
       setAuthenticating(true);
       setError(null);
+      setSuccess(false);
 
       const result = await biometricService.authenticate(
         'Please authenticate to complete your payment'
       );
 
       if (result.success) {
+        // Set success state first
+        setSuccess(true);
+        setAuthenticating(false);
+
+        // Wait a moment to show the success state before closing
+        // This will be handled by the parent component
         onSuccess();
       } else {
         setError(result.error || 'Authentication failed');
@@ -62,7 +77,9 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
       setError(errorMessage);
       onError(errorMessage);
     } finally {
-      setAuthenticating(false);
+      if (!success) {
+        setAuthenticating(false);
+      }
     }
   };
 
@@ -82,7 +99,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
               <div
                 className={cn(
                   "w-28 h-28 rounded-full flex items-center justify-center mb-6 relative",
-                  authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
+                  success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
                 )}
               >
                 {/* Animated rings for Gojek-like effect */}
@@ -92,22 +109,47 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
                     <div className="absolute inset-2 rounded-full bg-blue-200 animate-pulse opacity-20"></div>
                   </>
                 )}
-                <svg
-                  className={cn(
-                    "w-16 h-16 z-10",
-                    authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
-                  )}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0"
-                  />
-                </svg>
+
+                {/* Success animation */}
+                {success && (
+                  <>
+                    <div className="absolute inset-0 rounded-full bg-green-100 animate-pulse opacity-30"></div>
+                    <div className="absolute inset-4 rounded-full bg-green-200 opacity-20"></div>
+                  </>
+                )}
+
+                {success ? (
+                  <svg
+                    className="w-16 h-16 z-10 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className={cn(
+                      "w-16 h-16 z-10",
+                      authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0"
+                    />
+                  </svg>
+                )}
               </div>
             )}
 
@@ -116,7 +158,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
               <div
                 className={cn(
                   "w-28 h-28 rounded-full flex items-center justify-center mb-6 relative",
-                  authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
+                  success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
                 )}
               >
                 {/* Animated rings for Gojek-like effect */}
@@ -126,23 +168,59 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
                     <div className="absolute inset-2 rounded-full bg-blue-200 animate-pulse opacity-20"></div>
                   </>
                 )}
-                <svg
-                  className={cn(
-                    "w-16 h-16 z-10",
-                    authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
-                  )}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
-                </svg>
+
+                {/* Success animation */}
+                {success && (
+                  <>
+                    <div className="absolute inset-0 rounded-full bg-green-100 animate-pulse opacity-30"></div>
+                    <div className="absolute inset-4 rounded-full bg-green-200 opacity-20"></div>
+                  </>
+                )}
+
+                {success ? (
+                  <svg
+                    className="w-16 h-16 z-10 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className={cn(
+                      "w-16 h-16 z-10",
+                      authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h.01M9 9h.01" />
+                  </svg>
+                )}
               </div>
             )}
 
             {/* Status text - Gojek style */}
-            {authenticating ? (
+            {success ? (
+              <div className="text-center">
+                <p className="text-lg font-medium text-green-600 mb-1">
+                  {biometricType === 'fingerprint'
+                    ? 'Fingerprint Verified!'
+                    : 'Face ID Verified!'}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Completing your payment...
+                </p>
+              </div>
+            ) : authenticating ? (
               <div className="text-center">
                 <p className="text-lg font-medium text-gray-800 mb-1">
                   {biometricType === 'fingerprint'
