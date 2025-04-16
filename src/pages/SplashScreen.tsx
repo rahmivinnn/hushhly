@@ -1487,10 +1487,10 @@ const SplashScreen: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-center">
+                  <div className="flex justify-center mt-4 z-20 relative">
                     <button
                       onClick={() => setShowPaymentModal(false)}
-                      className="text-gray-600 py-2 px-4 hover:text-gray-800 transition-colors text-sm"
+                      className="text-gray-600 py-3 px-6 hover:text-gray-800 transition-colors text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg"
                     >
                       Cancel
                     </button>
@@ -1890,7 +1890,7 @@ const SplashScreen: React.FC = () => {
   const renderProgressIndicators = () => {
     if (currentScreen >= 2 && currentScreen <= 5) {
       return (
-        <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2">
+        <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
           {[...Array(4)].map((_, index) => (
             <div
               key={index}
