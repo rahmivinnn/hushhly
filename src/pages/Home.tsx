@@ -24,6 +24,14 @@ interface MeditationCard {
   image: string;
 }
 
+interface CategoryCard {
+  icon: string;
+  title: string;
+  description: string;
+  subtext: string;
+  color: string;
+}
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -104,6 +112,58 @@ const Home: React.FC = () => {
     }
   ];
 
+  const categoryCards: CategoryCard[] = [
+    {
+      icon: "🧠",
+      title: "Quick Reset",
+      description: "For overwhelmed moments, school runs, or toddler tantrums.",
+      subtext: "Breathe and reset in under 5 minutes.",
+      color: "bg-gradient-to-r from-blue-400 to-blue-500"
+    },
+    {
+      icon: "💞",
+      title: "Mindful Parenting",
+      description: "For patience, emotional regulation, and presence with kids.",
+      subtext: "Show up grounded, even on the messy days.",
+      color: "bg-gradient-to-r from-pink-400 to-pink-500"
+    },
+    {
+      icon: "🌙",
+      title: "Deep Sleep Recovery",
+      description: "For bedtime wind-down, racing thoughts, or night wakings.",
+      subtext: "Let go of the day and drift into deep rest.",
+      color: "bg-gradient-to-r from-indigo-400 to-indigo-600"
+    },
+    {
+      icon: "☀️",
+      title: "Start Your Day Calm",
+      description: "Morning affirmations, grounding meditations, or intention-setting.",
+      subtext: "Begin with clarity, not chaos.",
+      color: "bg-gradient-to-r from-amber-400 to-amber-500"
+    },
+    {
+      icon: "🧸",
+      title: "Parent–Child Bonding",
+      description: "Shared meditations, breathing games, or bedtime stories.",
+      subtext: "Connect through calm.",
+      color: "bg-gradient-to-r from-green-400 to-green-500"
+    },
+    {
+      icon: "🛠",
+      title: "Emotional First Aid",
+      description: "For anxiety, mom guilt, frustration, or when you're touched out.",
+      subtext: "Press pause and recalibrate.",
+      color: "bg-gradient-to-r from-red-400 to-red-500"
+    },
+    {
+      icon: "🌺",
+      title: "Affirmations & Mantras",
+      description: "For mental clarity, confidence, or emotional support.",
+      subtext: "Reframe your thoughts, reclaim your calm.",
+      color: "bg-gradient-to-r from-purple-400 to-purple-500"
+    }
+  ];
+
   const handleWatchNow = (title: string, duration: string) => {
     if (title === "Meditation 101") {
       navigate('/meditation-101');
@@ -157,6 +217,29 @@ const Home: React.FC = () => {
     setTimeout(() => {
       navigate('/meditation');
     }, 1500);
+  };
+
+  const handleScheduleSession = (category: string) => {
+    toast({
+      title: `Schedule ${category}`,
+      description: `Opening scheduler for ${category} session.`,
+    });
+
+    // In a real app, this would open a scheduling interface
+    setTimeout(() => {
+      navigate('/work');
+    }, 1000);
+  };
+
+  const handleStartNow = (category: string) => {
+    toast({
+      title: `Starting ${category}`,
+      description: `Beginning your ${category} session now.`,
+    });
+
+    setTimeout(() => {
+      navigate('/meditation');
+    }, 1000);
   };
 
   return (
@@ -237,122 +320,85 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Daily Meditation */}
+      {/* Categories Section */}
       <section className="px-4 mb-3">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-base font-semibold">Daily Meditation</h2>
+          <h2 className="text-base font-semibold">Meditation Categories</h2>
           <button
             onClick={goToSleepStories}
             className="text-blue-500 flex items-center text-xs"
           >
-            View More <ArrowRight size={12} className="ml-1" />
+            View All <ArrowRight size={12} className="ml-1" />
           </button>
         </div>
 
-        {dailyMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-3 mb-2">
-            <h3 className="text-sm font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-xs text-gray-600 mb-1">{meditation.description}</p>
-            <div className="flex items-center mb-2">
-              <div className="flex items-center text-gray-500 text-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {meditation.duration}
+        <div className="space-y-3">
+          {categoryCards.map((category, index) => (
+            <div key={index} className={`${category.color} rounded-xl p-3 text-white`}>
+              <div className="flex items-start mb-1">
+                <span className="text-2xl mr-2">{category.icon}</span>
+                <div>
+                  <h3 className="text-sm font-medium">{category.title}</h3>
+                  <p className="text-xs text-white/90">{category.description}</p>
+                </div>
+              </div>
+              <p className="text-xs italic text-white/80 mb-2">"{category.subtext}"</p>
+
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() => handleScheduleSession(category.title)}
+                  className="bg-white/20 hover:bg-white/30 text-white border border-white/40 rounded-full px-3 py-1 text-xs flex-1"
+                >
+                  Schedule
+                </Button>
+                <Button
+                  onClick={() => handleStartNow(category.title)}
+                  className="bg-white hover:bg-white/90 text-blue-600 rounded-full px-3 py-1 text-xs flex-1"
+                >
+                  Start Now
+                </Button>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex items-center"
-              >
-                Watch Now <div className="ml-1 p-0.5 bg-white rounded-full"><ArrowRight size={10} className="text-blue-500" /></div>
-              </Button>
-              <Button
-                onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-3 py-1 text-xs"
-              >
-                Start Meditation
-              </Button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
-      {/* Quick Stress Relief */}
+      {/* Daily Meditation - Keeping one card as example */}
       <section className="px-4 mb-3">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-base font-semibold">Quick Stress Relief</h2>
-          <button className="text-blue-500 flex items-center text-xs">
-            View More <ArrowRight size={12} className="ml-1" />
+          <h2 className="text-base font-semibold">Today's Recommendation</h2>
+          <button
+            onClick={goToSleepStories}
+            className="text-blue-500 flex items-center text-xs"
+          >
+            More <ArrowRight size={12} className="ml-1" />
           </button>
         </div>
 
-        {quickReliefMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-3 mb-2">
-            <h3 className="text-sm font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-xs text-gray-600 mb-1">{meditation.description}</p>
-            <div className="flex items-center mb-2">
-              <div className="flex items-center text-gray-500 text-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {meditation.duration}
-              </div>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex items-center"
-              >
-                Watch Now <div className="ml-1 p-0.5 bg-white rounded-full"><ArrowRight size={10} className="text-blue-500" /></div>
-              </Button>
-              <Button
-                onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-3 py-1 text-xs"
-              >
-                Start Meditation
-              </Button>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* Quick Access Cards */}
-      <section className="px-4 mb-3 space-y-2">
-        <div
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
-          onClick={() => handleQuickSessionClick("1-minute", "Quick Relaxation")}
-        >
-          <p className="text-xs">Quick relaxation before picking up kids</p>
-          <div className="flex items-center justify-between mt-1">
-            <div className="flex items-center">
+        <div className="bg-blue-100 rounded-xl p-3 mb-2">
+          <h3 className="text-sm font-medium text-gray-900">{dailyMeditations[0].title}</h3>
+          <p className="text-xs text-gray-600 mb-1">{dailyMeditations[0].description}</p>
+          <div className="flex items-center mb-2">
+            <div className="flex items-center text-gray-500 text-xs">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-xs">02:58 PM</span>
+              {dailyMeditations[0].duration}
             </div>
-            <button className="bg-transparent border border-white rounded-full px-2 py-0.5 text-xs flex items-center">
-              1-Minute Reset <ArrowRight size={10} className="ml-1" />
-            </button>
           </div>
-        </div>
-
-        <div
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
-          onClick={() => handleQuickSessionClick("5-minute", "Short Guided Session")}
-        >
-          <p className="text-xs">Short guided session for daily relaxation</p>
-          <div className="flex items-center justify-between mt-1">
-            <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-xs">5 Min</span>
-            </div>
-            <button className="bg-transparent border border-white rounded-full px-2 py-0.5 text-xs flex items-center">
-              5-Minute Meditation <ArrowRight size={10} className="ml-1" />
-            </button>
+          <div className="flex space-x-2">
+            <Button
+              onClick={() => handleWatchNow(dailyMeditations[0].title, dailyMeditations[0].duration)}
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex items-center"
+            >
+              Watch Now <div className="ml-1 p-0.5 bg-white rounded-full"><ArrowRight size={10} className="text-blue-500" /></div>
+            </Button>
+            <Button
+              onClick={handleStartMeditation}
+              className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-3 py-1 text-xs"
+            >
+              Start Meditation
+            </Button>
           </div>
         </div>
       </section>
