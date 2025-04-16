@@ -35,7 +35,7 @@ const Home: React.FC = () => {
   const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
-  
+
   useEffect(() => {
     // Try to get user data from localStorage
     const storedUser = localStorage.getItem('user');
@@ -70,7 +70,7 @@ const Home: React.FC = () => {
       icon: <MoodIcon iconType="focus" />,
       label: "Focus",
       color: "bg-gradient-to-r from-cyan-500 to-blue-500",
-      type: "focus" 
+      type: "focus"
     },
     {
       icon: <MoodIcon iconType="anxious" />,
@@ -129,7 +129,7 @@ const Home: React.FC = () => {
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
   };
-  
+
   const handleNotificationClick = () => {
     if (!showNotification) {
       setShowNotification(true);
@@ -137,34 +137,34 @@ const Home: React.FC = () => {
         title: "New Notification",
         description: "You have a meditation session scheduled in 30 minutes!",
       });
-      
+
       setTimeout(() => {
         setShowNotification(false);
       }, 3000);
     }
   };
-  
+
   const handleAIRecommendationClick = () => {
     setShowAIRecommendation(true);
   };
-  
+
   const handleQuickSessionClick = (duration: string, title: string) => {
     toast({
       title: `${title}`,
       description: `Starting your ${duration} session now.`,
     });
-    
+
     setTimeout(() => {
       navigate('/meditation');
     }, 1500);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 overflow-y-auto pb-24">
       {/* Header */}
       <header className="px-4 pt-4 pb-2">
         <div className="flex justify-between items-center">
-          <button 
+          <button
             className="p-2 text-gray-800"
             onClick={toggleSideMenu}
           >
@@ -172,23 +172,23 @@ const Home: React.FC = () => {
             <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
             <div className="w-6 h-0.5 bg-gray-800"></div>
           </button>
-          
+
           <div className="flex items-center">
-            <img 
+            <img
               src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
               alt="Shh Logo"
               className="h-8"
             />
           </div>
-          
+
           <div className="flex items-center space-x-4">
-            <button 
+            <button
               className={`text-gray-800 ${showNotification ? 'animate-bounce' : ''}`}
               onClick={handleNotificationClick}
             >
               <Bell size={20} />
             </button>
-            <button 
+            <button
               className="text-yellow-500"
               onClick={() => navigate('/sleep-stories')}
             >
@@ -197,17 +197,17 @@ const Home: React.FC = () => {
           </div>
         </div>
       </header>
-      
+
       {/* Welcome Section */}
-      <section className="px-4 pt-2 pb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {userName}!</h1>
-        <p className="text-gray-600 mt-1">How are you feeling today?</p>
-        
-        <div className="flex justify-between mt-4">
+      <section className="px-4 pt-1 pb-3">
+        <h1 className="text-xl font-semibold text-gray-900">Welcome back, {userName}!</h1>
+        <p className="text-gray-600 text-sm">How are you feeling today?</p>
+
+        <div className="flex justify-between mt-3">
           {moodOptions.map((mood, index) => (
-            <button 
+            <button
               key={index}
-              className={`flex flex-col items-center ${mood.color} w-16 h-16 rounded-2xl text-white p-2 transition-transform hover:scale-105 active:scale-95`}
+              className={`flex flex-col items-center ${mood.color} w-14 h-14 rounded-2xl text-white p-1 transition-transform hover:scale-105 active:scale-95`}
               aria-label={`Feeling ${mood.label}`}
               onClick={() => handleMoodSelection(mood.type)}
             >
@@ -217,60 +217,60 @@ const Home: React.FC = () => {
           ))}
         </div>
       </section>
-      
+
       {/* Recommended Section */}
-      <section className="px-4 mb-6">
-        <div 
+      <section className="px-4 mb-3">
+        <div
           onClick={handleAIRecommendationClick}
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
         >
           <div>
-            <h2 className="font-medium">AI-recommended meditation for the day</h2>
+            <h2 className="font-medium text-sm">AI-recommended meditation for the day</h2>
             <div className="flex items-center mt-1">
-              <p>Mindfulness meditation</p>
-              <ArrowRight size={16} className="ml-1" />
+              <p className="text-xs">Mindfulness meditation</p>
+              <ArrowRight size={14} className="ml-1" />
             </div>
           </div>
-          <div className="text-4xl">
-            <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-12 h-12" />
+          <div>
+            <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-10 h-10" />
           </div>
         </div>
       </section>
-      
+
       {/* Daily Meditation */}
-      <section className="px-4 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Daily Meditation</h2>
-          <button 
+      <section className="px-4 mb-3">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-base font-semibold">Daily Meditation</h2>
+          <button
             onClick={goToSleepStories}
-            className="text-blue-500 flex items-center text-sm"
+            className="text-blue-500 flex items-center text-xs"
           >
-            View More <ArrowRight size={14} className="ml-1" />
+            View More <ArrowRight size={12} className="ml-1" />
           </button>
         </div>
-        
+
         {dailyMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-4 mb-4">
-            <h3 className="text-lg font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-sm text-gray-600 mb-2">{meditation.description}</p>
-            <div className="flex items-center mb-3">
-              <div className="flex items-center text-gray-500 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div key={index} className="bg-blue-100 rounded-xl p-3 mb-2">
+            <h3 className="text-sm font-medium text-gray-900">{meditation.title}</h3>
+            <p className="text-xs text-gray-600 mb-1">{meditation.description}</p>
+            <div className="flex items-center mb-2">
+              <div className="flex items-center text-gray-500 text-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {meditation.duration}
               </div>
             </div>
-            <div className="flex space-x-3">
-              <Button 
+            <div className="flex space-x-2">
+              <Button
                 onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm flex items-center"
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex items-center"
               >
-                Watch Now <div className="ml-1 p-1 bg-white rounded-full"><ArrowRight size={12} className="text-blue-500" /></div>
+                Watch Now <div className="ml-1 p-0.5 bg-white rounded-full"><ArrowRight size={10} className="text-blue-500" /></div>
               </Button>
-              <Button 
+              <Button
                 onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-4 py-2 text-sm"
+                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-3 py-1 text-xs"
               >
                 Start Meditation
               </Button>
@@ -278,38 +278,38 @@ const Home: React.FC = () => {
           </div>
         ))}
       </section>
-      
+
       {/* Quick Stress Relief */}
-      <section className="px-4 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Quick Stress Relief</h2>
-          <button className="text-blue-500 flex items-center text-sm">
-            View More <ArrowRight size={14} className="ml-1" />
+      <section className="px-4 mb-3">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-base font-semibold">Quick Stress Relief</h2>
+          <button className="text-blue-500 flex items-center text-xs">
+            View More <ArrowRight size={12} className="ml-1" />
           </button>
         </div>
-        
+
         {quickReliefMeditations.map((meditation, index) => (
-          <div key={index} className="bg-blue-100 rounded-xl p-4 mb-4">
-            <h3 className="text-lg font-medium text-gray-900">{meditation.title}</h3>
-            <p className="text-sm text-gray-600 mb-2">{meditation.description}</p>
-            <div className="flex items-center mb-3">
-              <div className="flex items-center text-gray-500 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div key={index} className="bg-blue-100 rounded-xl p-3 mb-2">
+            <h3 className="text-sm font-medium text-gray-900">{meditation.title}</h3>
+            <p className="text-xs text-gray-600 mb-1">{meditation.description}</p>
+            <div className="flex items-center mb-2">
+              <div className="flex items-center text-gray-500 text-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {meditation.duration}
               </div>
             </div>
-            <div className="flex space-x-3">
-              <Button 
+            <div className="flex space-x-2">
+              <Button
                 onClick={() => handleWatchNow(meditation.title, meditation.duration)}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm flex items-center"
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex items-center"
               >
-                Watch Now <div className="ml-1 p-1 bg-white rounded-full"><ArrowRight size={12} className="text-blue-500" /></div>
+                Watch Now <div className="ml-1 p-0.5 bg-white rounded-full"><ArrowRight size={10} className="text-blue-500" /></div>
               </Button>
-              <Button 
+              <Button
                 onClick={handleStartMeditation}
-                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-4 py-2 text-sm"
+                className="bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 rounded-full px-3 py-1 text-xs"
               >
                 Start Meditation
               </Button>
@@ -317,65 +317,65 @@ const Home: React.FC = () => {
           </div>
         ))}
       </section>
-      
+
       {/* Quick Access Cards */}
-      <section className="px-4 mb-6 space-y-4">
-        <div 
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+      <section className="px-4 mb-3 space-y-2">
+        <div
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
           onClick={() => handleQuickSessionClick("1-minute", "Quick Relaxation")}
         >
-          <p className="text-sm">Quick relaxation before picking up kids</p>
-          <div className="flex items-center justify-between mt-2">
+          <p className="text-xs">Quick relaxation before picking up kids</p>
+          <div className="flex items-center justify-between mt-1">
             <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>02:58 PM</span>
+              <span className="text-xs">02:58 PM</span>
             </div>
-            <button className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center">
-              1-Minute Reset <ArrowRight size={14} className="ml-1" />
+            <button className="bg-transparent border border-white rounded-full px-2 py-0.5 text-xs flex items-center">
+              1-Minute Reset <ArrowRight size={10} className="ml-1" />
             </button>
           </div>
         </div>
-        
-        <div 
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+
+        <div
+          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
           onClick={() => handleQuickSessionClick("5-minute", "Short Guided Session")}
         >
-          <p className="text-sm">Short guided session for daily relaxation</p>
-          <div className="flex items-center justify-between mt-2">
+          <p className="text-xs">Short guided session for daily relaxation</p>
+          <div className="flex items-center justify-between mt-1">
             <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>5 Min</span>
+              <span className="text-xs">5 Min</span>
             </div>
-            <button className="bg-transparent border border-white rounded-full px-3 py-1 text-sm flex items-center">
-              5-Minute Meditation <ArrowRight size={14} className="ml-1" />
+            <button className="bg-transparent border border-white rounded-full px-2 py-0.5 text-xs flex items-center">
+              5-Minute Meditation <ArrowRight size={10} className="ml-1" />
             </button>
           </div>
         </div>
       </section>
-      
+
       {/* Side Menu */}
-      <SideMenu 
-        isOpen={isSideMenuOpen} 
-        onClose={() => setIsSideMenuOpen(false)} 
+      <SideMenu
+        isOpen={isSideMenuOpen}
+        onClose={() => setIsSideMenuOpen(false)}
         userName={userName}
       />
-      
+
       {/* Mood Feedback Dialog */}
-      <MoodFeedbackDialog 
+      <MoodFeedbackDialog
         isOpen={showMoodFeedback}
         onClose={() => setShowMoodFeedback(false)}
         selectedMood={selectedMood}
       />
-      
+
       {/* AI Recommendation */}
       {showAIRecommendation && (
         <AIRecommendation onClose={() => setShowAIRecommendation(false)} />
       )}
-      
+
       {/* Video Popup */}
       {showVideoPopup && (
         <VideoPopup
@@ -384,7 +384,7 @@ const Home: React.FC = () => {
           onClose={() => setShowVideoPopup(false)}
         />
       )}
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>
