@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
-import { FaApple } from 'react-icons/fa';
+import { FaApple, FaGooglePlay } from 'react-icons/fa';
 import { usePromoCodeEnhanced } from '@/hooks/usePromoCodeEnhanced';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -15,6 +15,7 @@ import { balanceService } from '@/services/balanceService';
 import { faceIdService } from '@/services/faceIdService';
 import { applePayService } from '@/services/applePayService';
 import { biometricService } from '@/services/biometricService';
+import { googlePlayService } from '@/services/googlePlayService';
 import { FaceIDDialog } from '@/components/ui/face-id-dialog';
 import { FingerprintDialog } from '@/components/ui/fingerprint-dialog';
 
@@ -31,6 +32,7 @@ const SplashScreen: React.FC = () => {
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [faceIdFeatures, setFaceIdFeatures] = useState<any>(null);
   const [faceIdConfidence, setFaceIdConfidence] = useState<number | null>(null);
+  const [fingerprintConfidence, setFingerprintConfidence] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState('');
   const [verificationMethod, setVerificationMethod] = useState<'fingerprint' | 'screenlock'>('fingerprint');
   const [showBiometricDialog, setShowBiometricDialog] = useState(false);
@@ -136,6 +138,26 @@ const SplashScreen: React.FC = () => {
   // Get current user ID (real or temporary)
   const getCurrentUserId = () => {
     return user?.id || getTempUserId();
+  };
+
+  // Get user's country/region
+  const getUserCountry = async (): Promise<string> => {
+    try {
+      // Try to get country from browser's navigator.language
+      const browserLanguage = navigator.language || 'en-US';
+      const countryCode = browserLanguage.split('-')[1] || 'US';
+
+      // For a more accurate result, you could use a geolocation API
+      // This is a simplified version that just uses the browser's language setting
+
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      return countryCode;
+    } catch (error) {
+      console.error('Error detecting country:', error);
+      return 'US'; // Default to US if detection fails
+    }
   };
 
   const handlePayment = async (method: 'apple' | 'google' | 'balance') => {
@@ -285,65 +307,91 @@ const SplashScreen: React.FC = () => {
   };
 
   // Handle successful biometric authentication
-  const handleBiometricSuccess = async () => {
+  const handleBiometricSuccess = async (features?: any, confidence?: number) => {
+    // Store fingerprint confidence for display
+    if (confidence !== undefined) setFingerprintConfidence(confidence);
+
     // Trigger balance update
     window.dispatchEvent(new Event('balance-updated'));
+
     try {
+      // Get the pending payment details from localStorage
+      const amount = parseFloat(localStorage.getItem('pendingPaymentAmount') || '0');
+      const description = localStorage.getItem('pendingPaymentDescription') || '';
+      const userId = localStorage.getItem('pendingPaymentUserId') || getCurrentUserId();
+      const plan = localStorage.getItem('pendingPaymentPlan') as 'annual' | 'monthly' || selectedPlan;
+      const country = localStorage.getItem('pendingPaymentCountry') || 'US';
+
+      if (!amount || !description) {
+        throw new Error('Payment information not found');
+      }
+
+      // Set the selected plan based on what was stored
+      setSelectedPlan(plan);
+
       // Show success message
       toast.success('Fingerprint verified');
 
-      // Keep dialog visible longer to show success state
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Close the dialog
-      setShowBiometricDialog(false);
-
-      // Show processing message
-      toast.info('Processing payment...');
-
-      // Add a longer delay to simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 4000));
-
-      // Show verifying message
-      toast.info('Verifying payment...');
-
-      // Add another delay to simulate backend verification
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Verify the payment with backend
-      const paymentId = localStorage.getItem('pendingPaymentId');
-      if (!paymentId) {
-        throw new Error('Payment ID not found');
-      }
-
-      const isVerified = await paymentService.verifyPayment(paymentId);
-
-      if (!isVerified) {
-        throw new Error('Payment verification failed');
-      }
-
-      // Show verification success message
-      toast.success('Payment verification successful');
-
-      // Add a delay after verification
+      // Add a small delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Get payment result from local storage
-      const paymentResultJson = localStorage.getItem('pendingPaymentResult');
-      if (!paymentResultJson) {
-        throw new Error('Payment result not found');
+      // Show processing message
+      toast.info('Processing Google Play payment...');
+
+      // Process the actual payment with Google Play
+      const paymentResult = await googlePlayService.processPayment({
+        amount,
+        currency: 'USD',
+        description,
+        userId,
+        country
+      });
+
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || 'Google Play payment failed');
       }
 
-      const paymentResult = JSON.parse(paymentResultJson);
+      // Add another delay to simulate backend processing
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       // Complete the payment process
-      completePaymentProcess(paymentResult);
+      setPaymentStep('success');
 
+      // Save subscription details
+      const subscriptionDetails = {
+        plan: plan, // Use the plan from localStorage
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + (plan === 'annual' ? 12 : 1))),
+        autoRenew: true,
+        status: 'active' as 'active',
+        paymentId: paymentResult.transactionId,
+        promoCodeId: activePromo?.id,
+        originalPrice: plan === 'annual' ? prices.annual : prices.monthly,
+        finalPrice: amount, // Use the actual amount paid from localStorage
+        country: country // Include country information
+      };
+
+      await paymentService.saveSubscription(userId, subscriptionDetails);
+
+      // Show success message
+      toast.success('Payment successful!');
+
+      // Add a delay before closing the payment UI
+      setTimeout(() => {
+        // Close payment UI and proceed
+        setShowBiometricDialog(false);
+        setShowPaymentSheet(false);
+        setShowPaymentModal(false);
+
+        // Navigate to the next screen
+        setCurrentScreen(currentScreen + 1);
+      }, 3000);
     } catch (error) {
-      console.error('Biometric verification error:', error);
-      toast.error(error instanceof Error ? error.message : 'An error occurred during verification');
+      console.error('Fingerprint success handler error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment processing');
 
       // Reset payment UI
+      setShowBiometricDialog(false);
       setShowPaymentSheet(false);
       setPaymentStep('select');
     }
@@ -351,72 +399,25 @@ const SplashScreen: React.FC = () => {
 
   // Handle biometric authentication error
   const handleBiometricError = async (error: string) => {
-    // Trigger balance update
-    window.dispatchEvent(new Event('balance-updated'));
-    // Show error message
+    console.error('Fingerprint error:', error);
     toast.error(error || 'Fingerprint verification failed');
 
     // Close the biometric dialog
     setShowBiometricDialog(false);
 
-    // Wait a moment before showing the screen lock option
+    // Wait a moment before showing the retry option
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Ask if user wants to try screen lock instead
-    const useScreenLock = window.confirm('Would you like to try using screen lock instead?');
+    // Ask if user wants to try again
+    const tryAgain = window.confirm('Would you like to try fingerprint verification again?');
 
-    if (useScreenLock) {
-      try {
-        // Show screen lock verification message
-        toast.info('Verifying with screen lock...');
-
-        // Use the screen lock authentication method
-        const screenLockResult = await biometricService.authenticateWithScreenLock(
-          'Please authenticate to complete your purchase'
-        );
-
-        if (screenLockResult.success) {
-          // Show success message
-          toast.success('Screen lock verified');
-
-          // Wait a moment before proceeding
-          await new Promise(resolve => setTimeout(resolve, 2000));
-
-          // Show processing message
-          toast.info('Processing payment...');
-
-          // Wait a moment before proceeding
-          await new Promise(resolve => setTimeout(resolve, 3000));
-
-          // Get payment result from local storage
-          const paymentId = localStorage.getItem('pendingPaymentId');
-          const paymentResultJson = localStorage.getItem('pendingPaymentResult');
-
-          if (paymentId && paymentResultJson) {
-            // Verify the payment
-            const isVerified = await paymentService.verifyPayment(paymentId);
-
-            if (isVerified) {
-              // Parse the payment result
-              const paymentResult = JSON.parse(paymentResultJson);
-
-              // Complete the payment process
-              completePaymentProcess(paymentResult);
-              return;
-            }
-          }
-
-          throw new Error('Payment verification failed');
-        } else {
-          throw new Error(screenLockResult.error || 'Screen lock verification failed');
-        }
-      } catch (error) {
-        console.error('Screen lock verification error:', error);
-        toast.error(error instanceof Error ? error.message : 'An error occurred during verification');
-      }
+    if (tryAgain) {
+      // Try again with Google Play
+      handleGooglePlay();
+      return;
     }
 
-    // Reset payment UI if screen lock failed or was declined
+    // Reset payment UI if user doesn't want to try again
     setShowPaymentSheet(false);
     setPaymentStep('select');
   };
@@ -495,6 +496,88 @@ const SplashScreen: React.FC = () => {
 
   const getDiscountedPrice = (originalPrice: number) => {
     return calculateDiscountedPrice(originalPrice);
+  };
+
+  // Handle Google Play with Fingerprint
+  const handleGooglePlay = async () => {
+    // Show the payment sheet with Google Play branding
+    setShowPaymentSheet(true);
+    setPaymentStep('processing');
+    setProcessingPayment(true);
+
+    try {
+      // Get user ID
+      const userId = getCurrentUserId();
+
+      // Get user's country/region
+      const userCountry = await getUserCountry();
+      console.log(`User country detected: ${userCountry}`);
+
+      // Check if Google Play is available
+      const isGooglePlayAvailable = await googlePlayService.isAvailable();
+      if (!isGooglePlayAvailable) {
+        throw new Error('Google Play is not available on this device. Please use an Android device with Google Play support.');
+      }
+
+      // Calculate price based on selected plan
+      let originalPrice: number, finalPrice: number;
+
+      if (selectedPlan === 'annual') {
+        // Annual plan: $59.99 per year
+        originalPrice = prices.annual;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+        // Show initializing payment message with annual amount
+        toast.info(`Initializing Google Play payment for $${finalPrice.toFixed(2)}/year...`);
+      } else {
+        // Monthly plan: $5.99 per month
+        originalPrice = prices.monthly;
+        finalPrice = activePromo ? getDiscountedPrice(originalPrice) : originalPrice;
+
+        // Show initializing payment message with monthly amount
+        toast.info(`Initializing Google Play payment for $${finalPrice.toFixed(2)}/month...`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // First step: Process payment with Google Play
+      const paymentDescription = `Subscription to ${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Plan`;
+
+      // Store transaction details for verification
+      localStorage.setItem('pendingPaymentAmount', finalPrice.toString());
+      localStorage.setItem('pendingPaymentDescription', paymentDescription);
+      localStorage.setItem('pendingPaymentUserId', userId);
+      localStorage.setItem('pendingPaymentPlan', selectedPlan);
+      localStorage.setItem('pendingPaymentCountry', userCountry);
+
+      // Second step: Verify with Fingerprint
+      setPaymentStep('verifying');
+
+      // Check if Fingerprint is available
+      const isBiometricAvailable = await biometricService.isAvailable();
+      if (!isBiometricAvailable) {
+        throw new Error('Fingerprint authentication is not available on this device. Please use an Android device with fingerprint support.');
+      }
+
+      // Show Fingerprint verification message
+      toast.info('Please verify with your fingerprint to complete payment');
+
+      // Show the Fingerprint dialog
+      setShowBiometricDialog(true);
+
+      // The verification will continue in the onBiometricSuccess handler
+      return;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred during payment');
+
+      // Reset payment UI
+      setShowBiometricDialog(false);
+      setShowPaymentSheet(false);
+      setPaymentStep('select');
+    } finally {
+      setProcessingPayment(false);
+    }
   };
 
   // Handle Apple Pay with Face ID
@@ -1003,28 +1086,43 @@ const SplashScreen: React.FC = () => {
 
                           {/* Main icon container */}
                           <div className="animate-pulse w-20 h-20 rounded-full bg-white/20 flex items-center justify-center relative z-10">
-                            {/* Apple Face ID icon */}
-                            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 9h.01M15 9h.01M8 13a4 4 0 008 0" />
-                              <rect width="20" height="20" x="2" y="2" rx="5" />
-                            </svg>
+                            {isIOS() ? (
+                              /* Apple Face ID icon */
+                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 9h.01M15 9h.01M8 13a4 4 0 008 0" />
+                                <rect width="20" height="20" x="2" y="2" rx="5" />
+                              </svg>
+                            ) : (
+                              /* Google Fingerprint icon */
+                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.06-.411.091-.83.091-1.255a4.99 4.99 0 00-1.383-3.453M4.921 10a5.008 5.008 0 01-1.423-3.883c0-3.316 3.01-6 6.724-6M5.9 20.21a5.001 5.001 0 01-2.38-3.233M13.5 4.206V4a2 2 0 10-4 0v.206a6 6 0 00-.5 10.975M16 11a4 4 0 00-4-4v0" />
+                              </svg>
+                            )}
                           </div>
                         </div>
                       </div>
 
-                      {/* Apple Pay verification text */}
+                      {/* Payment verification text */}
                       <h3 className="text-xl font-semibold text-white mb-1">
-                        Look at Your Device
+                        {isIOS() ? 'Look at Your Device' : 'Touch Fingerprint Sensor'}
                       </h3>
                       <p className="text-sm text-white/80 mt-2">
-                        Use Face ID to verify this Apple Pay payment
+                        {isIOS()
+                          ? 'Use Face ID to verify this Apple Pay payment'
+                          : 'Use your fingerprint to verify this Google Play payment'}
                       </p>
 
-                      {/* Apple Pay security badge */}
+                      {/* Payment security badge */}
                       <div className="mt-6 flex items-center justify-center">
                         <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
-                          <FaApple size={12} className="text-white" />
-                          <span className="text-xs text-white/80">Secured by Apple Pay</span>
+                          {isIOS()
+                            ? <FaApple size={12} className="text-white" />
+                            : <FaGooglePlay size={12} className="text-white" />}
+                          <span className="text-xs text-white/80">
+                            {isIOS()
+                              ? 'Secured by Apple Pay'
+                              : 'Secured by Google Play'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1069,8 +1167,17 @@ const SplashScreen: React.FC = () => {
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-xs text-white/60">Payment Method</span>
                           <span className="text-sm text-white font-medium flex items-center">
-                            <FaApple size={14} className="mr-1" />
-                            Apple Pay
+                            {isIOS() ? (
+                              <>
+                                <FaApple size={14} className="mr-1" />
+                                Apple Pay
+                              </>
+                            ) : (
+                              <>
+                                <FaGooglePlay size={14} className="mr-1" />
+                                Google Play
+                              </>
+                            )}
                           </span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
@@ -1097,51 +1204,97 @@ const SplashScreen: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Face ID verification details */}
-                      {faceIdFeatures && (
-                        <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs text-white/60">Face ID Details</span>
-                            <span className="text-xs text-white/80 bg-green-500/30 px-2 py-0.5 rounded-full">
-                              Verified
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                            <div className="flex items-center">
-                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.eyes ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                              <span className="text-white/80">Eyes: {faceIdFeatures.eyes ? 'Detected' : 'Not Detected'}</span>
+                      {/* Biometric verification details */}
+                      {isIOS() ? (
+                        // Face ID verification details
+                        faceIdFeatures && (
+                          <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs text-white/60">Face ID Details</span>
+                              <span className="text-xs text-white/80 bg-green-500/30 px-2 py-0.5 rounded-full">
+                                Verified
+                              </span>
                             </div>
-                            <div className="flex items-center">
-                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.nose ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                              <span className="text-white/80">Nose: {faceIdFeatures.nose ? 'Detected' : 'Not Detected'}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.mouth ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                              <span className="text-white/80">Mouth: {faceIdFeatures.mouth ? 'Detected' : 'Not Detected'}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.skinTexture ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                              <span className="text-white/80">Skin: {faceIdFeatures.skinTexture ? 'Detected' : 'Not Detected'}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.depthMap ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                              <span className="text-white/80">Depth: {faceIdFeatures.depthMap ? 'Detected' : 'Not Detected'}</span>
-                            </div>
-                            {faceIdConfidence !== null && (
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                               <div className="flex items-center">
-                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdConfidence > 0.9 ? 'bg-green-500' : faceIdConfidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'} mr-1`}></div>
-                                <span className="text-white/80">Confidence: {Math.round(faceIdConfidence * 100)}%</span>
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.eyes ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Eyes: {faceIdFeatures.eyes ? 'Detected' : 'Not Detected'}</span>
                               </div>
-                            )}
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.nose ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Nose: {faceIdFeatures.nose ? 'Detected' : 'Not Detected'}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.mouth ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Mouth: {faceIdFeatures.mouth ? 'Detected' : 'Not Detected'}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.skinTexture ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Skin: {faceIdFeatures.skinTexture ? 'Detected' : 'Not Detected'}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${faceIdFeatures.depthMap ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Depth: {faceIdFeatures.depthMap ? 'Detected' : 'Not Detected'}</span>
+                              </div>
+                              {faceIdConfidence !== null && (
+                                <div className="flex items-center">
+                                  <div className={`w-1.5 h-1.5 rounded-full ${faceIdConfidence > 0.9 ? 'bg-green-500' : faceIdConfidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'} mr-1`}></div>
+                                  <span className="text-white/80">Confidence: {Math.round(faceIdConfidence * 100)}%</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        )
+                      ) : (
+                        // Fingerprint verification details
+                        fingerprintConfidence !== null && (
+                          <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs text-white/60">Fingerprint Details</span>
+                              <span className="text-xs text-white/80 bg-green-500/30 px-2 py-0.5 rounded-full">
+                                Verified
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full bg-green-500 mr-1`}></div>
+                                <span className="text-white/80">Pattern: Detected</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full bg-green-500 mr-1`}></div>
+                                <span className="text-white/80">Ridges: Detected</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full bg-green-500 mr-1`}></div>
+                                <span className="text-white/80">Minutiae: Detected</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full ${fingerprintConfidence > 0.9 ? 'bg-green-500' : fingerprintConfidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'} mr-1`}></div>
+                                <span className="text-white/80">Confidence: {Math.round(fingerprintConfidence * 100)}%</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className={`w-1.5 h-1.5 rounded-full bg-green-500 mr-1`}></div>
+                                <span className="text-white/80">Country: {localStorage.getItem('pendingPaymentCountry') || 'US'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
                       )}
 
-                      {/* Apple Pay security badge */}
+                      {/* Payment security badge */}
                       <div className="mt-6 flex items-center justify-center">
                         <div className="bg-white/10 rounded-full px-3 py-1 flex items-center space-x-1">
-                          <FaApple size={12} className="text-white" />
-                          <span className="text-xs text-white/80">Secured by Apple Pay</span>
+                          {isIOS() ? (
+                            <>
+                              <FaApple size={12} className="text-white" />
+                              <span className="text-xs text-white/80">Secured by Apple Pay</span>
+                            </>
+                          ) : (
+                            <>
+                              <FaGooglePlay size={12} className="text-white" />
+                              <span className="text-xs text-white/80">Secured by Google Play</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1248,30 +1401,60 @@ const SplashScreen: React.FC = () => {
 
                   {/* Payment Method Options */}
                   <div className="space-y-3">
-                    <Button
-                      onClick={handleApplePay}
-                      className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors active:scale-95 transform transition-transform"
-                    >
-                      <FaApple size={24} />
-                      <span className="text-lg">Pay with Apple Pay</span>
-                    </Button>
+                    {isIOS() ? (
+                      <Button
+                        onClick={handleApplePay}
+                        className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors active:scale-95 transform transition-transform"
+                      >
+                        <FaApple size={24} />
+                        <span className="text-lg">Pay with Apple Pay</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleGooglePlay}
+                        className="w-full bg-white border border-gray-300 text-gray-800 py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors active:scale-95 transform transition-transform"
+                      >
+                        <FaGooglePlay size={24} className="text-[#1a73e8]" />
+                        <span className="text-lg">Pay with Google Play</span>
+                      </Button>
+                    )}
                     <p className="text-xs text-gray-500 text-center mt-2">
-                      Secure payment with advanced Face ID verification
+                      {isIOS() ?
+                        "Secure payment with advanced Face ID verification" :
+                        "Secure payment with fingerprint verification"}
                     </p>
                   </div>
 
-                  {/* Face ID Security Information */}
+                  {/* Security Information */}
                   <div className="mt-4 pt-3 border-t border-gray-200">
-                    <p className="text-sm text-gray-600 mb-2 text-center">Advanced Face ID Security</p>
+                    <p className="text-sm text-gray-600 mb-2 text-center">
+                      {isIOS() ? "Advanced Face ID Security" : "Advanced Fingerprint Security"}
+                    </p>
                     <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
-                      <p className="mb-2">Your payment is secured with Apple's advanced Face ID technology that:</p>
-                      <ul className="list-disc pl-4 space-y-1">
-                        <li>Detects precise facial features (eyes, nose, mouth)</li>
-                        <li>Analyzes skin texture and depth mapping</li>
-                        <li>Ensures real-time identity verification</li>
-                        <li>Follows Apple Pay security protocols</li>
-                        <li>Processes payment only after successful verification</li>
-                      </ul>
+                      {isIOS() ? (
+                        <>
+                          <p className="mb-2">Your payment is secured with Apple's advanced Face ID technology that:</p>
+                          <ul className="list-disc pl-4 space-y-1">
+                            <li>Detects precise facial features (eyes, nose, mouth)</li>
+                            <li>Analyzes skin texture and depth mapping</li>
+                            <li>Ensures real-time identity verification</li>
+                            <li>Follows Apple Pay security protocols</li>
+                            <li>Processes payment only after successful verification</li>
+                          </ul>
+                        </>
+                      ) : (
+                        <>
+                          <p className="mb-2">Your payment is secured with Google's advanced fingerprint technology that:</p>
+                          <ul className="list-disc pl-4 space-y-1">
+                            <li>Detects precise fingerprint patterns and ridges</li>
+                            <li>Analyzes unique fingerprint characteristics</li>
+                            <li>Ensures real-time identity verification</li>
+                            <li>Follows Google Play security protocols</li>
+                            <li>Processes payment only after successful verification</li>
+                            <li>Detects your country for regional payment processing</li>
+                          </ul>
+                        </>
+                      )}
                     </div>
                   </div>
 
