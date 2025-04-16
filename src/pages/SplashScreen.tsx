@@ -1401,13 +1401,26 @@ const SplashScreen: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-4">
-                  {/* Balance Information - No Add Funds button */}
+                  {/* Payment Amount Information */}
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex flex-col">
-                      <p className="text-sm text-gray-500">Your Balance</p>
-                      <p className="text-xl font-bold">
-                        {balanceService.formatBalance(balanceService.getUserBalance(getCurrentUserId()).balance)}
+                      <p className="text-sm text-gray-500">Payment Amount</p>
+                      <p className="text-xl font-bold text-green-600">
+                        ${activePromo
+                          ? getDiscountedPrice(selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)
+                          : (selectedPlan === 'annual' ? prices.annual : prices.monthly).toFixed(2)}
+                        <span className="text-sm font-normal text-gray-500 ml-1">
+                          {selectedPlan === 'annual' ? '/year' : '/month'}
+                        </span>
                       </p>
+                      {activePromo && (
+                        <p className="text-xs text-green-600 mt-1 flex items-center">
+                          <span className="line-through text-gray-400 mr-2">
+                            ${selectedPlan === 'annual' ? prices.annual : prices.monthly}
+                          </span>
+                          {activePromo.description}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -1886,8 +1899,14 @@ const SplashScreen: React.FC = () => {
     </div>
   ];
 
-  // Progress indicators - only show for content screens (screens 2-5)
+  // Progress indicators - only show for content screens (screens 2-5), but not for subscription screen (9)
   const renderProgressIndicators = () => {
+    // Don't show indicators on subscription screen (screen 9)
+    if (currentScreen === 9) {
+      return null;
+    }
+
+    // Show indicators only for screens 2-5
     if (currentScreen >= 2 && currentScreen <= 5) {
       return (
         <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
