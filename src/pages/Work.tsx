@@ -37,17 +37,17 @@ const Work: React.FC = () => {
     date: "",
     image: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
   });
-  
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Generate 100 work sessions for demonstration
   const generateWorkSessions = (): WorkSession[] => {
     const sessions: WorkSession[] = [];
     const sessionTypes = [
-      "Focus Meditation", 
-      "Stress Relief Break", 
-      "Midday Mindfulness", 
-      "End of Workday", 
+      "Focus Meditation",
+      "Stress Relief Break",
+      "Midday Mindfulness",
+      "End of Workday",
       "Morning Routine",
       "Productivity Boost",
       "Meeting Preparation",
@@ -55,7 +55,7 @@ const Work: React.FC = () => {
       "Deep Work Session",
       "Team Collaboration"
     ];
-    
+
     const descriptions = [
       "Enhance your productivity and focus",
       "Quick break to reduce work stress",
@@ -68,26 +68,26 @@ const Work: React.FC = () => {
       "Get into flow state for complex tasks",
       "Improve team communication skills"
     ];
-    
+
     const images = [
       "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png",
       "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png",
       "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
     ];
-    
+
     const videoIds = [
       "nRkP3lKj_lY",
       "U5o8UiYxfeY",
       "rnDiXEhkBd8",
       "XqeAt45goBI"
     ];
-    
+
     const durations = ["5 Min", "10 Min", "15 Min", "20 Min", "30 Min"];
-    
+
     const now = new Date();
     let time = new Date(now);
     time.setHours(8, 0, 0, 0); // Start at 8:00 AM
-    
+
     for (let i = 0; i < 100; i++) {
       // Format time as h:mm AM/PM
       const hours = time.getHours();
@@ -96,10 +96,10 @@ const Work: React.FC = () => {
       const formattedHours = hours % 12 || 12; // Convert to 12-hour format
       const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
       const timeString = `${formattedHours}:${formattedMinutes} ${ampm}`;
-      
+
       // Add 30 minutes for the next session
       time = new Date(time.getTime() + 30 * 60000);
-      
+
       // Generate a session
       const typeIndex = i % sessionTypes.length;
       sessions.push({
@@ -114,7 +114,7 @@ const Work: React.FC = () => {
         completed: false
       });
     }
-    
+
     return sessions;
   };
 
@@ -122,7 +122,7 @@ const Work: React.FC = () => {
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
-      
+
       // Format time as h:mm AM/PM
       const hours = now.getHours();
       const minutes = now.getMinutes();
@@ -130,7 +130,7 @@ const Work: React.FC = () => {
       const formattedHours = hours % 12 || 12; // Convert to 12-hour format
       const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
       const timeString = `${formattedHours}:${formattedMinutes} ${ampm}`;
-      
+
       // Format date as Day, Month Date
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -139,11 +139,11 @@ const Work: React.FC = () => {
       const date = now.getDate();
       const dateString = `${dayOfWeek}, ${month} ${date}`;
       const todayString = `Today (${month} ${date})`;
-      
+
       setCurrentTime(timeString);
       setCurrentDate(dateString);
       setTodayDateString(todayString);
-      
+
       // Check for scheduled sessions that need notifications
       calendarEvents.forEach(event => {
         const eventTime = event.time;
@@ -156,23 +156,23 @@ const Work: React.FC = () => {
           if (period === 'PM' && hour < 12) hour += 12;
           if (period === 'AM' && hour === 12) hour = 0;
           const minute = parseInt(minuteStr);
-          
+
           eventTimeObj.setHours(hour, minute, 0, 0);
-          
-          // Create a comparison time for current time minus 1 minute to 
+
+          // Create a comparison time for current time minus 1 minute to
           // show notification for sessions coming up
           const compareTime = new Date();
           compareTime.setMinutes(compareTime.getMinutes() - 1);
-          
+
           // If the event time is within the past minute
           if (eventTimeObj > compareTime && eventTimeObj <= now) {
             toast({
               title: "Meditation Reminder",
               description: `${event.title} is scheduled for now`,
             });
-            
+
             // Mark as completed so we don't get repeated notifications
-            const updatedEvents = calendarEvents.map(e => 
+            const updatedEvents = calendarEvents.map(e =>
               e.id === event.id ? { ...e, completed: true } : e
             );
             setCalendarEvents(updatedEvents);
@@ -181,23 +181,23 @@ const Work: React.FC = () => {
         }
       });
     };
-    
+
     // Update immediately and then every minute
     updateClock();
     timerRef.current = setInterval(updateClock, 60000);
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
   }, [calendarEvents, toast]);
-  
+
   useEffect(() => {
     // Initialize filtered sessions with generated sessions
     const generatedSessions = generateWorkSessions();
     setFilteredSessions(generatedSessions);
-    
+
     // Load calendar events from localStorage
     const savedEvents = localStorage.getItem('workCalendarEvents');
     if (savedEvents) {
@@ -208,63 +208,63 @@ const Work: React.FC = () => {
       }
     }
   }, [todayDateString]);
-  
+
   const handleBack = () => {
     navigate(-1);
   };
-  
+
   const handlePlaySession = (title: string, duration: string, videoId?: string) => {
     setCurrentVideo({title, duration, videoId});
     setShowVideoPopup(true);
   };
-  
+
   const handleAddToCalendar = (session: WorkSession) => {
     const sessionWithId = {
       ...session,
       id: `ws-custom-${Date.now()}`
     };
-    
+
     const newCalendarEvents = [...calendarEvents, sessionWithId];
     setCalendarEvents(newCalendarEvents);
-    
+
     // Save to localStorage
     localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
-    
+
     toast({
       title: "Added to Calendar",
       description: `${session.title} scheduled for ${session.time}`,
     });
   };
-  
+
   const handleRemoveFromCalendar = (id: string) => {
     const updatedEvents = calendarEvents.filter(event => event.id !== id);
     setCalendarEvents(updatedEvents);
-    
+
     // Save to localStorage
     localStorage.setItem('workCalendarEvents', JSON.stringify(updatedEvents));
-    
+
     toast({
       title: "Removed from Calendar",
       description: "Session has been removed from your schedule",
     });
   };
-  
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    
+
     if (query.trim() === '') {
       setFilteredSessions(generateWorkSessions());
     } else {
       const allSessions = generateWorkSessions();
-      const filtered = allSessions.filter(session => 
+      const filtered = allSessions.filter(session =>
         session.title.toLowerCase().includes(query.toLowerCase()) ||
         session.description.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredSessions(filtered);
     }
   };
-  
+
   const handleNewSessionInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNewSession(prev => ({
@@ -272,11 +272,11 @@ const Work: React.FC = () => {
       [name]: value
     }));
   };
-  
+
   const handleScheduleNew = () => {
     setShowScheduleModal(true);
   };
-  
+
   const handleSaveNewSession = () => {
     if (!newSession.title || !newSession.time) {
       toast({
@@ -285,7 +285,7 @@ const Work: React.FC = () => {
       });
       return;
     }
-    
+
     const completeSession: WorkSession = {
       id: `ws-${Date.now()}`,
       title: newSession.title || "Untitled Session",
@@ -296,18 +296,18 @@ const Work: React.FC = () => {
       image: newSession.image || "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png",
       completed: false
     };
-    
+
     const newCalendarEvents = [...calendarEvents, completeSession];
     setCalendarEvents(newCalendarEvents);
-    
+
     // Save to localStorage
     localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
-    
+
     toast({
       title: "New Session Scheduled",
       description: `${completeSession.title} scheduled for ${completeSession.time}`,
     });
-    
+
     // Reset form and close modal
     setNewSession({
       title: "",
@@ -317,10 +317,10 @@ const Work: React.FC = () => {
       date: "",
       image: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
     });
-    
+
     setShowScheduleModal(false);
   };
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white pb-16">
       {/* Header */}
@@ -330,22 +330,22 @@ const Work: React.FC = () => {
             <ArrowLeft size={20} />
           </button>
           <h1 className="text-xl font-semibold text-white flex items-center">
-            Work Meditation <Briefcase size={18} className="ml-2" />
+            Your Guided Day <Briefcase size={18} className="ml-2" />
           </h1>
-          <button 
+          <button
             onClick={handleScheduleNew}
             className="p-2 text-white"
           >
             <Calendar size={20} />
           </button>
         </div>
-        
+
         {/* Current time display */}
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-white">{currentTime}</h2>
           <p className="text-white/80 text-sm">{currentDate}</p>
         </div>
-        
+
         {/* Search box */}
         <div className="px-4">
           <div className="relative">
@@ -360,7 +360,7 @@ const Work: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Stats */}
       <div className="px-4 pt-6 pb-4">
         <div className="flex justify-between items-center mb-2">
@@ -397,15 +397,15 @@ const Work: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Today's schedule */}
       <div className="px-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Today's Schedule ({todayDateString})</h2>
         {filteredSessions.length > 0 ? (
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 pb-2">
             {filteredSessions.map((session) => (
-              <div 
-                key={session.id} 
+              <div
+                key={session.id}
                 className="bg-gray-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start">
@@ -418,15 +418,15 @@ const Work: React.FC = () => {
                       <span>{session.duration}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-2">
-                    <button 
+                    <button
                       onClick={() => handlePlaySession(session.title, session.duration, session.videoId)}
                       className="w-10 h-10 bg-[#0098c1] hover:bg-[#0086ab] rounded-full flex items-center justify-center text-white transform hover:scale-105 transition-transform"
                     >
                       <Play size={16} fill="white" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleAddToCalendar(session)}
                       className="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center text-white transform hover:scale-105 transition-transform"
                     >
@@ -440,7 +440,7 @@ const Work: React.FC = () => {
         ) : (
           <div className="text-center py-10">
             <p className="text-gray-500">No sessions found for "{searchQuery}"</p>
-            <button 
+            <button
               onClick={() => setSearchQuery("")}
               className="mt-2 text-[#0098c1] hover:underline"
             >
@@ -449,15 +449,15 @@ const Work: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Your scheduled sessions */}
       {calendarEvents.length > 0 && (
         <div className="px-4 mb-20">
           <h2 className="text-lg font-semibold mb-4">Your Scheduled Sessions</h2>
           <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-1">
             {calendarEvents.map((event) => (
-              <div 
-                key={event.id} 
+              <div
+                key={event.id}
                 className="bg-blue-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start">
@@ -470,15 +470,15 @@ const Work: React.FC = () => {
                       <span>{event.duration}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-2">
-                    <button 
+                    <button
                       onClick={() => handlePlaySession(event.title, event.duration, event.videoId)}
                       className="w-10 h-10 bg-[#0098c1] hover:bg-[#0086ab] rounded-full flex items-center justify-center text-white transform hover:scale-105 transition-transform"
                     >
                       <Play size={16} fill="white" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleRemoveFromCalendar(event.id)}
                       className="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transform hover:scale-105 transition-transform"
                     >
@@ -491,26 +491,26 @@ const Work: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* New Session Modal */}
       {showScheduleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-semibold">Schedule New Session</h2>
-              <button 
+              <button
                 onClick={() => setShowScheduleModal(false)}
                 className="text-gray-400 hover:text-gray-500"
               >
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="title"
                   value={newSession.title}
                   onChange={handleNewSessionInput}
@@ -518,10 +518,10 @@ const Work: React.FC = () => {
                   placeholder="Session Title"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea 
+                <textarea
                   name="description"
                   value={newSession.description}
                   onChange={handleNewSessionInput}
@@ -529,12 +529,12 @@ const Work: React.FC = () => {
                   placeholder="Brief description"
                 ></textarea>
               </div>
-              
+
               <div className="flex space-x-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                  <input 
-                    type="time" 
+                  <input
+                    type="time"
                     name="time"
                     value={newSession.time?.split(' ')[0] || ""}
                     onChange={(e) => {
@@ -547,7 +547,7 @@ const Work: React.FC = () => {
                         const period = hour >= 12 ? 'PM' : 'AM';
                         const hour12 = hour % 12 || 12;
                         const formattedTime = `${hour12}:${minuteStr} ${period}`;
-                        
+
                         setNewSession(prev => ({
                           ...prev,
                           time: formattedTime
@@ -557,11 +557,11 @@ const Work: React.FC = () => {
                     className="w-full h-10 rounded-lg border border-gray-300 px-3"
                   />
                 </div>
-                
+
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Duration (min)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     name="duration"
                     min="1"
                     max="60"
@@ -571,7 +571,7 @@ const Work: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
                 <select
@@ -585,7 +585,7 @@ const Work: React.FC = () => {
                   <option value="Next Week">Next Week</option>
                 </select>
               </div>
-              
+
               <button
                 onClick={handleSaveNewSession}
                 className="w-full bg-[#0098c1] hover:bg-[#0086ab] text-white rounded-full py-3 text-sm"
@@ -596,7 +596,7 @@ const Work: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Video Popup */}
       {showVideoPopup && (
         <VideoPopup
@@ -606,7 +606,7 @@ const Work: React.FC = () => {
           onClose={() => setShowVideoPopup(false)}
         />
       )}
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

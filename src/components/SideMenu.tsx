@@ -33,7 +33,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose}>
-      <div 
+      <div
         className="absolute left-0 top-0 bottom-0 w-4/5 max-w-xs bg-white shadow-xl animate-slide-in-left p-4"
         onClick={(e) => e.stopPropagation()}
       >
@@ -43,58 +43,58 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
             <X size={20} />
           </button>
         </div>
-        
+
         <div className="space-y-4">
-          <button 
+          <button
             onClick={() => handleNavigation('/profile', 'Profile')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <User size={20} className="text-blue-500" />
             <span>Profile</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation('/edit-profile', 'Settings')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Settings size={20} className="text-blue-500" />
             <span>Settings</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation('/sleep-stories', 'Sleep Stories')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Moon size={20} className="text-blue-500" />
             <span>Sleep Stories</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation('/meditation', 'Meditation')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Heart size={20} className="text-blue-500" />
             <span>Meditation</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation('/community', 'Community')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <User size={20} className="text-blue-500" />
             <span>Community</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation('/work', 'Work')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <User size={20} className="text-blue-500" />
-            <span>Work Meditation</span>
+            <span>Your Guided Day</span>
           </button>
-          
+
           <div className="border-t pt-4 mt-4">
-            <button 
+            <button
               onClick={handleLogout}
               className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-red-50 text-red-500"
             >
