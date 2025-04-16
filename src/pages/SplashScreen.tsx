@@ -500,6 +500,12 @@ const SplashScreen: React.FC = () => {
 
   // Handle Google Play with Fingerprint
   const handleGooglePlay = async () => {
+    // Check if Google Play is available before proceeding
+    if (!isAndroid()) {
+      toast.error('Google Play is only available on Android devices');
+      return;
+    }
+
     // Show the payment sheet with Google Play branding
     setShowPaymentSheet(true);
     setPaymentStep('processing');
@@ -582,6 +588,12 @@ const SplashScreen: React.FC = () => {
 
   // Handle Apple Pay with Face ID
   const handleApplePay = async () => {
+    // Check if Apple Pay is available before proceeding
+    if (!isIOS()) {
+      toast.error('Apple Pay is only available on iOS devices');
+      return;
+    }
+
     // Show the payment sheet with Apple Pay branding
     setShowPaymentSheet(true);
     setPaymentStep('processing');
@@ -1401,60 +1413,77 @@ const SplashScreen: React.FC = () => {
 
                   {/* Payment Method Options */}
                   <div className="space-y-3">
-                    {isIOS() ? (
-                      <Button
-                        onClick={handleApplePay}
-                        className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors active:scale-95 transform transition-transform"
-                      >
-                        <FaApple size={24} />
-                        <span className="text-lg">Pay with Apple Pay</span>
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleGooglePlay}
-                        className="w-full bg-white border border-gray-300 text-gray-800 py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors active:scale-95 transform transition-transform"
-                      >
-                        <FaGooglePlay size={24} className="text-[#1a73e8]" />
-                        <span className="text-lg">Pay with Google Play</span>
-                      </Button>
+                    <Button
+                      onClick={handleApplePay}
+                      className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors active:scale-95 transform transition-transform"
+                      disabled={!isIOS()}
+                    >
+                      <FaApple size={24} />
+                      <span className="text-lg">Pay with Apple Pay</span>
+                    </Button>
+                    {!isIOS() && (
+                      <p className="text-xs text-red-500 text-center mt-1">
+                        Apple Pay is only available on iOS devices
+                      </p>
                     )}
-                    <p className="text-xs text-gray-500 text-center mt-2">
-                      {isIOS() ?
-                        "Secure payment with advanced Face ID verification" :
-                        "Secure payment with fingerprint verification"}
+                    <p className="text-xs text-gray-500 text-center">
+                      Secure payment with advanced Face ID verification
+                    </p>
+
+                    <div className="my-2 flex items-center justify-center">
+                      <div className="h-px bg-gray-200 flex-grow"></div>
+                      <span className="px-2 text-gray-400 text-sm">OR</span>
+                      <div className="h-px bg-gray-200 flex-grow"></div>
+                    </div>
+
+                    <Button
+                      onClick={handleGooglePlay}
+                      className="w-full bg-white border border-gray-300 text-gray-800 py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors active:scale-95 transform transition-transform"
+                      disabled={!isAndroid()}
+                    >
+                      <FaGooglePlay size={24} className="text-[#1a73e8]" />
+                      <span className="text-lg">Pay with Google Play</span>
+                    </Button>
+                    {!isAndroid() && (
+                      <p className="text-xs text-red-500 text-center mt-1">
+                        Google Play is only available on Android devices
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-500 text-center">
+                      Secure payment with fingerprint verification
                     </p>
                   </div>
 
                   {/* Security Information */}
                   <div className="mt-4 pt-3 border-t border-gray-200">
                     <p className="text-sm text-gray-600 mb-2 text-center">
-                      {isIOS() ? "Advanced Face ID Security" : "Advanced Fingerprint Security"}
+                      Advanced Payment Security
                     </p>
                     <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
-                      {isIOS() ? (
-                        <>
-                          <p className="mb-2">Your payment is secured with Apple's advanced Face ID technology that:</p>
-                          <ul className="list-disc pl-4 space-y-1">
-                            <li>Detects precise facial features (eyes, nose, mouth)</li>
-                            <li>Analyzes skin texture and depth mapping</li>
-                            <li>Ensures real-time identity verification</li>
-                            <li>Follows Apple Pay security protocols</li>
-                            <li>Processes payment only after successful verification</li>
-                          </ul>
-                        </>
-                      ) : (
-                        <>
-                          <p className="mb-2">Your payment is secured with Google's advanced fingerprint technology that:</p>
-                          <ul className="list-disc pl-4 space-y-1">
-                            <li>Detects precise fingerprint patterns and ridges</li>
-                            <li>Analyzes unique fingerprint characteristics</li>
-                            <li>Ensures real-time identity verification</li>
-                            <li>Follows Google Play security protocols</li>
-                            <li>Processes payment only after successful verification</li>
-                            <li>Detects your country for regional payment processing</li>
-                          </ul>
-                        </>
-                      )}
+                      <div className="mb-3">
+                        <p className="font-medium mb-1">Apple Pay Security:</p>
+                        <p className="mb-2">Apple's advanced Face ID technology:</p>
+                        <ul className="list-disc pl-4 space-y-1">
+                          <li>Detects precise facial features (eyes, nose, mouth)</li>
+                          <li>Analyzes skin texture and depth mapping</li>
+                          <li>Ensures real-time identity verification</li>
+                          <li>Follows Apple Pay security protocols</li>
+                          <li>Processes payment only after successful verification</li>
+                        </ul>
+                      </div>
+
+                      <div className="mt-3">
+                        <p className="font-medium mb-1">Google Play Security:</p>
+                        <p className="mb-2">Google's advanced fingerprint technology:</p>
+                        <ul className="list-disc pl-4 space-y-1">
+                          <li>Detects precise fingerprint patterns and ridges</li>
+                          <li>Analyzes unique fingerprint characteristics</li>
+                          <li>Ensures real-time identity verification</li>
+                          <li>Follows Google Play security protocols</li>
+                          <li>Processes payment only after successful verification</li>
+                          <li>Detects your country for regional payment processing</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
 
