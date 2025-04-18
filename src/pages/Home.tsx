@@ -64,9 +64,8 @@ const Home: React.FC = () => {
       }
     }
 
-    // Show both popups immediately when the component mounts
+    // Show only the features popup when the component mounts
     setShowFeaturesPopup(true);
-    setShowMoodSelection(true);
   }, []);
 
   const moodOptions: MoodOption[] = [
@@ -298,7 +297,7 @@ const Home: React.FC = () => {
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh Logo"
-              className="h-8"
+              className="h-8 filter brightness-0 saturate-100 invert-[.25] sepia-[.3] saturate-[5] hue-rotate-[260deg]"
             />
           </div>
 
@@ -479,7 +478,11 @@ const Home: React.FC = () => {
       {/* Features Popup */}
       <FeaturesPopup
         isOpen={showFeaturesPopup}
-        onClose={() => setShowFeaturesPopup(false)}
+        onClose={() => {
+          setShowFeaturesPopup(false);
+          // Show the mood selection dialog after the features popup is closed
+          setShowMoodSelection(true);
+        }}
       />
 
       {/* Bottom Navigation */}
