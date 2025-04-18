@@ -279,7 +279,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'mpt-2',
             title: 'Name the Emotion',
-            content: 'Help your child name their emotions: "You seem frustrated right now. Is that how you're feeling?"'
+            content: 'Help your child name their emotions: "You seem frustrated right now. Is that how you\'re feeling?"'
           },
           {
             id: 'mpt-3',
@@ -441,10 +441,10 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     // Get existing calendar events
     const savedEvents = localStorage.getItem('workCalendarEvents');
     const calendarEvents = savedEvents ? JSON.parse(savedEvents) : [];
-    
+
     // Add new session
     const newCalendarEvents = [...calendarEvents, session];
-    
+
     // Save to localStorage
     localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
 

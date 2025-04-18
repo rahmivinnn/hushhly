@@ -201,7 +201,7 @@ const insightsDatabase = [
   {
     id: 'insight-5',
     title: 'Stress Response',
-    content: 'Meditation reduces cortisol levels, your body's main stress hormone, within just 8 weeks of regular practice.',
+    content: 'Meditation reduces cortisol levels, your body\'s main stress hormone, within just 8 weeks of regular practice.',
     type: 'insight',
     icon: '🧠'
   }
@@ -244,43 +244,43 @@ export const aiRecommendationService = {
     const activitySummary = activityTrackingService.getActivitySummary(userId);
     const recentMeditations = activityTrackingService.getMeditationSessions(userId);
     const recentPageVisits = activityTrackingService.getRecentPageVisits(userId);
-    
+
     // Get time of day
     const timeOfDay = getTimeOfDay();
-    
+
     // Get user preferences
     const preferences = this.getUserPreferences(userId);
-    
+
     // Calculate recommendation scores for each meditation
     const scoredMeditations = meditationDatabase.map(meditation => {
       let score = 50; // Base score
-      
+
       // Adjust score based on time of day
       if (meditation.bestFor.includes(timeOfDay)) {
         score += 15;
       }
-      
+
       // Adjust score based on user mood if available
       if (preferences.mood && meditation.bestFor.includes(preferences.mood)) {
         score += 20;
       }
-      
+
       // Adjust score based on user preferences
       if (preferences.preferredDuration) {
         const meditationMinutes = parseInt(meditation.duration.split(' ')[0]);
         const preferredMinutes = parseInt(preferences.preferredDuration.split(' ')[0]);
-        
+
         // If within 5 minutes of preferred duration
         if (Math.abs(meditationMinutes - preferredMinutes) <= 5) {
           score += 10;
         }
       }
-      
+
       // Adjust score based on past activity
-      const hasDoneSimilar = recentMeditations.some(session => 
+      const hasDoneSimilar = recentMeditations.some(session =>
         meditation.tags.some(tag => session.title.toLowerCase().includes(tag))
       );
-      
+
       if (hasDoneSimilar) {
         // User has done similar meditations before
         if (preferences.preferVariety) {
@@ -289,7 +289,7 @@ export const aiRecommendationService = {
           score += 10; // Increase score if user likes consistency
         }
       }
-      
+
       // Generate reason for recommendation
       let reason = '';
       if (meditation.bestFor.includes(timeOfDay)) {
@@ -297,24 +297,24 @@ export const aiRecommendationService = {
       } else if (preferences.mood && meditation.bestFor.includes(preferences.mood)) {
         reason = `Recommended for your ${preferences.mood} mood`;
       } else if (hasDoneSimilar && !preferences.preferVariety) {
-        reason = 'Based on meditations you've enjoyed';
+        reason = 'Based on meditations you\'ve enjoyed';
       } else {
         reason = 'Recommended to expand your practice';
       }
-      
+
       return {
         ...meditation,
         confidence: Math.min(Math.max(score, 0), 100), // Ensure score is between 0-100
         reasonForRecommendation: reason
       };
     });
-    
+
     // Sort by score and take the top 'count' recommendations
     return scoredMeditations
       .sort((a, b) => b.confidence - a.confidence)
       .slice(0, count);
   },
-  
+
   // Get personalized insights
   getPersonalizedInsights(userId: string, count: number = 2): AIInsight[] {
     // In a real implementation, this would analyze user data to provide relevant insights
@@ -322,7 +322,7 @@ export const aiRecommendationService = {
     const shuffled = [...insightsDatabase].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   },
-  
+
   // Get chat history
   getChatHistory(userId: string): AIChatMessage[] {
     try {
@@ -333,16 +333,16 @@ export const aiRecommendationService = {
     } catch (error) {
       console.error('Error getting chat history:', error);
     }
-    
+
     // If no history or error, return empty array
     return [];
   },
-  
+
   // Add message to chat
   addChatMessage(userId: string, content: string, sender: 'user' | 'ai', suggestions?: string[]): AIChatMessage {
     try {
       const history = this.getChatHistory(userId);
-      
+
       const newMessage: AIChatMessage = {
         id: getRandomId(),
         content,
@@ -350,18 +350,18 @@ export const aiRecommendationService = {
         timestamp: Date.now(),
         suggestions
       };
-      
+
       const updatedHistory = [...history, newMessage];
-      
+
       // Keep only the last 50 messages to avoid localStorage size issues
       const trimmedHistory = updatedHistory.slice(-50);
-      
+
       localStorage.setItem(`${AI_CHAT_HISTORY_KEY}_${userId}`, JSON.stringify(trimmedHistory));
-      
+
       return newMessage;
     } catch (error) {
       console.error('Error adding chat message:', error);
-      
+
       // Return a fallback message
       return {
         id: getRandomId(),
@@ -372,16 +372,16 @@ export const aiRecommendationService = {
       };
     }
   },
-  
+
   // Generate AI response based on user message
   generateAIResponse(userId: string, userMessage: string): AIChatMessage {
     // In a real implementation, this would use a proper NLP model or API
     // For now, we'll use simple keyword matching
-    
+
     const lowerMessage = userMessage.toLowerCase();
     let responseContent = '';
     let suggestions: string[] = [];
-    
+
     // Check for keywords and generate appropriate response
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
       responseContent = chatResponses.greeting[Math.floor(Math.random() * chatResponses.greeting.length)];
@@ -399,11 +399,11 @@ export const aiRecommendationService = {
       responseContent = chatResponses.general[Math.floor(Math.random() * chatResponses.general.length)];
       suggestions = ['Recommend a meditation', 'How do I start meditating?', 'Benefits of meditation'];
     }
-    
+
     // Add the AI response to chat history
     return this.addChatMessage(userId, responseContent, 'ai', suggestions);
   },
-  
+
   // Get user preferences
   getUserPreferences(userId: string): {
     mood?: 'calm' | 'relax' | 'focus' | 'anxious' | 'overwhelmed' | 'tired';
@@ -420,11 +420,11 @@ export const aiRecommendationService = {
     } catch (error) {
       console.error('Error getting user preferences:', error);
     }
-    
+
     // If no preferences or error, return empty object
     return {};
   },
-  
+
   // Update user preferences
   updateUserPreferences(userId: string, preferences: Partial<{
     mood: 'calm' | 'relax' | 'focus' | 'anxious' | 'overwhelmed' | 'tired';
@@ -436,42 +436,42 @@ export const aiRecommendationService = {
     try {
       const currentPreferences = this.getUserPreferences(userId);
       const updatedPreferences = { ...currentPreferences, ...preferences };
-      
+
       localStorage.setItem(`${AI_PREFERENCES_KEY}_${userId}`, JSON.stringify(updatedPreferences));
     } catch (error) {
       console.error('Error updating user preferences:', error);
     }
   },
-  
+
   // Create a personalized meditation plan
   createPersonalizedPlan(userId: string, duration: number = 7): AIPersonalizedPlan {
     // Get user preferences
     const preferences = this.getUserPreferences(userId);
-    
+
     // Create a plan with daily meditations
     const dailyMeditations = [];
-    
+
     for (let day = 1; day <= duration; day++) {
       // Select a meditation for this day based on preferences
       // In a real implementation, this would be more sophisticated
       const meditationPool = [...meditationDatabase];
-      
+
       // Shuffle the pool
       const shuffled = meditationPool.sort(() => 0.5 - Math.random());
-      
+
       // Select a meditation that matches preferences if possible
       let selectedMeditation = shuffled[0];
-      
+
       if (preferences.mood) {
-        const matchingMeditation = shuffled.find(med => 
+        const matchingMeditation = shuffled.find(med =>
           med.bestFor.includes(preferences.mood || '')
         );
-        
+
         if (matchingMeditation) {
           selectedMeditation = matchingMeditation;
         }
       }
-      
+
       dailyMeditations.push({
         day,
         title: selectedMeditation.title,
@@ -482,7 +482,7 @@ export const aiRecommendationService = {
         videoId: selectedMeditation.videoId
       });
     }
-    
+
     const plan: AIPersonalizedPlan = {
       id: `plan-${getRandomId()}`,
       title: 'Your Personalized Meditation Journey',
@@ -490,26 +490,26 @@ export const aiRecommendationService = {
       duration,
       dailyMeditations
     };
-    
+
     // Save the plan
     this.savePersonalizedPlan(userId, plan);
-    
+
     return plan;
   },
-  
+
   // Save a personalized plan
   savePersonalizedPlan(userId: string, plan: AIPersonalizedPlan): void {
     try {
       const storedPlans = localStorage.getItem(`${AI_PLANS_KEY}_${userId}`);
       let plans: AIPersonalizedPlan[] = [];
-      
+
       if (storedPlans) {
         plans = JSON.parse(storedPlans);
       }
-      
+
       // Check if plan with this ID already exists
       const existingPlanIndex = plans.findIndex(p => p.id === plan.id);
-      
+
       if (existingPlanIndex !== -1) {
         // Update existing plan
         plans[existingPlanIndex] = plan;
@@ -517,13 +517,13 @@ export const aiRecommendationService = {
         // Add new plan
         plans.push(plan);
       }
-      
+
       localStorage.setItem(`${AI_PLANS_KEY}_${userId}`, JSON.stringify(plans));
     } catch (error) {
       console.error('Error saving personalized plan:', error);
     }
   },
-  
+
   // Get all personalized plans
   getPersonalizedPlans(userId: string): AIPersonalizedPlan[] {
     try {
@@ -534,36 +534,36 @@ export const aiRecommendationService = {
     } catch (error) {
       console.error('Error getting personalized plans:', error);
     }
-    
+
     return [];
   },
-  
+
   // Get active personalized plan (most recent)
   getActivePersonalizedPlan(userId: string): AIPersonalizedPlan | null {
     const plans = this.getPersonalizedPlans(userId);
-    
+
     if (plans.length === 0) {
       return null;
     }
-    
+
     // Return the most recently created plan
     return plans[plans.length - 1];
   },
-  
+
   // Update meditation completion status in a plan
   updateMeditationCompletion(userId: string, planId: string, day: number, completed: boolean): void {
     try {
       const plans = this.getPersonalizedPlans(userId);
       const planIndex = plans.findIndex(p => p.id === planId);
-      
+
       if (planIndex !== -1) {
         const plan = plans[planIndex];
         const meditationIndex = plan.dailyMeditations.findIndex(m => m.day === day);
-        
+
         if (meditationIndex !== -1) {
           plan.dailyMeditations[meditationIndex].completed = completed;
           plans[planIndex] = plan;
-          
+
           localStorage.setItem(`${AI_PLANS_KEY}_${userId}`, JSON.stringify(plans));
         }
       }
