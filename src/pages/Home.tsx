@@ -60,39 +60,31 @@ const Home: React.FC = () => {
       }
     }
 
-    // Show the "How was your day" popup after a short delay
-    const moodTimer = setTimeout(() => {
-      // Set a default mood to trigger the popup
-      setSelectedMood('calm');
-      setShowMoodFeedback(true);
-    }, 1000);
+    // Force show the "How was your day" popup immediately
+    setSelectedMood('calm');
+    setShowMoodFeedback(true);
 
-    // Check if user has premium subscription
-    const hasSubscription = localStorage.getItem('hushhly_subscription');
-    if (!hasSubscription) {
-      // Show subscription notification after the mood popup
-      const subscriptionTimer = setTimeout(() => {
-        toast({
-          title: "Unlock Premium Features",
-          description: "Enhance your meditation experience with premium features.",
-          action: (
-            <button
-              onClick={() => {
-                navigate('/subscription');
-              }}
-              className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs"
-            >
-              Subscribe Now
-            </button>
-          ),
-          duration: 0, // Don't auto-dismiss
-        });
-      }, 3000);
+    // Always show subscription notification immediately after component mounts
+    // This ensures it appears every time the home screen is loaded
+    const subscriptionTimer = setTimeout(() => {
+      toast({
+        title: "Experience Hushhly for Free",
+        description: "Try our premium features with a 7-day free trial.",
+        action: (
+          <button
+            onClick={() => {
+              navigate('/subscription');
+            }}
+            className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs"
+          >
+            Try Free
+          </button>
+        ),
+        duration: 0, // Don't auto-dismiss
+      });
+    }, 500); // Show very quickly after component mounts
 
-      return () => clearTimeout(subscriptionTimer);
-    }
-
-    return () => clearTimeout(moodTimer);
+    return () => clearTimeout(subscriptionTimer);
   }, [navigate, toast]);
 
   const moodOptions: MoodOption[] = [

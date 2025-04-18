@@ -789,61 +789,62 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 0: Clean blue gradient background with Hushhly logo in center - enhanced with animations
+    // Screen 0: Clean blue gradient background with Hushhly logo in center - enhanced with elegant animations
     <div
       key="screen-0"
       className={`flex flex-col h-full ${
         animating
-          ? 'opacity-0 scale-90 rotate-3'
-          : 'opacity-100 scale-100 rotate-0'
-      } transition-all duration-700 ease-in-out overflow-hidden relative`}
+          ? 'opacity-0 scale-95'
+          : 'opacity-100 scale-100'
+      } transition-all duration-700 ease-in-out overflow-hidden relative animate-gradient-shift`}
       style={{
-        background: 'linear-gradient(180deg, #00a0d2 0%, #0076b5 50%, #3a5bb8 100%)'
+        background: 'linear-gradient(135deg, #00a0d2 0%, #0076b5 50%, #3a5bb8 100%)',
+        backgroundSize: '200% 200%'
       }}
     >
-      {/* Animated background elements */}
+      {/* Elegant animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-[10%] left-[10%] w-32 h-32 rounded-full bg-white/5 animate-float-slow"></div>
-        <div className="absolute bottom-[15%] right-[15%] w-40 h-40 rounded-full bg-white/5 animate-float-slow-reverse"></div>
-        <div className="absolute top-[40%] right-[20%] w-24 h-24 rounded-full bg-white/5 animate-float-medium"></div>
-        <div className="absolute bottom-[30%] left-[25%] w-36 h-36 rounded-full bg-white/5 animate-float-medium-reverse"></div>
+        <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-white/10 to-transparent animate-fade-in-out"></div>
+        <div className="absolute bottom-0 right-0 w-full h-1/3 bg-gradient-to-t from-white/5 to-transparent animate-fade-in-out" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-[30%] right-0 w-1/2 h-[1px] bg-white/10 animate-slide-left" style={{animationDelay: '0.5s'}}></div>
+        <div className="absolute bottom-[40%] left-0 w-1/2 h-[1px] bg-white/10 animate-slide-right" style={{animationDelay: '0.8s'}}></div>
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center relative z-10">
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto brightness-0 invert animate-pulse-subtle"
-          style={{ animationDuration: '3s' }}
+          className="w-64 h-auto brightness-0 invert animate-subtle-glow"
         />
       </div>
     </div>,
 
-    // Screen 1: White background with Hushhly logo (second screen) - enhanced with animations
+    // Screen 1: White background with Hushhly logo (second screen) - enhanced with elegant animations
     <div
       key="screen-1"
       className={`flex flex-col h-full ${
         animating
-          ? 'opacity-0 scale-90 -rotate-3'
-          : 'opacity-100 scale-100 rotate-0'
+          ? 'opacity-0 scale-95'
+          : 'opacity-100 scale-100'
       } transition-all duration-700 ease-in-out bg-white relative overflow-hidden`}
     >
-      {/* Animated background elements */}
+      {/* Elegant animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-[15%] left-[15%] w-40 h-40 rounded-full bg-blue-50 animate-float-slow"></div>
-        <div className="absolute bottom-[20%] right-[10%] w-48 h-48 rounded-full bg-blue-50 animate-float-slow-reverse"></div>
-        <div className="absolute top-[45%] right-[25%] w-32 h-32 rounded-full bg-blue-50 animate-float-medium"></div>
-        <div className="absolute bottom-[35%] left-[20%] w-36 h-36 rounded-full bg-blue-50 animate-float-medium-reverse"></div>
+        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-blue-50 to-transparent"></div>
+        <div className="absolute bottom-0 right-0 w-full h-24 bg-gradient-to-t from-blue-50 to-transparent"></div>
+        <div className="absolute top-[20%] left-0 w-full h-[1px] bg-blue-100 animate-slide-right" style={{animationDelay: '0.3s'}}></div>
+        <div className="absolute top-[25%] left-0 w-3/4 h-[1px] bg-blue-100 animate-slide-right" style={{animationDelay: '0.5s'}}></div>
+        <div className="absolute bottom-[20%] right-0 w-full h-[1px] bg-blue-100 animate-slide-left" style={{animationDelay: '0.3s'}}></div>
+        <div className="absolute bottom-[25%] right-0 w-3/4 h-[1px] bg-blue-100 animate-slide-left" style={{animationDelay: '0.5s'}}></div>
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center relative z-10">
         <div className="relative">
-          <div className="absolute inset-0 animate-pulse-subtle opacity-30 blur-md bg-blue-200 rounded-full" style={{ animationDuration: '4s' }}></div>
+          <div className="absolute inset-0 -m-8 bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 opacity-30 blur-lg animate-gradient-shift"></div>
           <img
             src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
             alt="Hushhly Logo"
-            className="w-64 h-auto relative z-10 animate-float-subtle"
-            style={{ animationDuration: '6s' }}
+            className="w-64 h-auto relative z-10 animate-elegant-pulse"
           />
         </div>
       </div>
