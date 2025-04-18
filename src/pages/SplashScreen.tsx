@@ -1926,18 +1926,18 @@ const SplashScreen: React.FC = () => {
     </div>
   ];
 
-  // Progress indicators - only show for content screens (screens 2-5), but not for subscription screen (9)
+  // Progress indicators - show for all screens with the bear (screens 2-8), but not for subscription screen (9)
   const renderProgressIndicators = () => {
     // Don't show indicators on subscription screen (screen 9)
     if (currentScreen === 9) {
       return null;
     }
 
-    // Show indicators only for screens 2-5
-    if (currentScreen >= 2 && currentScreen <= 5) {
+    // Show indicators for screens 2-8 (all screens with the bear)
+    if (currentScreen >= 2 && currentScreen <= 8) {
       return (
         <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
-          {[...Array(4)].map((_, index) => (
+          {[...Array(7)].map((_, index) => (
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${

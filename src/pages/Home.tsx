@@ -59,7 +59,41 @@ const Home: React.FC = () => {
         console.error("Error parsing user data:", error);
       }
     }
-  }, []);
+
+    // Show the "How was your day" popup after a short delay
+    const moodTimer = setTimeout(() => {
+      // Set a default mood to trigger the popup
+      setSelectedMood('calm');
+      setShowMoodFeedback(true);
+    }, 1000);
+
+    // Check if user has premium subscription
+    const hasSubscription = localStorage.getItem('hushhly_subscription');
+    if (!hasSubscription) {
+      // Show subscription notification after the mood popup
+      const subscriptionTimer = setTimeout(() => {
+        toast({
+          title: "Unlock Premium Features",
+          description: "Enhance your meditation experience with premium features.",
+          action: (
+            <button
+              onClick={() => {
+                navigate('/subscription');
+              }}
+              className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs"
+            >
+              Subscribe Now
+            </button>
+          ),
+          duration: 0, // Don't auto-dismiss
+        });
+      }, 3000);
+
+      return () => clearTimeout(subscriptionTimer);
+    }
+
+    return () => clearTimeout(moodTimer);
+  }, [navigate, toast]);
 
   const moodOptions: MoodOption[] = [
     {
@@ -258,7 +292,7 @@ const Home: React.FC = () => {
 
           <div className="flex items-center">
             <img
-              src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh Logo"
               className="h-8"
             />
