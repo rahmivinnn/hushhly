@@ -66,6 +66,13 @@ const Home: React.FC = () => {
 
     // Show the features popup immediately when the component mounts
     setShowFeaturesPopup(true);
+
+    // After a short delay, show the mood selection dialog
+    const moodTimer = setTimeout(() => {
+      setShowMoodSelection(true);
+    }, 500);
+
+    return () => clearTimeout(moodTimer);
   }, []);
 
   const moodOptions: MoodOption[] = [
@@ -329,15 +336,7 @@ const Home: React.FC = () => {
               key={index}
               className={`flex flex-col items-center ${mood.color} w-14 h-14 rounded-2xl text-white p-1 transition-transform hover:scale-105 active:scale-95`}
               aria-label={`Feeling ${mood.label}`}
-              onClick={() => {
-                // For the Calm button, open the mood selection dialog
-                if (mood.type === 'calm') {
-                  openMoodSelectionDialog();
-                } else {
-                  // For other mood buttons, use the original behavior
-                  handleMoodSelection(mood.type);
-                }
-              }}
+              onClick={() => handleMoodSelection(mood.type)}
             >
               <div className="mb-1 text-white">{mood.icon}</div>
               <span className="text-xs">{mood.label}</span>
