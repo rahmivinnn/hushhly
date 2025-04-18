@@ -84,17 +84,17 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-xs">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+      <DialogContent className="max-w-[250px]">
+        <DialogHeader className="pb-1 space-y-1">
+          <DialogTitle className="text-base">{title}</DialogTitle>
+          <DialogDescription className="text-xs">{description}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col items-center justify-center py-4">
+        <div className="flex flex-col items-center justify-center py-2">
           {/* Face ID Animation */}
           <div
             className={cn(
-              "w-24 h-24 rounded-full flex items-center justify-center mb-4 relative",
+              "w-16 h-16 rounded-full flex items-center justify-center mb-3 relative",
               success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
             )}
           >
@@ -126,8 +126,8 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
             )}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
+                width="32"
+                height="32"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -148,8 +148,8 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
               {success && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -166,8 +166,8 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
               {error && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -186,17 +186,17 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
           {/* Status Text */}
           {error ? (
             <div className="text-center">
-              <p className="text-lg font-medium text-red-600 mb-4">{error}</p>
+              <p className="text-sm font-medium text-red-600 mb-2">{error}</p>
               <Button
                 onClick={handleAuthenticate}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm rounded-full"
               >
                 Try Again
               </Button>
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-lg font-medium text-gray-800 mb-1">
+              <p className="text-sm font-medium text-gray-800 mb-1">
                 {success
                   ? 'Authentication Successful'
                   : authenticating

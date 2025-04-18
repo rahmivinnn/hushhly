@@ -86,20 +86,20 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+      <DialogContent className="max-w-[300px] p-0 overflow-hidden">
         {/* Gojek-style header with brand color */}
-        <div className="bg-blue-600 p-6 text-white">
-          <h3 className="text-xl font-semibold mb-1">{title}</h3>
-          <p className="text-sm text-white/80">{description}</p>
+        <div className="bg-blue-600 p-3 text-white">
+          <h3 className="text-base font-semibold mb-1">{title}</h3>
+          <p className="text-xs text-white/80">{description}</p>
         </div>
 
-        <div className="p-6">
-          <div className="flex flex-col items-center justify-center py-6">
+        <div className="p-3">
+          <div className="flex flex-col items-center justify-center py-3">
             {/* Fingerprint Icon for Android - Gojek style */}
             {biometricType === 'fingerprint' && (
               <div
                 className={cn(
-                  "w-28 h-28 rounded-full flex items-center justify-center mb-6 relative",
+                  "w-16 h-16 rounded-full flex items-center justify-center mb-3 relative",
                   success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
                 )}
               >
@@ -121,7 +121,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
 
                 {success ? (
                   <svg
-                    className="w-16 h-16 z-10 text-green-500"
+                    className="w-10 h-10 z-10 text-green-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -136,7 +136,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
                 ) : (
                   <svg
                     className={cn(
-                      "w-16 h-16 z-10",
+                      "w-10 h-10 z-10",
                       authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
                     )}
                     fill="none"
@@ -158,7 +158,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
             {biometricType === 'face' && (
               <div
                 className={cn(
-                  "w-28 h-28 rounded-full flex items-center justify-center mb-6 relative",
+                  "w-16 h-16 rounded-full flex items-center justify-center mb-3 relative",
                   success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
                 )}
               >
@@ -180,7 +180,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
 
                 {success ? (
                   <svg
-                    className="w-16 h-16 z-10 text-green-500"
+                    className="w-10 h-10 z-10 text-green-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
                 ) : (
                   <svg
                     className={cn(
-                      "w-16 h-16 z-10",
+                      "w-10 h-10 z-10",
                       authenticating ? "text-blue-600" : error ? "text-red-500" : "text-blue-600"
                     )}
                     fill="none"
@@ -212,7 +212,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
             {/* Status text - Gojek style */}
             {success ? (
               <div className="text-center">
-                <p className="text-lg font-medium text-green-600 mb-1">
+                <p className="text-sm font-medium text-green-600 mb-1">
                   {biometricType === 'fingerprint'
                     ? 'Fingerprint Verified!'
                     : 'Face ID Verified!'}
@@ -223,7 +223,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
               </div>
             ) : authenticating ? (
               <div className="text-center">
-                <p className="text-lg font-medium text-gray-800 mb-1">
+                <p className="text-sm font-medium text-gray-800 mb-1">
                   {biometricType === 'fingerprint'
                     ? 'Touch Fingerprint Sensor'
                     : 'Look at Your Device'}
@@ -236,17 +236,17 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
               </div>
             ) : error ? (
               <div className="text-center">
-                <p className="text-lg font-medium text-red-600 mb-3">{error}</p>
+                <p className="text-sm font-medium text-red-600 mb-2">{error}</p>
                 <Button
                   onClick={handleAuthenticate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-xs rounded-full"
                 >
                   Try Again
                 </Button>
               </div>
             ) : (
               <div className="text-center">
-                <p className="text-lg font-medium text-gray-800 mb-1">
+                <p className="text-sm font-medium text-gray-800 mb-1">
                   {biometricType === 'fingerprint'
                     ? 'Ready for Authentication'
                     : 'Ready for Face ID'}
@@ -261,7 +261,7 @@ export const FingerprintDialog: React.FC<FingerprintDialogProps> = ({
           </div>
 
           {/* Gojek-style footer with alternative option */}
-          <div className="mt-4 border-t pt-4 flex flex-col space-y-3">
+          <div className="mt-2 border-t pt-2 flex flex-col space-y-2">
             <div className="flex justify-between items-center">
               <p className="text-xs text-gray-500">
                 Secured by Hushhly Pay
