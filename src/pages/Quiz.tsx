@@ -214,7 +214,7 @@ const Quiz = () => {
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh"
-              className="w-24 h-auto"
+              className="w-16 h-auto"
             />
           </div>
         </div>
