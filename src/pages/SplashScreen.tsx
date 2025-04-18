@@ -65,8 +65,8 @@ const SplashScreen: React.FC = () => {
         setTimeout(() => {
           setCurrentScreen(currentScreen + 1);
           setAnimating(false);
-        }, 600); // Increase fade-out animation for more visible effect
-      }, currentScreen === 0 ? 1800 : 1200); // Longer delays for better visibility
+        }, 800); // Increased fade-out animation for more visible effect
+      }, currentScreen === 0 ? 2200 : 1800); // Longer delays for better visibility of animations
       return () => clearTimeout(timer);
     }
   }, [currentScreen]);
@@ -479,10 +479,14 @@ const SplashScreen: React.FC = () => {
 
     setIsApplyingPromo(true);
     try {
-      const result = await applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
+      // Convert promo code to uppercase to ensure case-insensitive matching
+      const normalizedCode = promoCode.trim().toUpperCase();
+      const result = await applyPromoCode(normalizedCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
 
       if (result.isValid) {
         toast.success(result.message);
+        // Clear the input field after successful application
+        setPromoCode('');
       } else {
         toast.error(result.message);
       }
@@ -785,42 +789,63 @@ const SplashScreen: React.FC = () => {
 
   // Define the content for each screen
   const screens = [
-    // Screen 0: Clean blue gradient background with Hushhly logo in center
+    // Screen 0: Clean blue gradient background with Hushhly logo in center - enhanced with animations
     <div
       key="screen-0"
       className={`flex flex-col h-full ${
         animating
           ? 'opacity-0 scale-90 rotate-3'
           : 'opacity-100 scale-100 rotate-0'
-      } transition-all duration-700 ease-in-out`}
+      } transition-all duration-700 ease-in-out overflow-hidden relative`}
       style={{
         background: 'linear-gradient(180deg, #00a0d2 0%, #0076b5 50%, #3a5bb8 100%)'
       }}
     >
-      <div className="flex-grow flex flex-col items-center justify-center">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-[10%] left-[10%] w-32 h-32 rounded-full bg-white/5 animate-float-slow"></div>
+        <div className="absolute bottom-[15%] right-[15%] w-40 h-40 rounded-full bg-white/5 animate-float-slow-reverse"></div>
+        <div className="absolute top-[40%] right-[20%] w-24 h-24 rounded-full bg-white/5 animate-float-medium"></div>
+        <div className="absolute bottom-[30%] left-[25%] w-36 h-36 rounded-full bg-white/5 animate-float-medium-reverse"></div>
+      </div>
+
+      <div className="flex-grow flex flex-col items-center justify-center relative z-10">
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto brightness-0 invert"
+          className="w-64 h-auto brightness-0 invert animate-pulse-subtle"
+          style={{ animationDuration: '3s' }}
         />
       </div>
     </div>,
 
-    // Screen 1: White background with Hushhly logo (second screen)
+    // Screen 1: White background with Hushhly logo (second screen) - enhanced with animations
     <div
       key="screen-1"
       className={`flex flex-col h-full ${
         animating
           ? 'opacity-0 scale-90 -rotate-3'
           : 'opacity-100 scale-100 rotate-0'
-      } transition-all duration-700 ease-in-out bg-white`}
+      } transition-all duration-700 ease-in-out bg-white relative overflow-hidden`}
     >
-      <div className="flex-grow flex flex-col items-center justify-center">
-        <img
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
-          alt="Hushhly Logo"
-          className="w-64 h-auto"
-        />
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-[15%] left-[15%] w-40 h-40 rounded-full bg-blue-50 animate-float-slow"></div>
+        <div className="absolute bottom-[20%] right-[10%] w-48 h-48 rounded-full bg-blue-50 animate-float-slow-reverse"></div>
+        <div className="absolute top-[45%] right-[25%] w-32 h-32 rounded-full bg-blue-50 animate-float-medium"></div>
+        <div className="absolute bottom-[35%] left-[20%] w-36 h-36 rounded-full bg-blue-50 animate-float-medium-reverse"></div>
+      </div>
+
+      <div className="flex-grow flex flex-col items-center justify-center relative z-10">
+        <div className="relative">
+          <div className="absolute inset-0 animate-pulse-subtle opacity-30 blur-md bg-blue-200 rounded-full" style={{ animationDuration: '4s' }}></div>
+          <img
+            src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+            alt="Hushhly Logo"
+            className="w-64 h-auto relative z-10 animate-float-subtle"
+            style={{ animationDuration: '6s' }}
+          />
+        </div>
       </div>
     </div>,
 
@@ -882,11 +907,12 @@ const SplashScreen: React.FC = () => {
               <div className="font-bold text-base mb-0.5">Premium Annual</div>
               <div className="text-sm opacity-80">
                 {activePromo ? (
-                  <span className="flex items-center gap-1">
+                  <span className="flex flex-col items-start gap-1">
                     <span className="line-through">${prices.annual}/year</span>
                     <span className="text-green-400 no-underline">
                       ${getDiscountedPrice(prices.annual).toFixed(2)}/year
                     </span>
+                    <span className="text-xs text-green-300">{activePromo.discount}</span>
                   </span>
                 ) : (
                   <span>${prices.annual}/year</span>
@@ -915,11 +941,12 @@ const SplashScreen: React.FC = () => {
               <div className="font-bold text-base mb-0.5">Monthly</div>
               <div className="text-sm opacity-80">
                 {activePromo ? (
-                  <span className="flex items-center gap-1">
+                  <span className="flex flex-col items-start gap-1">
                     <span className="line-through">${prices.monthly}/month</span>
                     <span className="text-green-400 no-underline">
                       ${getDiscountedPrice(prices.monthly).toFixed(2)}/month
                     </span>
+                    <span className="text-xs text-green-300">{activePromo.discount}</span>
                   </span>
                 ) : (
                   <span>${prices.monthly}/month</span>

@@ -84,7 +84,7 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-xs">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -94,7 +94,7 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
           {/* Face ID Animation */}
           <div
             className={cn(
-              "w-32 h-32 rounded-full flex items-center justify-center mb-6 relative",
+              "w-24 h-24 rounded-full flex items-center justify-center mb-4 relative",
               success ? "bg-green-50" : authenticating ? "bg-blue-50" : error ? "bg-red-50" : "bg-blue-50"
             )}
           >
@@ -126,8 +126,8 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
             )}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="64"
-                height="64"
+                width="48"
+                height="48"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -212,39 +212,7 @@ export const FaceIDDialog: React.FC<FaceIDDialogProps> = ({
               </p>
 
               {/* Feature detection details (only show in success state) */}
-              {success && features && (
-                <div className="mt-4 text-xs text-left bg-gray-50 p-3 rounded-lg">
-                  <p className="font-medium mb-1">Face ID Details:</p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                    <div className="flex items-center">
-                      <div className={`w-2 h-2 rounded-full ${features.eyes ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                      <span>Eyes: {features.eyes ? 'Detected' : 'Not Detected'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className={`w-2 h-2 rounded-full ${features.nose ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                      <span>Nose: {features.nose ? 'Detected' : 'Not Detected'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className={`w-2 h-2 rounded-full ${features.mouth ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                      <span>Mouth: {features.mouth ? 'Detected' : 'Not Detected'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className={`w-2 h-2 rounded-full ${features.skinTexture ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                      <span>Skin: {features.skinTexture ? 'Detected' : 'Not Detected'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className={`w-2 h-2 rounded-full ${features.depthMap ? 'bg-green-500' : 'bg-red-500'} mr-1`}></div>
-                      <span>Depth: {features.depthMap ? 'Detected' : 'Not Detected'}</span>
-                    </div>
-                    {confidence !== null && (
-                      <div className="flex items-center col-span-2">
-                        <div className={`w-2 h-2 rounded-full ${confidence > 0.9 ? 'bg-green-500' : confidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'} mr-1`}></div>
-                        <span>Confidence: {Math.round(confidence * 100)}%</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              {/* Removed detailed Face ID features to make dialog more compact */}
             </div>
           )}
         </div>

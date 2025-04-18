@@ -121,13 +121,17 @@ const SubscriptionScreen: React.FC = () => {
       return;
     }
 
-    const result = applyPromoCode(promoCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
+    // Convert promo code to uppercase to ensure case-insensitive matching
+    const normalizedCode = promoCode.trim().toUpperCase();
+    const result = applyPromoCode(normalizedCode, selectedPlan === 'annual' ? 'Annual' : 'Monthly');
 
     if (result.isValid) {
       toast({
         title: "Promo Code Applied",
         description: result.message
       });
+      // Clear the input field after successful application
+      setPromoCode('');
     } else {
       toast({
         title: "Invalid Code",
@@ -260,6 +264,11 @@ const SubscriptionScreen: React.FC = () => {
                       ${selectedPlan === 'annual' ?
                         (activePromo ? getDiscountedPrice(prices.annual) : prices.annual).toFixed(2) :
                         (activePromo ? getDiscountedPrice(prices.monthly) : prices.monthly).toFixed(2)}
+                      {activePromo && (
+                        <div className="text-xs text-green-400 mt-1">
+                          {activePromo.discount}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -338,6 +347,11 @@ const SubscriptionScreen: React.FC = () => {
                     {selectedPlan === 'annual' ?
                       `Annual Plan - $${(activePromo ? getDiscountedPrice(prices.annual) : prices.annual).toFixed(2)}/year` :
                       `Monthly Plan - $${(activePromo ? getDiscountedPrice(prices.monthly) : prices.monthly).toFixed(2)}/month`}
+                    {activePromo && (
+                      <span className="ml-2 text-green-500 text-sm">
+                        ({activePromo.discount})
+                      </span>
+                    )}
                   </p>
                 </div>
                 <div className="space-y-4">
