@@ -180,11 +180,15 @@ class PaymentService {
       // For now, we'll simulate the API call with a promise
 
       return await new Promise<boolean>((resolve) => {
+        // Simulate a longer verification process (3-5 seconds)
+        const verificationTime = 3000 + Math.random() * 2000;
+
         setTimeout(() => {
-          // Simulate 95% success rate for payment verification
-          const isVerified = Math.random() < 0.95;
+          // Simulate 80% success rate for payment verification
+          // This makes the payment process more realistic
+          const isVerified = Math.random() < 0.8;
           resolve(isVerified);
-        }, 1500);
+        }, verificationTime);
       });
     } catch (error) {
       console.error('Payment verification error:', error);

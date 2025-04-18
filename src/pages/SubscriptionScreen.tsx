@@ -52,7 +52,9 @@ const SubscriptionScreen: React.FC = () => {
 
       const user = JSON.parse(userData);
 
-      // Process payment
+      // Process payment - add a small delay to simulate initial processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
       const paymentResult = await paymentService.processPayment(
         selectedPlan,
         { method },
@@ -73,10 +75,13 @@ const SubscriptionScreen: React.FC = () => {
           );
 
           if (saved) {
+            // Add a small delay before showing success to make it feel more realistic
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             setPaymentStep('success');
             setPaymentSuccess(true);
 
-            // Show success message and redirect
+            // Show success message and redirect after a delay
             setTimeout(() => {
               setShowPaymentModal(false);
               toast({
@@ -84,15 +89,15 @@ const SubscriptionScreen: React.FC = () => {
                 description: `Your ${selectedPlan} subscription has been activated successfully!`
               });
               navigate('/home');
-            }, 2000);
+            }, 3000);
           } else {
             throw new Error('Failed to save subscription');
           }
         } else {
-          throw new Error('Payment verification failed');
+          throw new Error('Payment verification failed. Please try again or contact support.');
         }
       } else {
-        throw new Error(paymentResult.error || 'Payment failed');
+        throw new Error(paymentResult.error || 'Payment failed. Please try again later.');
       }
     } catch (error) {
       console.error('Payment error:', error);
@@ -231,7 +236,7 @@ const SubscriptionScreen: React.FC = () => {
       {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-11/12 max-w-md">
+          <div className="bg-white rounded-2xl p-6 w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
             {paymentSuccess ? (
               <div className="p-6 text-center">
                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -239,11 +244,14 @@ const SubscriptionScreen: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Payment Successful!</h3>
                 <p className="text-gray-600 mb-4">Welcome to Hushhly Premium. You now have access to all premium features.</p>
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg text-white text-center">
+                  <p className="font-medium">Your premium features are now unlocked!</p>
+                </div>
               </div>
             ) : processingPayment ? (
               <div className="relative">
                 {/* Payment Processing UI */}
-                <div className="bg-black text-white p-6 rounded-2xl">
+                <div className="bg-black text-white p-6 rounded-2xl w-full">
                   <div className="flex justify-between items-center mb-6">
                     <div className="text-lg font-medium">
                       {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
@@ -255,10 +263,42 @@ const SubscriptionScreen: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Payment method indicator */}
+                  <div className="mb-4 flex items-center">
+                    <div className="bg-white/10 px-3 py-1 rounded-full text-sm flex items-center">
+                      {paymentStep === 'processing' && (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing payment...
+                        </>
+                      )}
+                      {paymentStep === 'verifying' && (
+                        <>
+                          <svg className="animate-pulse -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                          Verifying payment...
+                        </>
+                      )}
+                      {paymentStep === 'success' && (
+                        <>
+                          <svg className="-ml-1 mr-2 h-4 w-4 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Payment successful!
+                        </>
+                      )}
+                    </div>
+                  </div>
+
                   {paymentStep === 'processing' && (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-12 w-12 border-2 border-white border-t-transparent mx-auto mb-4"></div>
-                      <p className="text-lg">Processing payment...</p>
+                      <p className="text-lg">Processing your payment...</p>
+                      <p className="text-sm text-gray-400 mt-2">This may take a moment. Please don't close this window.</p>
                     </div>
                   )}
 
@@ -272,6 +312,7 @@ const SubscriptionScreen: React.FC = () => {
                         </div>
                       </div>
                       <p className="text-lg">Verifying payment...</p>
+                      <p className="text-sm text-gray-400 mt-2">We're confirming your payment with the payment provider.</p>
                     </div>
                   )}
 
@@ -305,21 +346,21 @@ const SubscriptionScreen: React.FC = () => {
                     className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M14.94 5.19A4.38 4.38 0 0 0 16 2a4.44 4.44 0 0 0-3 1.52 4.17 4.17 0 0 0-1 3.09 3.69 3.69 0 0 0 2.94-1.42zm2.52 7.44a4.51 4.51 0 0 1 2.16-3.81 4.66 4.66 0 0 0-3.66-2c-1.56-.16-3 .91-3.83.91s-2-.89-3.3-.87a4.92 4.92 0 0 0-4.14 2.53C2.92 12.29 4.24 17 6 19.47c.8 1.21 1.8 2.58 3.12 2.53s1.75-.82 3.28-.82 2 .82 3.3.79 2.22-1.23 3.06-2.45a11 11 0 0 0 1.38-2.85 4.41 4.41 0 0 1-2.68-4.04z"></path></svg>
-                    <span>Pay with Apple Pay</span>
+                    <span className="text-sm md:text-base">Pay with Apple Pay</span>
                   </Button>
                   <Button
                     onClick={() => handlePayment('google_pay')}
                     className="w-full bg-blue-600 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 24c6.624 0 12-5.376 12-12s-5.376-12-12-12-12 5.376-12 12 5.376 12 12 12zm0-22.5c5.799 0 10.5 4.701 10.5 10.5s-4.701 10.5-10.5 10.5-10.5-4.701-10.5-10.5 4.701-10.5 10.5-10.5z"/><path d="M15.75 12c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75z"/></svg>
-                    <span>Pay with Google Pay</span>
+                    <span className="text-sm md:text-base">Pay with Google Pay</span>
                   </Button>
                   <Button
                     onClick={() => handlePayment('credit_card')}
                     className="w-full bg-gray-800 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-700 transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                    <span>Pay with Credit Card</span>
+                    <span className="text-sm md:text-base">Pay with Credit Card</span>
                   </Button>
                   <button
                     onClick={() => setShowPaymentModal(false)}

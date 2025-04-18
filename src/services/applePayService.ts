@@ -67,6 +67,17 @@ class ApplePayService {
       // Step 2: Process the payment
       // In a real implementation, this would send the payment token to the payment processor
 
+      // Add a delay to simulate real payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
+
+      // Simulate occasional payment failures (10% chance)
+      if (Math.random() < 0.1) {
+        return {
+          success: false,
+          error: 'Payment declined by your bank. Please try again or use a different payment method.'
+        };
+      }
+
       // For this implementation, we'll use our balance service to deduct the balance
       const deductResult = await balanceService.deductBalance(
         paymentDetails.userId,
@@ -246,13 +257,13 @@ class ApplePayService {
       modal.appendChild(sheet);
       document.body.appendChild(modal);
 
-      // Auto-close after 3 seconds to simulate automatic Face ID detection
+      // Auto-close after 4-6 seconds to simulate a more realistic Apple Pay flow
       setTimeout(() => {
         if (document.body.contains(modal)) {
           document.body.removeChild(modal);
           resolve();
         }
-      }, 3000);
+      }, 4000 + Math.random() * 2000);
     });
   }
 }

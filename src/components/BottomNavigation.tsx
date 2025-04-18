@@ -38,7 +38,7 @@ const BottomNavigation: React.FC = () => {
             className={`transition-transform flex flex-col items-center ${isActive('/work') ? 'text-white scale-110' : 'text-white/80 hover:text-white'}`}
           >
             <Briefcase size={24} />
-            <span className="text-xs mt-1 font-medium">Your Guided Day</span>
+            <span className="text-xs mt-1 font-medium">Moments</span>
           </button>
 
           <button
@@ -54,7 +54,7 @@ const BottomNavigation: React.FC = () => {
             className={`transition-transform flex flex-col items-center ${isActive('/sleep-stories') ? 'text-white scale-110' : 'text-white/80 hover:text-white'}`}
           >
             <Moon size={24} />
-            <span className="text-xs mt-1 font-medium">Sleep Stories</span>
+            <span className="text-xs mt-1 font-medium">Stories</span>
           </button>
 
           <button

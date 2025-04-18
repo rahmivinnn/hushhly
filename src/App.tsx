@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import React from 'react';
+import ScheduledReminder from "./components/ScheduledReminder";
 import Index from "./pages/Index";
 import SplashScreen from "./pages/SplashScreen";
 import NotFound from "./pages/NotFound";
@@ -57,6 +58,7 @@ const App = () => (
           </Routes>
           <Toaster />
           <Sonner />
+          <ScheduledReminder />
         </TooltipProvider>
     </QueryClientProvider>
   </React.StrictMode>

@@ -30,7 +30,7 @@ class GooglePlayService {
       // 1. If the device is Android
       // 2. If the device supports Google Play (via Google Play Services)
       // 3. If the merchant is configured to accept Google Play payments
-      
+
       // For this implementation, we'll just check if the device is Android
       return isAndroid();
     } catch (error) {
@@ -53,22 +53,33 @@ class GooglePlayService {
 
       // Show Google Play payment sheet
       await this.showGooglePlaySheet(paymentDetails);
-      
+
       // Step 1: Authenticate with Fingerprint
       const fingerprintResult = await biometricService.authenticate(
         'Verify your identity to complete this payment'
       );
-      
+
       if (!fingerprintResult.success) {
         return {
           success: false,
           error: fingerprintResult.error || 'Fingerprint authentication failed'
         };
       }
-      
+
       // Step 2: Process the payment
       // In a real implementation, this would send the payment token to the payment processor
-      
+
+      // Add a delay to simulate real payment processing
+      await new Promise(resolve => setTimeout(resolve, 2500 + Math.random() * 1500));
+
+      // Simulate occasional payment failures (10% chance)
+      if (Math.random() < 0.1) {
+        return {
+          success: false,
+          error: 'Payment declined. Please check your Google Play account settings or try a different payment method.'
+        };
+      }
+
       // For this implementation, we'll use our balance service to deduct the balance
       const deductResult = await balanceService.deductBalance(
         paymentDetails.userId,
@@ -76,14 +87,14 @@ class GooglePlayService {
         paymentDetails.description,
         'google_play'
       );
-      
+
       if (!deductResult.success) {
         return {
           success: false,
           error: deductResult.error || 'Payment processing failed'
         };
       }
-      
+
       // Step 3: Return the result
       return {
         success: true,
@@ -212,7 +223,7 @@ class GooglePlayService {
 
         country.appendChild(countryLabel);
         country.appendChild(countryValue);
-        
+
         details.appendChild(country);
       }
 
@@ -273,13 +284,13 @@ class GooglePlayService {
       modal.appendChild(sheet);
       document.body.appendChild(modal);
 
-      // Auto-close after 3 seconds to simulate automatic fingerprint detection
+      // Auto-close after 3-5 seconds to simulate a more realistic Google Pay flow
       setTimeout(() => {
         if (document.body.contains(modal)) {
           document.body.removeChild(modal);
           resolve();
         }
-      }, 3000);
+      }, 3000 + Math.random() * 2000);
     });
   }
 }

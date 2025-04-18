@@ -62,11 +62,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
 
           <button
-            onClick={() => handleNavigation('/sleep-stories', 'Sleep Stories')}
+            onClick={() => handleNavigation('/sleep-stories', 'Stories')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Moon size={20} className="text-blue-500" />
-            <span>Sleep Stories</span>
+            <span>Stories</span>
           </button>
 
           <button
@@ -86,11 +86,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
 
           <button
-            onClick={() => handleNavigation('/work', 'Work')}
+            onClick={() => handleNavigation('/work', 'Moments')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <User size={20} className="text-blue-500" />
-            <span>Your Guided Day</span>
+            <span>Moments</span>
           </button>
 
           <div className="border-t pt-4 mt-4">
