@@ -1755,18 +1755,18 @@ const SplashScreen: React.FC = () => {
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto animate-float mb-6 brightness-0 invert"
+          className="w-48 h-auto animate-float mb-3 brightness-0 invert"
         />
-        <h2 className="text-white text-xl font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
+        <h2 className="text-white text-xl font-medium mb-3 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
         <div>
           <img
             src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
             alt="Meditation Bear"
-            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            className="w-36 h-auto mb-4 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
         </div>
-        <p className="text-sm text-white mb-10 animate-slide-up">
+        <p className="text-sm text-white mb-4 animate-slide-up">
           Your journey to mindfulness begins here
         </p>
         <Button
@@ -1803,42 +1803,42 @@ const SplashScreen: React.FC = () => {
         <img
           src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
           alt="Hushhly Logo"
-          className="w-64 h-auto mb-6 brightness-0 invert"
+          className="w-48 h-auto mb-3 brightness-0 invert"
         />
-        <h2 className="text-white text-lg font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
+        <h2 className="text-white text-lg font-medium mb-3 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
         <div>
           <img
             src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
             alt="Meditation Bear"
-            className="w-48 h-auto mb-8 animate-pulse-subtle"
+            className="w-36 h-auto mb-4 animate-pulse-subtle"
             style={{ animationDuration: '3s' }}
           />
         </div>
 
-        <div className="w-full space-y-4 mt-4 mb-8">
+        <div className="w-full space-y-3 mt-2 mb-4">
           <Button
             onClick={handleLogin}
-            className="bg-white text-blue-600 hover:bg-blue-50 rounded-full flex items-center justify-center w-full py-6 animate-slide-up"
+            className="bg-white text-blue-600 hover:bg-blue-50 rounded-full flex items-center justify-center w-full py-3 animate-slide-up"
             style={{ animationDelay: '0.1s' }}
           >
-            <span className="text-lg">Login</span>
+            <span className="text-base">Login</span>
           </Button>
 
           <Button
             onClick={handleSignUp}
-            className="bg-transparent text-white border-2 border-white hover:bg-white/10 rounded-full flex items-center justify-center w-full py-6 animate-slide-up"
+            className="bg-transparent text-white border-2 border-white hover:bg-white/10 rounded-full flex items-center justify-center w-full py-3 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
-            <span className="text-lg">Sign up</span>
+            <span className="text-base">Sign up</span>
           </Button>
 
-          <div className="flex items-center justify-center space-x-2 py-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="flex items-center justify-center space-x-2 py-2 animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="h-px bg-white/30 flex-grow"></div>
             <span className="text-white/80">Or Continue with</span>
             <div className="h-px bg-white/30 flex-grow"></div>
           </div>
 
-          <div className="flex justify-center space-x-4 pb-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <div className="flex justify-center space-x-4 pb-2 animate-slide-up" style={{ animationDelay: '0.4s' }}>
             <button
               onClick={() => {
                 // Open Google authentication popup
@@ -1852,9 +1852,9 @@ const SplashScreen: React.FC = () => {
                   `width=${width},height=${height},left=${left},top=${top}`
                 );
               }}
-              className="bg-white p-4 rounded-xl flex items-center justify-center w-24 hover:bg-blue-50 transition-colors"
+              className="bg-white p-3 rounded-xl flex items-center justify-center w-20 hover:bg-blue-50 transition-colors"
             >
-              <FcGoogle size={24} />
+              <FcGoogle size={20} />
             </button>
             <button
               onClick={() => {
@@ -1869,9 +1869,9 @@ const SplashScreen: React.FC = () => {
                   `width=${width},height=${height},left=${left},top=${top}`
                 );
               }}
-              className="bg-white p-4 rounded-xl flex items-center justify-center w-24 hover:bg-blue-50 transition-colors"
+              className="bg-white p-3 rounded-xl flex items-center justify-center w-20 hover:bg-blue-50 transition-colors"
             >
-              <FaApple size={24} className="text-black" />
+              <FaApple size={20} className="text-black" />
             </button>
           </div>
         </div>
