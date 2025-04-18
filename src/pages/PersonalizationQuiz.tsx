@@ -14,7 +14,7 @@ const PersonalizationQuiz: React.FC = () => {
   const { toast } = useToast();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(4);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  
+
   // Mock questions
   const questions: QuizQuestion[] = [
     {
@@ -43,9 +43,9 @@ const PersonalizationQuiz: React.FC = () => {
       options: ["Yes", "No", "Maybe later"]
     }
   ];
-  
+
   const currentQuestion = questions[currentQuestionIndex];
-  
+
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -54,11 +54,11 @@ const PersonalizationQuiz: React.FC = () => {
       navigate(-1);
     }
   };
-  
+
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
   };
-  
+
   const handleSaveResponse = () => {
     if (!selectedOption) {
       toast({
@@ -68,10 +68,10 @@ const PersonalizationQuiz: React.FC = () => {
       });
       return;
     }
-    
+
     // Save the response
     // In a real app, you'd save this to state/context/backend
-    
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
@@ -84,7 +84,7 @@ const PersonalizationQuiz: React.FC = () => {
       navigate("/home");
     }
   };
-  
+
   const handleSkip = () => {
     toast({
       title: "Quiz skipped",
@@ -92,7 +92,7 @@ const PersonalizationQuiz: React.FC = () => {
     });
     navigate("/home");
   };
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
       {/* Top bar */}
@@ -114,41 +114,41 @@ const PersonalizationQuiz: React.FC = () => {
           </svg>
         </div>
       </div>
-      
+
       {/* Back button */}
       <div className="mt-4 px-4">
         <button onClick={handleBack} className="p-2">
           <ArrowLeft className="text-black" size={24} />
         </button>
       </div>
-      
+
       {/* Logo */}
       <div className="flex justify-center my-8">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="h-16" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
+          className="h-16"
         />
       </div>
-      
+
       {/* Quiz content */}
       <div className="px-6 flex-1">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Personalization Quiz</h1>
-        
+
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-800">
             Q{currentQuestion.id}: {currentQuestion.question}
           </h2>
         </div>
-        
+
         <div className="space-y-4">
           {currentQuestion.options.map((option, index) => (
             <div key={index} className="flex items-center">
               <label className="flex items-center cursor-pointer">
-                <div 
+                <div
                   className={`w-6 h-6 rounded-full border-2 ${
-                    selectedOption === option 
-                      ? 'border-blue-500 bg-white' 
+                    selectedOption === option
+                      ? 'border-blue-500 bg-white'
                       : 'border-gray-300 bg-white'
                   } flex items-center justify-center mr-3`}
                 >
@@ -162,7 +162,7 @@ const PersonalizationQuiz: React.FC = () => {
           ))}
         </div>
       </div>
-      
+
       {/* Bottom buttons */}
       <div className="px-4 mb-32">
         <button
@@ -171,7 +171,7 @@ const PersonalizationQuiz: React.FC = () => {
         >
           Save My Response
         </button>
-        
+
         <button
           onClick={handleSkip}
           className="w-full py-3 mt-4 text-blue-500 font-medium"
@@ -179,13 +179,13 @@ const PersonalizationQuiz: React.FC = () => {
           Skip for Now
         </button>
       </div>
-      
+
       {/* Progress indicator */}
       <div className="flex justify-center mt-4 mb-24">
         <div className="flex space-x-2">
           {questions.map((_, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`h-1 w-12 rounded-full ${
                 index === currentQuestionIndex ? 'bg-blue-500' : 'bg-gray-300'
               }`}
@@ -193,7 +193,7 @@ const PersonalizationQuiz: React.FC = () => {
           ))}
         </div>
       </div>
-      
+
       {/* Wave and Shh logo */}
       <div className="absolute bottom-0 left-0 right-0 w-full h-64 overflow-hidden">
         <div className="absolute bottom-0 w-full">
@@ -226,11 +226,11 @@ const PersonalizationQuiz: React.FC = () => {
             </defs>
           </svg>
         </div>
-        
+
         {/* Shh logo in white */}
         <div className="absolute bottom-14 left-10 z-10">
           <img
-            src="/images/shh-logo-white.svg"
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
             alt="Shh"
             className="w-24 h-auto"
           />
@@ -240,4 +240,4 @@ const PersonalizationQuiz: React.FC = () => {
   );
 };
 
-export default PersonalizationQuiz; 
+export default PersonalizationQuiz;

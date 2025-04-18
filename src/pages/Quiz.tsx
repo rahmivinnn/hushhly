@@ -78,31 +78,31 @@ const Quiz = () => {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="w-full flex justify-between items-center pt-6 px-4">
-        <button 
-          onClick={handleBack} 
+        <button
+          onClick={handleBack}
           className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
-        <button 
-          onClick={handleSkip} 
+        <button
+          onClick={handleSkip}
           className="text-xs text-meditation-lightBlue hover:text-meditation-mediumBlue transition-colors"
         >
           Skip for now
         </button>
       </div>
-      
+
       <div className="flex justify-center mt-2 mb-4">
-        <img 
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png" 
-          alt="Hushhly Logo" 
-          className="w-32 h-auto" 
+        <img
+          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+          alt="Hushhly Logo"
+          className="w-32 h-auto"
         />
       </div>
-      
+
       <div className="w-full px-8 mb-8">
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-meditation-lightBlue transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
           />
@@ -112,7 +112,7 @@ const Quiz = () => {
           <span>{Math.round(progressPercentage)}% complete</span>
         </div>
       </div>
-          
+
       <div className="flex-1 flex flex-col px-8">
         <div className={`transition-all duration-300 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
           <h2 className="text-xl font-semibold text-meditation-darkBlue mb-2">
@@ -121,21 +121,21 @@ const Quiz = () => {
           <p className="text-gray-600 mb-8">
             {quizQuestions[currentQuestion].question}
           </p>
-          
+
           <div className="space-y-4 mb-8">
             {quizQuestions[currentQuestion].options.map((option, index) => (
-              <label 
+              <label
                 key={index}
                 className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${
-                  selectedOption === index 
-                    ? 'border-blue-500 bg-blue-50' 
+                  selectedOption === index
+                    ? 'border-blue-500 bg-blue-50'
                     : 'border-gray-300 hover:border-blue-300'
                 }`}
                 onClick={() => setSelectedOption(index)}
               >
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
-                  selectedOption === index 
-                    ? 'border-blue-500' 
+                  selectedOption === index
+                    ? 'border-blue-500'
                     : 'border-gray-400'
                 }`}>
                   {selectedOption === index && (
@@ -148,10 +148,10 @@ const Quiz = () => {
           </div>
         </div>
       </div>
-          
+
       {/* Button container with higher z-index */}
       <div className="px-8 py-6 z-20 relative">
-        <Button 
+        <Button
           onClick={handleNext}
           className="w-full h-12 bg-gradient-to-r from-meditation-lightBlue to-meditation-mediumBlue hover:bg-meditation-mediumBlue text-white font-medium rounded-xl flex items-center justify-center"
         >
@@ -162,13 +162,13 @@ const Quiz = () => {
           )}
         </Button>
       </div>
-          
+
       {/* Progress indicator */}
       <div className="flex justify-center mt-4 mb-20">
         <div className="flex space-x-2">
           {quizQuestions.map((_, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`h-1 w-12 rounded-full ${
                 index === currentQuestion ? 'bg-blue-500' : 'bg-gray-300'
               }`}
@@ -176,8 +176,8 @@ const Quiz = () => {
           ))}
         </div>
       </div>
-      
-      {/* Bottom decoration with waves only (removed Shh logo) */}
+
+      {/* Bottom decoration with waves and SHH logo */}
       <div className="fixed bottom-0 left-0 right-0 w-full h-48 overflow-hidden">
         <div className="absolute bottom-0 w-full">
           <svg viewBox="0 0 1440 400" preserveAspectRatio="none" className="w-full">
@@ -208,8 +208,15 @@ const Quiz = () => {
               d="M0,288L60,261.3C120,235,240,181,360,176C480,171,600,213,720,218.7C840,224,960,192,1080,197.3C1200,203,1320,245,1380,266.7L1440,288L1440,400L1380,400C1320,400,1200,400,1080,400C960,400,840,400,720,400C600,400,480,400,360,400C240,400,120,400,60,400L0,400Z"
             ></path>
           </svg>
-          
-          {/* Removed the Shh logo */}
+
+          {/* Add the white SHH logo to bottom left */}
+          <div className="absolute bottom-14 left-10 z-10">
+            <img
+              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+              alt="Shh"
+              className="w-24 h-auto"
+            />
+          </div>
         </div>
       </div>
     </div>
