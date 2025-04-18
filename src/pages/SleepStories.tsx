@@ -26,7 +26,7 @@ const SleepStories: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>("21:00");
   const [scheduledStory, setScheduledStory] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
-  
+
   const storyImages = {
     "whispering": "/lovable-uploads/f3796138-3de0-44f8-9fab-6a71b48c7632.png",
     "starlit": "/lovable-uploads/97bc74f2-226d-4977-aa93-9b0d386fca75.png",
@@ -34,7 +34,7 @@ const SleepStories: React.FC = () => {
     "gentle": "/lovable-uploads/f2a6ea2d-db0c-4da6-ab79-4c8a4b158fff.png",
     "forest": "/lovable-uploads/79057e46-19a8-4c32-9d96-f637c4ac722c.png"
   };
-  
+
   const originalStories: StoryItem[] = [
     {
       id: "1",
@@ -66,7 +66,7 @@ const SleepStories: React.FC = () => {
       image: storyImages.gentle
     }
   ];
-  
+
   const [featuredStories, setFeaturedStories] = useState<StoryItem[]>([...originalStories]);
   const [shortStories, setShortStories] = useState<StoryItem[]>([...originalStories]);
   const [relaxingTales, setRelaxingTales] = useState<StoryItem[]>([...originalStories]);
@@ -79,7 +79,7 @@ const SleepStories: React.FC = () => {
     "The Gentle Night": "XqeAt45goBI",
     "default": "nRkP3lKj_lY"
   };
-  
+
   // Map sleep story titles to meditation indices for navigation
   const storyToMeditationMap: Record<string, number> = {
     "The Whispering Forest": 0,
@@ -87,26 +87,26 @@ const SleepStories: React.FC = () => {
     "Painting Forest": 2,
     "The Gentle Night": 3
   };
-  
+
   useEffect(() => {
     const savedLikes = localStorage.getItem('likedStories');
     if (savedLikes) {
       setLikedStories(JSON.parse(savedLikes));
     }
   }, []);
-  
+
   const handleReshuffleStories = () => {
     setFeaturedStories(shuffleArray([...originalStories]));
     setShortStories(shuffleArray([...originalStories]));
     setRelaxingTales(shuffleArray([...originalStories]));
     setParentChildStories(shuffleArray([...originalStories]));
-    
+
     toast({
       title: "Stories Reshuffled",
       description: "We've found some new stories for you to enjoy.",
     });
   };
-  
+
   const shuffleArray = (array: StoryItem[]): StoryItem[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -115,10 +115,10 @@ const SleepStories: React.FC = () => {
     }
     return newArray;
   };
-  
+
   const handleLikeStory = (id: string) => {
     let newLikedStories: string[];
-    
+
     if (likedStories.includes(id)) {
       newLikedStories = likedStories.filter(storyId => storyId !== id);
       toast({
@@ -132,39 +132,39 @@ const SleepStories: React.FC = () => {
         description: "Story added to your favorites"
       });
     }
-    
+
     setLikedStories(newLikedStories);
     localStorage.setItem('likedStories', JSON.stringify(newLikedStories));
   };
-  
+
   const handlePlayNow = (title: string, duration: string) => {
     // Navigate to meditation page with the corresponding track
     const meditationIndex = storyToMeditationMap[title] || 0;
-    
+
     // Store the selected meditation index in localStorage
     localStorage.setItem('selectedMeditationIndex', meditationIndex.toString());
-    
+
     // Navigate to meditation page
     navigate('/meditation');
-    
+
     toast({
       title: "Starting Meditation",
       description: `${title} meditation is starting now.`
     });
   };
-  
+
   const handleBackButton = () => {
     navigate(-1);
   };
-  
+
   const handleViewMore = (section: string) => {
     toast({
       title: `More ${section}`,
       description: `Loading more ${section.toLowerCase()}...`,
     });
-    
+
     const additionalStories = shuffleArray([...originalStories]);
-    
+
     switch(section) {
       case "Featured Sleep Stories":
         setFeaturedStories(prev => [...prev, ...additionalStories]);
@@ -180,17 +180,17 @@ const SleepStories: React.FC = () => {
         break;
     }
   };
-  
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    
+
     if (e.target.value) {
       const query = e.target.value.toLowerCase();
-      const filtered = originalStories.filter(story => 
-        story.title.toLowerCase().includes(query) || 
+      const filtered = originalStories.filter(story =>
+        story.title.toLowerCase().includes(query) ||
         (story.description && story.description.toLowerCase().includes(query))
       );
-      
+
       setFeaturedStories(filtered);
       setShortStories(filtered);
       setRelaxingTales(filtered);
@@ -202,11 +202,11 @@ const SleepStories: React.FC = () => {
       setParentChildStories([...originalStories]);
     }
   };
-  
+
   const handleInvite = () => {
     setShowShareModal(true);
   };
-  
+
   const handleCopyLink = () => {
     // In a real app, this would copy the actual invite link
     navigator.clipboard.writeText("https://hushhly.com/invite/sleep-stories?ref=user123");
@@ -215,7 +215,7 @@ const SleepStories: React.FC = () => {
       description: "Invite link has been copied to clipboard",
     });
   };
-  
+
   const handleShareSocial = (platform: string) => {
     // In a real app, this would open the sharing dialog for the specific platform
     toast({
@@ -224,23 +224,23 @@ const SleepStories: React.FC = () => {
     });
     setShowShareModal(false);
   };
-  
+
   const handleCalendarClick = () => {
     setShowCalendar(true);
   };
-  
+
   const handleCloseCalendar = () => {
     setShowCalendar(false);
   };
-  
+
   const handleDateSelection = (date: Date) => {
     setSelectedDate(date);
   };
-  
+
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedTime(e.target.value);
   };
-  
+
   const handleScheduleStory = (title: string) => {
     if (!selectedDate) {
       toast({
@@ -249,14 +249,14 @@ const SleepStories: React.FC = () => {
       });
       return;
     }
-    
+
     const scheduledDateTime = new Date(selectedDate);
     const [hours, minutes] = selectedTime.split(':').map(Number);
     scheduledDateTime.setHours(hours, minutes);
-    
+
     setScheduledStory(title);
     setShowCalendar(false);
-    
+
     // Format date for display
     const formattedDate = scheduledDateTime.toLocaleString('en-US', {
       month: 'short',
@@ -265,12 +265,12 @@ const SleepStories: React.FC = () => {
       minute: 'numeric',
       hour12: true
     });
-    
+
     toast({
       title: "Story Scheduled",
       description: `"${title}" has been scheduled for ${formattedDate}`,
     });
-    
+
     // Show notification after a short delay to simulate system notification
     setTimeout(() => {
       const notificationElement = document.createElement('div');
@@ -281,13 +281,13 @@ const SleepStories: React.FC = () => {
             <img src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" alt="Hushhly" class="h-6 w-auto">
           </div>
           <div class="ml-3">
-            <h3 class="text-sm font-medium text-gray-900">Sleep story scheduled!</h3>
+            <h3 class="text-sm font-medium text-gray-900">Story scheduled!</h3>
             <p class="mt-1 text-sm text-gray-500">"${title}" will start at ${formattedDate}</p>
           </div>
         </div>
       `;
       document.body.appendChild(notificationElement);
-      
+
       // Remove notification after 5 seconds
       setTimeout(() => {
         notificationElement.classList.remove('animate-slide-in');
@@ -298,7 +298,7 @@ const SleepStories: React.FC = () => {
       }, 5000);
     }, 1000);
   };
-  
+
   const StoryCard = ({ story, isFeatured = false }: { story: StoryItem, isFeatured?: boolean }) => (
     <div className={`flex ${isFeatured ? 'flex-col h-48 rounded-xl overflow-hidden relative mb-4' : 'items-center mb-4'}`}>
       {isFeatured ? (
@@ -308,8 +308,8 @@ const SleepStories: React.FC = () => {
           <div className="mt-auto p-4 z-10 text-white">
             <h3 className="text-xl font-semibold">{story.title}</h3>
             <p className="text-sm opacity-90">{story.description}</p>
-            
-            <button 
+
+            <button
               onClick={() => handlePlayNow(story.title, story.duration)}
               className="mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 text-sm flex items-center"
             >
@@ -326,7 +326,7 @@ const SleepStories: React.FC = () => {
             <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
             <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
           </div>
-          <button 
+          <button
             onClick={() => handlePlayNow(story.title, story.duration)}
             className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
           >
@@ -336,25 +336,25 @@ const SleepStories: React.FC = () => {
       )}
     </div>
   );
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white pb-16">
       <header className="px-4 pt-4 pb-2 flex justify-between items-center">
         <button onClick={handleBackButton} className="p-2 text-black">
           <ArrowLeft size={20} />
         </button>
-        
+
         <div className="flex flex-col items-center">
-          <img 
+          <img
             src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
             alt="Shh Logo"
             className="h-6 mb-1"
           />
-          <h1 className="text-lg font-semibold">Sleep Stories</h1>
+          <h1 className="text-lg font-semibold">Stories</h1>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <button 
+          <button
             onClick={handleCalendarClick}
             className="p-2 text-blue-500"
           >
@@ -365,7 +365,7 @@ const SleepStories: React.FC = () => {
           </button>
         </div>
       </header>
-      
+
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -376,22 +376,22 @@ const SleepStories: React.FC = () => {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="flex items-center justify-between mb-6 bg-gray-50 p-3 rounded-lg">
                 <div className="text-sm text-gray-600 truncate flex-1">https://hushhly.com/invite/sleep-stories?ref=user123</div>
-                <button 
+                <button
                   onClick={handleCopyLink}
                   className="ml-3 text-blue-500 hover:text-blue-600"
                 >
                   <Copy size={18} />
                 </button>
               </div>
-              
+
               <p className="text-sm text-gray-600 mb-4">Share via</p>
-              
+
               <div className="grid grid-cols-4 gap-4">
-                <button 
+                <button
                   onClick={() => handleShareSocial('WhatsApp')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -400,8 +400,8 @@ const SleepStories: React.FC = () => {
                   </div>
                   <span className="text-xs">WhatsApp</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Telegram')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -410,8 +410,8 @@ const SleepStories: React.FC = () => {
                   </div>
                   <span className="text-xs">Telegram</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Twitter')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -420,8 +420,8 @@ const SleepStories: React.FC = () => {
                   </div>
                   <span className="text-xs">Twitter</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Email')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -435,7 +435,7 @@ const SleepStories: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       <div className="px-4 mb-4">
         <div className="relative">
           <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -448,13 +448,13 @@ const SleepStories: React.FC = () => {
           />
         </div>
       </div>
-      
+
       <div className="px-4 mb-6">
         {featuredStories.length > 0 && (
           <div className="rounded-xl overflow-hidden">
-            <img 
-              src={storyImages.forest} 
-              alt="Featured Story" 
+            <img
+              src={storyImages.forest}
+              alt="Featured Story"
               className="w-full h-48 object-cover"
             />
             <div className="relative -mt-48 h-48 rounded-xl overflow-hidden">
@@ -462,7 +462,7 @@ const SleepStories: React.FC = () => {
               <div className="absolute bottom-0 p-4 text-white">
                 <h2 className="text-xl font-semibold">The Whispering Forest</h2>
                 <p className="text-sm mb-3">A walk through a magical, quiet woodland.</p>
-                <button 
+                <button
                   onClick={() => handlePlayNow("The Whispering Forest", "15 Min")}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 text-sm flex items-center"
                 >
@@ -473,18 +473,18 @@ const SleepStories: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       <section className="px-4 mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Featured Sleep Stories</h2>
-          <button 
+          <h2 className="text-lg font-semibold">Featured Stories</h2>
+          <button
             onClick={handleReshuffleStories}
             className="text-blue-500 text-sm"
           >
             Reshuffle
           </button>
         </div>
-        
+
         <div className="space-y-3">
           {featuredStories.map(story => (
             <div key={story.id} className="flex items-center mb-4">
@@ -495,7 +495,7 @@ const SleepStories: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
-              <button 
+              <button
                 onClick={() => handlePlayNow(story.title, story.duration)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
@@ -504,18 +504,18 @@ const SleepStories: React.FC = () => {
             </div>
           ))}
         </div>
-        
-        <button 
-          onClick={() => handleViewMore("Featured Sleep Stories")} 
+
+        <button
+          onClick={() => handleViewMore("Featured Stories")}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 mt-4 text-sm flex items-center justify-center"
         >
           View More
         </button>
       </section>
-      
+
       <section className="px-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Short Stories for Quick Sleep</h2>
-        
+
         <div className="space-y-3">
           {shortStories.map(story => (
             <div key={story.id} className="flex items-center mb-4">
@@ -526,7 +526,7 @@ const SleepStories: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
-              <button 
+              <button
                 onClick={() => handlePlayNow(story.title, story.duration)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
@@ -535,18 +535,18 @@ const SleepStories: React.FC = () => {
             </div>
           ))}
         </div>
-        
-        <button 
-          onClick={() => handleViewMore("Short Stories")} 
+
+        <button
+          onClick={() => handleViewMore("Short Stories")}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 mt-4 text-sm flex items-center justify-center"
         >
           View More
         </button>
       </section>
-      
+
       <section className="px-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Long Relaxing Tales</h2>
-        
+
         <div className="space-y-3">
           {relaxingTales.map(story => (
             <div key={story.id} className="flex items-center mb-4">
@@ -557,7 +557,7 @@ const SleepStories: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
-              <button 
+              <button
                 onClick={() => handlePlayNow(story.title, story.duration)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
@@ -566,18 +566,18 @@ const SleepStories: React.FC = () => {
             </div>
           ))}
         </div>
-        
-        <button 
-          onClick={() => handleViewMore("Relaxing Tales")} 
+
+        <button
+          onClick={() => handleViewMore("Relaxing Tales")}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 mt-4 text-sm flex items-center justify-center"
         >
           View More
         </button>
       </section>
-      
+
       <section className="px-4 mb-20">
         <h2 className="text-lg font-semibold mb-4">Parent & Child Bonding Stories</h2>
-        
+
         <div className="space-y-3">
           {parentChildStories.map(story => (
             <div key={story.id} className="flex items-center mb-4">
@@ -588,7 +588,7 @@ const SleepStories: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
-              <button 
+              <button
                 onClick={() => handlePlayNow(story.title, story.duration)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
@@ -597,15 +597,15 @@ const SleepStories: React.FC = () => {
             </div>
           ))}
         </div>
-        
-        <button 
-          onClick={() => handleViewMore("Parent & Child Bonding Stories")} 
+
+        <button
+          onClick={() => handleViewMore("Parent & Child Bonding Stories")}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 mt-4 text-sm flex items-center justify-center"
         >
           View More
         </button>
       </section>
-      
+
       {showVideoPopup && (
         <VideoPopup
           title={currentVideo.title}
@@ -614,50 +614,50 @@ const SleepStories: React.FC = () => {
           onClose={() => setShowVideoPopup(false)}
         />
       )}
-      
+
       {/* Calendar Modal */}
       {showCalendar && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-semibold">Schedule Sleep Story</h2>
-              <button 
+              <button
                 onClick={handleCloseCalendar}
                 className="text-gray-400 hover:text-gray-500"
               >
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-4">
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   className="w-full h-10 rounded-lg border border-gray-300 px-3"
                   onChange={(e) => handleDateSelection(new Date(e.target.value))}
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
-              
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Time</label>
                 <div className="flex items-center">
                   <Clock size={16} className="text-gray-400 mr-2" />
-                  <input 
-                    type="time" 
+                  <input
+                    type="time"
                     className="w-full h-10 rounded-lg border border-gray-300 px-3"
                     value={selectedTime}
                     onChange={handleTimeChange}
                   />
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Story</label>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {originalStories.map(story => (
-                    <div 
+                    <div
                       key={story.id}
                       className="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
                       onClick={() => handleScheduleStory(story.title)}
@@ -673,7 +673,7 @@ const SleepStories: React.FC = () => {
                   ))}
                 </div>
               </div>
-              
+
               <button
                 onClick={() => handleScheduleStory(originalStories[0].title)}
                 disabled={!selectedDate}
@@ -685,7 +685,7 @@ const SleepStories: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       <BottomNavigation />
     </div>
   );
