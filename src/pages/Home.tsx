@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Moon, ArrowRight } from 'lucide-react';
+import { Bell, Search, Moon, ArrowRight, Calendar, Play, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import VideoPopup from '@/components/VideoPopup';
@@ -11,6 +11,8 @@ import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
 import MoodSelectionDialog from '@/components/MoodSelectionDialog';
 import AIRecommendation from '@/components/AIRecommendation';
 import FeaturesPopup from '@/components/FeaturesPopup';
+import CategoryDetail from '@/components/CategoryDetail';
+import { motion } from 'framer-motion';
 
 interface MoodOption {
   icon: React.ReactNode;
@@ -47,6 +49,7 @@ const Home: React.FC = () => {
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
   const [showFeaturesPopup, setShowFeaturesPopup] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryCard | null>(null);
 
   useEffect(() => {
     // Try to get user data from localStorage
@@ -64,8 +67,22 @@ const Home: React.FC = () => {
       }
     }
 
-    // Show only the features popup when the component mounts
-    setShowFeaturesPopup(true);
+    // Check if popups have been shown before
+    const featuresPopupShown = localStorage.getItem('features_popup_shown');
+    const moodPopupShown = localStorage.getItem('mood_popup_shown');
+
+    // Only show the features popup if it hasn't been shown before
+    if (!featuresPopupShown) {
+      setShowFeaturesPopup(true);
+      localStorage.setItem('features_popup_shown', 'true');
+    }
+
+    // Only show the mood selection popup if it hasn't been shown before
+    // and features popup has been shown
+    if (!moodPopupShown && featuresPopupShown) {
+      setShowMoodSelection(true);
+      localStorage.setItem('mood_popup_shown', 'true');
+    }
   }, []);
 
   const moodOptions: MoodOption[] = [
@@ -371,7 +388,13 @@ const Home: React.FC = () => {
 
         <div className="space-y-3">
           {categoryCards.map((category, index) => (
-            <div key={index} className={`${category.color} rounded-xl p-3 text-white`}>
+            <motion.div
+              key={index}
+              className={`${category.color} rounded-xl p-3 text-white cursor-pointer`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedCategory(category)}
+            >
               <div className="flex items-start mb-1">
                 <span className="text-2xl mr-2">{category.icon}</span>
                 <div>
@@ -383,19 +406,27 @@ const Home: React.FC = () => {
 
               <div className="flex space-x-2">
                 <Button
-                  onClick={() => handleScheduleSession(category.title)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent opening the category detail
+                    handleScheduleSession(category.title);
+                  }}
                   className="bg-white/20 hover:bg-white/30 text-white border border-white/40 rounded-full px-3 py-1 text-xs flex-1"
                 >
+                  <Calendar size={12} className="mr-1" />
                   Schedule
                 </Button>
                 <Button
-                  onClick={() => handleStartNow(category.title)}
-                  className="bg-white hover:bg-white/90 text-blue-600 rounded-full px-3 py-1 text-xs flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent opening the category detail
+                    handleStartNow(category.title);
+                  }}
+                  className="bg-white hover:bg-white/90 text-blue-600 rounded-full px-3 py-1 text-xs flex-1 flex items-center justify-center"
                 >
+                  <Play size={12} className="mr-1" fill="currentColor" />
                   Start Now
                 </Button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -480,10 +511,22 @@ const Home: React.FC = () => {
         isOpen={showFeaturesPopup}
         onClose={() => {
           setShowFeaturesPopup(false);
-          // Show the mood selection dialog after the features popup is closed
-          setShowMoodSelection(true);
+          // Only show mood selection if it hasn't been shown before
+          if (!localStorage.getItem('mood_popup_shown')) {
+            setShowMoodSelection(true);
+            localStorage.setItem('mood_popup_shown', 'true');
+          }
         }}
       />
+
+      {/* Category Detail */}
+      {selectedCategory && (
+        <CategoryDetail
+          isOpen={!!selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+          category={selectedCategory}
+        />
+      )}
 
       {/* Bottom Navigation */}
       <BottomNavigation />
