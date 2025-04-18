@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, ArrowLeft, Search, Clock, Calendar, Play, Trophy, User, Plus, X } from 'lucide-react';
+import { Briefcase, ArrowLeft, Search, Clock, Calendar, Play, Trophy, User, Plus, X, BarChart, Activity, Timer } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import VideoPopup from '@/components/VideoPopup';
+import { useAuth } from '@/hooks/useAuth';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
 
 interface WorkSession {
   id: string;
@@ -20,6 +22,9 @@ interface WorkSession {
 const Work: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const activityTracking = useActivityTracking();
+
   const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string, videoId?: string}>({title: "", duration: ""});
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -37,6 +42,15 @@ const Work: React.FC = () => {
     date: "",
     image: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png"
   });
+
+  // Activity stats
+  const [activityStats, setActivityStats] = useState({
+    totalTimeToday: "0 min",
+    totalSessions: 0,
+    currentStreak: 0
+  });
+
+  const [recentActivity, setRecentActivity] = useState<{path: string, title: string, time: string}[]>([]);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -118,9 +132,9 @@ const Work: React.FC = () => {
     return sessions;
   };
 
-  // Update clock in real-time
+  // Update clock and activity stats in real-time
   useEffect(() => {
-    const updateClock = () => {
+    const updateClockAndStats = () => {
       const now = new Date();
 
       // Format time as h:mm AM/PM
@@ -143,6 +157,30 @@ const Work: React.FC = () => {
       setCurrentTime(timeString);
       setCurrentDate(dateString);
       setTodayDateString(todayString);
+
+      // Update activity stats
+      const stats = activityTracking.getFormattedActivitySummary();
+      setActivityStats(stats);
+
+      // Get recent activity
+      const recentPageVisits = activityTracking.getRecentPageVisits(5);
+      const formattedVisits = recentPageVisits.map(visit => {
+        const visitDate = new Date(visit.visitTime);
+        const visitHours = visitDate.getHours();
+        const visitMinutes = visitDate.getMinutes();
+        const visitAmpm = visitHours >= 12 ? 'PM' : 'AM';
+        const visitFormattedHours = visitHours % 12 || 12;
+        const visitFormattedMinutes = visitMinutes < 10 ? `0${visitMinutes}` : visitMinutes;
+        const visitTimeString = `${visitFormattedHours}:${visitFormattedMinutes} ${visitAmpm}`;
+
+        return {
+          path: visit.path,
+          title: visit.title,
+          time: visitTimeString
+        };
+      });
+
+      setRecentActivity(formattedVisits);
 
       // Check for scheduled sessions that need notifications
       calendarEvents.forEach(event => {
@@ -183,15 +221,15 @@ const Work: React.FC = () => {
     };
 
     // Update immediately and then every minute
-    updateClock();
-    timerRef.current = setInterval(updateClock, 60000);
+    updateClockAndStats();
+    timerRef.current = setInterval(updateClockAndStats, 10000); // Update every 10 seconds for more responsive stats
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
-  }, [calendarEvents, toast]);
+  }, [calendarEvents, toast, activityTracking]);
 
   useEffect(() => {
     // Initialize filtered sessions with generated sessions
@@ -214,8 +252,15 @@ const Work: React.FC = () => {
   };
 
   const handlePlaySession = (title: string, duration: string, videoId?: string) => {
+    // Track meditation session start
+    const sessionId = `session_${Date.now()}`;
+    activityTracking.startMeditationSession(sessionId, title);
+
     setCurrentVideo({title, duration, videoId});
     setShowVideoPopup(true);
+
+    // Store session ID to end tracking when popup closes
+    localStorage.setItem('current_meditation_session', sessionId);
   };
 
   const handleAddToCalendar = (session: WorkSession) => {
@@ -364,37 +409,63 @@ const Work: React.FC = () => {
       {/* Stats */}
       <div className="px-4 pt-6 pb-4">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">Your Work Stats</h2>
-          <span className="text-[#0098c1] text-sm">This Week</span>
+          <h2 className="text-lg font-semibold">Your Activity Stats</h2>
+          <span className="text-[#0098c1] text-sm">Today</span>
         </div>
         <div className="flex space-x-3">
           <div className="flex-1 bg-blue-50 p-3 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500">Focus Time</p>
-                <p className="text-xl font-semibold">3.5 hrs</p>
+                <p className="text-xs text-gray-500">App Usage</p>
+                <p className="text-xl font-semibold">{activityStats.totalTimeToday} hrs</p>
               </div>
-              <Clock size={24} className="text-[#0098c1]" />
+              <Timer size={24} className="text-[#0098c1]" />
             </div>
           </div>
           <div className="flex-1 bg-blue-50 p-3 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Sessions</p>
-                <p className="text-xl font-semibold">{filteredSessions.length + calendarEvents.length}</p>
+                <p className="text-xl font-semibold">{activityStats.totalSessions}</p>
               </div>
-              <Calendar size={24} className="text-[#0098c1]" />
+              <Activity size={24} className="text-[#0098c1]" />
             </div>
           </div>
           <div className="flex-1 bg-blue-50 p-3 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Streak</p>
-                <p className="text-xl font-semibold">5 days</p>
+                <p className="text-xl font-semibold">{activityStats.currentStreak} days</p>
               </div>
               <Trophy size={24} className="text-yellow-500" />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="px-4 mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-semibold">Recent Activity</h2>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-3 mb-4">
+          {recentActivity.length > 0 ? (
+            <div className="space-y-3">
+              {recentActivity.map((activity, index) => (
+                <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+                  <div>
+                    <p className="font-medium text-sm">{activity.title}</p>
+                    <p className="text-xs text-gray-500">{activity.time}</p>
+                  </div>
+                  <div className="text-xs text-blue-500">
+                    {activity.path === '/work' ? 'Current' : 'Visited'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-3 text-sm">No recent activity</p>
+          )}
         </div>
       </div>
 

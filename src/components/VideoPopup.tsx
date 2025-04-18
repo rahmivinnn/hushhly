@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Volume2, SkipBack, Play, SkipForward, Heart } from 'lucide-react';
+import { activityTrackingService } from '@/services/activityTrackingService';
 
 interface VideoPopupProps {
   title: string;
@@ -10,6 +11,23 @@ interface VideoPopupProps {
 }
 
 const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRkP3lKj_lY', onClose }) => {
+  // End meditation session when component unmounts
+  useEffect(() => {
+    return () => {
+      const sessionId = localStorage.getItem('current_meditation_session');
+      if (sessionId) {
+        // Get user ID from localStorage
+        const userData = localStorage.getItem('user');
+        const userId = userData ? JSON.parse(userData).id : 'guest';
+
+        // End the meditation session
+        activityTrackingService.endMeditationSession(userId, sessionId, true);
+
+        // Clear the session ID
+        localStorage.removeItem('current_meditation_session');
+      }
+    };
+  }, []);
   return (
     <div className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 animate-fade-in">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden">
@@ -19,19 +37,19 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRk
             <X size={20} />
           </button>
         </div>
-        
+
         <div className="relative pt-[56.25%] bg-black">
           {videoId && (
-            <iframe 
+            <iframe
               className="absolute top-0 left-0 w-full h-full"
               src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1`}
               title={title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           )}
         </div>
-        
+
         <div className="p-4 text-white space-y-4">
           <div className="flex justify-between items-center">
             <div>
@@ -42,7 +60,7 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRk
               <Heart size={20} />
             </button>
           </div>
-          
+
           <div className="flex items-center justify-around">
             <button className="p-3 hover:bg-white/10 rounded-full">
               <SkipBack size={24} />
@@ -54,15 +72,15 @@ const VideoPopup: React.FC<VideoPopupProps> = ({ title, duration, videoId = 'nRk
               <SkipForward size={24} />
             </button>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Volume2 size={16} />
             <div className="flex-1 h-1 bg-white/30 rounded-full">
               <div className="w-1/2 h-full bg-blue-500 rounded-full"></div>
             </div>
           </div>
-          
-          <button 
+
+          <button
             onClick={onClose}
             className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:opacity-90 py-2 rounded-lg"
           >

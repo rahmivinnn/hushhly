@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import React from 'react';
+import { AuthProvider } from "./hooks/useAuth";
 import ScheduledReminder from "./components/ScheduledReminder";
 import Index from "./pages/Index";
 import SplashScreen from "./pages/SplashScreen";
@@ -31,7 +32,8 @@ const queryClient = new QueryClient();
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
         <Routes>
             <Route path="/" element={<SplashScreen />} />
             <Route path="/splash" element={<SplashScreen />} />
@@ -60,6 +62,7 @@ const App = () => (
           <Sonner />
           <ScheduledReminder />
         </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
