@@ -34,7 +34,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
           </p>
 
           {/* Tabs */}
-          <Tabs defaultValue="features" className="w-full">
+          <Tabs defaultValue="pricing" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-white/20 rounded-full mb-6">
               <TabsTrigger
                 value="features"
@@ -110,7 +110,22 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                     <h3 className="font-semibold text-white">Premium Plan</h3>
                     <span className="bg-yellow-400 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium">Recommended</span>
                   </div>
-                  <p className="text-white/90 text-sm mb-2">Full access to all features</p>
+
+                  <div className="flex justify-between items-center mb-3">
+                    <p className="text-white/90 text-sm">Full access to all features</p>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center">
+                        <span className="text-white font-bold mr-1">$5.99</span>
+                        <span className="text-white/80 text-xs">/ month</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="text-white font-bold mr-1">$59.99</span>
+                        <span className="text-white/80 text-xs">/ year</span>
+                        <span className="ml-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">Save 16%</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <ul className="text-sm text-white/80 space-y-1">
                     <li className="flex items-center">
                       <span className="mr-2">✓</span> All premium meditations
@@ -123,6 +138,9 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                     </li>
                     <li className="flex items-center">
                       <span className="mr-2">✓</span> Offline downloads
+                    </li>
+                    <li className="flex items-center">
+                      <span className="mr-2">✓</span> AI-powered meditation guide
                     </li>
                   </ul>
                 </div>
@@ -142,13 +160,21 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Action button */}
-        <div className="bg-white p-4 flex justify-center">
+        {/* Action buttons */}
+        <div className="bg-white p-4 flex flex-col space-y-3">
+          <Button
+            onClick={() => {
+              window.location.href = '/subscription';
+            }}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 py-3 font-medium w-full"
+          >
+            Subscribe Now
+          </Button>
           <Button
             onClick={onClose}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 py-2 font-medium"
+            className="bg-transparent hover:bg-gray-100 text-indigo-600 border border-indigo-600 rounded-full px-8 py-3 font-medium w-full"
           >
-            Continue
+            Continue with Free Plan
           </Button>
         </div>
       </div>
