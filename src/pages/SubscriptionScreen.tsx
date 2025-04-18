@@ -240,32 +240,32 @@ const SubscriptionScreen: React.FC = () => {
       {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl p-4 w-11/12 max-w-sm max-h-[85vh] overflow-y-auto">
             {paymentSuccess ? (
-              <div className="p-6 text-center">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div className="p-4 text-center">
+                <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Payment Successful!</h3>
-                <p className="text-gray-600 mb-4">Welcome to Hushhly Premium. You now have access to all premium features.</p>
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg text-white text-center">
-                  <p className="font-medium">Your premium features are now unlocked!</p>
+                <h3 className="text-lg font-bold mb-1">Payment Successful!</h3>
+                <p className="text-gray-600 mb-3 text-sm">Welcome to Hushhly Premium.</p>
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-3 rounded-lg text-white text-center">
+                  <p className="font-medium text-sm">Premium features unlocked!</p>
                 </div>
               </div>
             ) : processingPayment ? (
               <div className="relative">
                 {/* Payment Processing UI */}
-                <div className="bg-black text-white p-6 rounded-2xl w-full">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="text-lg font-medium">
+                <div className="bg-black text-white p-4 rounded-2xl w-full">
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="text-base font-medium">
                       {selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'}
                     </div>
-                    <div className="text-lg font-medium">
+                    <div className="text-base font-medium">
                       ${selectedPlan === 'annual' ?
                         (activePromo ? getDiscountedPrice(prices.annual) : prices.annual).toFixed(2) :
                         (activePromo ? getDiscountedPrice(prices.monthly) : prices.monthly).toFixed(2)}
                       {activePromo && (
-                        <div className="text-xs text-green-400 mt-1">
+                        <div className="text-xs text-green-400 mt-0.5">
                           {activePromo.discount}
                         </div>
                       )}
@@ -304,51 +304,51 @@ const SubscriptionScreen: React.FC = () => {
                   </div>
 
                   {paymentStep === 'processing' && (
-                    <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-12 w-12 border-2 border-white border-t-transparent mx-auto mb-4"></div>
-                      <p className="text-lg">Processing your payment...</p>
-                      <p className="text-sm text-gray-400 mt-2">This may take a moment. Please don't close this window.</p>
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent mx-auto mb-3"></div>
+                      <p className="text-base">Processing payment...</p>
+                      <p className="text-xs text-gray-400 mt-1">Please don't close this window.</p>
                     </div>
                   )}
 
                   {paymentStep === 'verifying' && (
-                    <div className="text-center py-8">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="animate-pulse w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="text-center py-4">
+                      <div className="flex items-center justify-center mb-3">
+                        <div className="animate-pulse w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
                       </div>
-                      <p className="text-lg">Verifying payment...</p>
-                      <p className="text-sm text-gray-400 mt-2">We're confirming your payment with the payment provider.</p>
+                      <p className="text-base">Verifying payment...</p>
+                      <p className="text-xs text-gray-400 mt-1">Confirming with payment provider.</p>
                     </div>
                   )}
 
                   {paymentStep === 'success' && (
-                    <div className="text-center py-8">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                          <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="text-center py-4">
+                      <div className="flex items-center justify-center mb-3">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                       </div>
-                      <p className="text-lg">Payment Successful!</p>
+                      <p className="text-base">Payment Successful!</p>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
               <>
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold text-gray-800">Complete Purchase</h3>
-                  <p className="text-gray-600 mt-2">
+                <div className="text-center mb-4">
+                  <h3 className="text-lg font-bold text-gray-800">Payment Amount</h3>
+                  <p className="text-gray-600 mt-1 text-sm">
                     {selectedPlan === 'annual' ?
-                      `Annual Plan - $${(activePromo ? getDiscountedPrice(prices.annual) : prices.annual).toFixed(2)}/year` :
-                      `Monthly Plan - $${(activePromo ? getDiscountedPrice(prices.monthly) : prices.monthly).toFixed(2)}/month`}
+                      `$${(activePromo ? getDiscountedPrice(prices.annual) : prices.annual).toFixed(2)}/year` :
+                      `$${(activePromo ? getDiscountedPrice(prices.monthly) : prices.monthly).toFixed(2)}/month`}
                     {activePromo && (
-                      <span className="ml-2 text-green-500 text-sm">
+                      <span className="ml-2 text-green-500 text-xs">
                         ({activePromo.discount})
                       </span>
                     )}
@@ -357,24 +357,24 @@ const SubscriptionScreen: React.FC = () => {
                 <div className="space-y-4">
                   <Button
                     onClick={() => handlePayment('apple_pay')}
-                    className="w-full bg-black text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
+                    className="w-full bg-black text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-900 transition-colors"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M14.94 5.19A4.38 4.38 0 0 0 16 2a4.44 4.44 0 0 0-3 1.52 4.17 4.17 0 0 0-1 3.09 3.69 3.69 0 0 0 2.94-1.42zm2.52 7.44a4.51 4.51 0 0 1 2.16-3.81 4.66 4.66 0 0 0-3.66-2c-1.56-.16-3 .91-3.83.91s-2-.89-3.3-.87a4.92 4.92 0 0 0-4.14 2.53C2.92 12.29 4.24 17 6 19.47c.8 1.21 1.8 2.58 3.12 2.53s1.75-.82 3.28-.82 2 .82 3.3.79 2.22-1.23 3.06-2.45a11 11 0 0 0 1.38-2.85 4.41 4.41 0 0 1-2.68-4.04z"></path></svg>
-                    <span className="text-sm md:text-base">Pay with Apple Pay</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M14.94 5.19A4.38 4.38 0 0 0 16 2a4.44 4.44 0 0 0-3 1.52 4.17 4.17 0 0 0-1 3.09 3.69 3.69 0 0 0 2.94-1.42zm2.52 7.44a4.51 4.51 0 0 1 2.16-3.81 4.66 4.66 0 0 0-3.66-2c-1.56-.16-3 .91-3.83.91s-2-.89-3.3-.87a4.92 4.92 0 0 0-4.14 2.53C2.92 12.29 4.24 17 6 19.47c.8 1.21 1.8 2.58 3.12 2.53s1.75-.82 3.28-.82 2 .82 3.3.79 2.22-1.23 3.06-2.45a11 11 0 0 0 1.38-2.85 4.41 4.41 0 0 1-2.68-4.04z"></path></svg>
+                    <span className="text-sm">Pay with Apple Pay</span>
                   </Button>
                   <Button
                     onClick={() => handlePayment('google_pay')}
-                    className="w-full bg-blue-600 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
+                    className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 24c6.624 0 12-5.376 12-12s-5.376-12-12-12-12 5.376-12 12 5.376 12 12 12zm0-22.5c5.799 0 10.5 4.701 10.5 10.5s-4.701 10.5-10.5 10.5-10.5-4.701-10.5-10.5 4.701-10.5 10.5-10.5z"/><path d="M15.75 12c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75z"/></svg>
-                    <span className="text-sm md:text-base">Pay with Google Pay</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 24c6.624 0 12-5.376 12-12s-5.376-12-12-12-12 5.376-12 12 5.376 12 12 12zm0-22.5c5.799 0 10.5 4.701 10.5 10.5s-4.701 10.5-10.5 10.5-10.5-4.701-10.5-10.5 4.701-10.5 10.5-10.5z"/><path d="M15.75 12c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-1.5 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75z"/></svg>
+                    <span className="text-sm">Pay with Google Play</span>
                   </Button>
                   <Button
                     onClick={() => handlePayment('credit_card')}
-                    className="w-full bg-gray-800 text-white py-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-700 transition-colors"
+                    className="w-full bg-gray-800 text-white py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-700 transition-colors"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                    <span className="text-sm md:text-base">Pay with Credit Card</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <span className="text-sm">Pay with Credit Card</span>
                   </Button>
                   <button
                     onClick={() => setShowPaymentModal(false)}
