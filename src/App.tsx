@@ -26,6 +26,7 @@ import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SubscriptionManagement from "./pages/SubscriptionManagement";
 import AdminPromoCodesPage from "./pages/AdminPromoCodesPage";
 import TransactionHistory from "./pages/TransactionHistory";
+import AIMeditation from "./pages/AIMeditation";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/admin/promo-codes" element={<AdminPromoCodesPage />} />
             <Route path="/transaction-history" element={<TransactionHistory />} />
+            <Route path="/ai-meditation" element={<AIMeditation />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -357,21 +357,26 @@ const Home: React.FC = () => {
 
       {/* Recommended Section */}
       <section className="px-4 mb-3">
-        <div
-          onClick={handleAIRecommendationClick}
-          className="bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+        <motion.div
+          onClick={() => navigate('/ai-meditation')}
+          className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           <div>
-            <h2 className="font-medium text-sm">AI-recommended meditation for the day</h2>
+            <h2 className="font-medium text-sm flex items-center">
+              <Sparkles size={14} className="mr-1" />
+              AI-powered meditation guide
+            </h2>
             <div className="flex items-center mt-1">
-              <p className="text-xs">Mindfulness meditation</p>
+              <p className="text-xs">Personalized recommendations</p>
               <ArrowRight size={14} className="ml-1" />
             </div>
           </div>
-          <div>
-            <img src="/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png" alt="Meditation" className="w-10 h-10" />
+          <div className="bg-white/20 p-2 rounded-full">
+            <Brain size={24} className="text-white" />
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Categories Section */}
