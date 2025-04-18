@@ -210,7 +210,7 @@ const Quiz = () => {
           </svg>
 
           {/* Add the white SHH logo to bottom left */}
-          <div className="absolute bottom-14 left-10 z-10">
+          <div className="fixed bottom-4 left-4 z-20">
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh"
