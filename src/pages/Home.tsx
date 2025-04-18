@@ -67,21 +67,30 @@ const Home: React.FC = () => {
       }
     }
 
-    // Check if popups have been shown before
-    const featuresPopupShown = localStorage.getItem('features_popup_shown');
-    const moodPopupShown = localStorage.getItem('mood_popup_shown');
+    // Check if this is the first time the app is being opened in this session
+    const isFirstVisit = sessionStorage.getItem('app_visited') !== 'true';
 
-    // Only show the features popup if it hasn't been shown before
-    if (!featuresPopupShown) {
-      setShowFeaturesPopup(true);
-      localStorage.setItem('features_popup_shown', 'true');
-    }
+    // Only check for popups on the first visit in this session
+    if (isFirstVisit) {
+      // Mark that the app has been visited in this session
+      sessionStorage.setItem('app_visited', 'true');
 
-    // Only show the mood selection popup if it hasn't been shown before
-    // and features popup has been shown
-    if (!moodPopupShown && featuresPopupShown) {
-      setShowMoodSelection(true);
-      localStorage.setItem('mood_popup_shown', 'true');
+      // Check if popups have been shown before (across all sessions)
+      const featuresPopupShown = localStorage.getItem('features_popup_shown');
+      const moodPopupShown = localStorage.getItem('mood_popup_shown');
+
+      // Only show the features popup if it hasn't been shown before
+      if (!featuresPopupShown) {
+        setShowFeaturesPopup(true);
+        localStorage.setItem('features_popup_shown', 'true');
+      }
+
+      // Only show the mood selection popup if it hasn't been shown before
+      // and features popup has been shown
+      if (!moodPopupShown && featuresPopupShown) {
+        setShowMoodSelection(true);
+        localStorage.setItem('mood_popup_shown', 'true');
+      }
     }
   }, []);
 
@@ -207,7 +216,21 @@ const Home: React.FC = () => {
 
   const handleMoodSelection = (moodType: 'calm' | 'relax' | 'focus' | 'anxious') => {
     setSelectedMood(moodType);
-    setShowMoodFeedback(true);
+
+    // Check if mood feedback has been shown in this session
+    const moodFeedbackShown = sessionStorage.getItem('mood_feedback_shown') === 'true';
+
+    // Only show the mood feedback dialog once per session
+    if (!moodFeedbackShown) {
+      setShowMoodFeedback(true);
+      sessionStorage.setItem('mood_feedback_shown', 'true');
+    } else {
+      // Just show a toast instead
+      toast({
+        title: `Feeling ${moodType}`,
+        description: "We've updated your recommendations based on your mood.",
+      });
+    }
   };
 
   const handleMoodSelectionFromDialog = (mood: 'overwhelmed' | 'calm' | 'exhausted' | 'anxious' | 'tired') => {
@@ -232,6 +255,9 @@ const Home: React.FC = () => {
     }
 
     setSelectedMood(mappedMood);
+
+    // Mark that mood feedback has been shown in this session
+    sessionStorage.setItem('mood_feedback_shown', 'true');
     setShowMoodFeedback(true);
   };
 
@@ -517,7 +543,9 @@ const Home: React.FC = () => {
         onClose={() => {
           setShowFeaturesPopup(false);
           // Only show mood selection if it hasn't been shown before
-          if (!localStorage.getItem('mood_popup_shown')) {
+          // AND this is the first visit in this session
+          const isFirstVisit = sessionStorage.getItem('app_visited') === 'true';
+          if (isFirstVisit && !localStorage.getItem('mood_popup_shown')) {
             setShowMoodSelection(true);
             localStorage.setItem('mood_popup_shown', 'true');
           }
