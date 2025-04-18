@@ -8,6 +8,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import MoodIcon from '@/components/MoodIcon';
 import SideMenu from '@/components/SideMenu';
 import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
+import MoodSelectionDialog from '@/components/MoodSelectionDialog';
 import AIRecommendation from '@/components/AIRecommendation';
 import FeaturesPopup from '@/components/FeaturesPopup';
 
@@ -40,8 +41,9 @@ const Home: React.FC = () => {
   const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string}>({title: "", duration: ""});
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
-  const [selectedMood, setSelectedMood] = useState<'calm' | 'relax' | 'focus' | 'anxious' | null>(null);
+  const [selectedMood, setSelectedMood] = useState<'calm' | 'relax' | 'focus' | 'anxious' | 'overwhelmed' | 'tired' | null>(null);
   const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
+  const [showMoodSelection, setShowMoodSelection] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
   const [showFeaturesPopup, setShowFeaturesPopup] = useState<boolean>(false);
@@ -65,10 +67,9 @@ const Home: React.FC = () => {
     // Show the features popup immediately when the component mounts
     setShowFeaturesPopup(true);
 
-    // After a short delay, show the mood feedback dialog
+    // After a short delay, show the mood selection dialog
     const moodTimer = setTimeout(() => {
-      setSelectedMood('calm');
-      setShowMoodFeedback(true);
+      setShowMoodSelection(true);
     }, 500);
 
     return () => clearTimeout(moodTimer);
@@ -196,6 +197,31 @@ const Home: React.FC = () => {
 
   const handleMoodSelection = (moodType: 'calm' | 'relax' | 'focus' | 'anxious') => {
     setSelectedMood(moodType);
+    setShowMoodFeedback(true);
+  };
+
+  const handleMoodSelectionFromDialog = (mood: 'overwhelmed' | 'calm' | 'exhausted' | 'anxious' | 'tired') => {
+    // Map the mood from the dialog to the mood types used in the app
+    let mappedMood: 'calm' | 'relax' | 'focus' | 'anxious';
+
+    switch(mood) {
+      case 'overwhelmed':
+      case 'exhausted':
+        mappedMood = 'focus';
+        break;
+      case 'anxious':
+        mappedMood = 'anxious';
+        break;
+      case 'tired':
+        mappedMood = 'relax';
+        break;
+      case 'calm':
+      default:
+        mappedMood = 'calm';
+        break;
+    }
+
+    setSelectedMood(mappedMood);
     setShowMoodFeedback(true);
   };
 
@@ -421,6 +447,13 @@ const Home: React.FC = () => {
         isOpen={isSideMenuOpen}
         onClose={() => setIsSideMenuOpen(false)}
         userName={userName}
+      />
+
+      {/* Mood Selection Dialog */}
+      <MoodSelectionDialog
+        isOpen={showMoodSelection}
+        onClose={() => setShowMoodSelection(false)}
+        onSelectMood={handleMoodSelectionFromDialog}
       />
 
       {/* Mood Feedback Dialog */}

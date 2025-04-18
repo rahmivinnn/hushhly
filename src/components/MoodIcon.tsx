@@ -2,7 +2,7 @@
 import React from 'react';
 
 interface MoodIconProps {
-  iconType: 'calm' | 'relax' | 'focus' | 'anxious';
+  iconType: 'calm' | 'relax' | 'focus' | 'anxious' | 'overwhelmed' | 'tired' | 'exhausted';
 }
 
 const MoodIcon: React.FC<MoodIconProps> = ({ iconType }) => {
@@ -46,6 +46,26 @@ const MoodIcon: React.FC<MoodIconProps> = ({ iconType }) => {
           <path d="M7.5 9L9.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           <path d="M16.5 9L14.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           <path d="M12 8V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case 'overwhelmed':
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M8 16C8.5 14.5 10 13 12 13C14 13 15.5 14.5 16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M8 9L10 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M14 9L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M9 6L12 8L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'tired':
+    case 'exhausted':
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+          <path d="M8 15H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M9 9H9.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M15 9H15.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       );
     default:
