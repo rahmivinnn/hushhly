@@ -297,7 +297,7 @@ const Home: React.FC = () => {
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh Logo"
-              className="h-8 filter brightness-0 saturate-100 invert-[.25] sepia-[.3] saturate-[5] hue-rotate-[260deg]"
+              className="h-8 filter brightness-0 saturate-100 invert-[.25] sepia-[.6] saturate-[8] hue-rotate-[270deg]"
             />
           </div>
 
