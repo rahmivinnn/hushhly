@@ -1771,10 +1771,10 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button
           onClick={handleNext}
-          className="bg-white text-blue-600 hover:bg-blue-50 px-16 py-6 rounded-full flex items-center justify-center animate-pulse-subtle w-full"
+          className="bg-white text-blue-600 hover:bg-blue-50 px-10 py-4 rounded-full flex items-center justify-center animate-pulse-subtle w-full max-w-xs"
           style={{ animationDuration: '2s' }}
         >
-          <span className="text-lg">Get Started</span>
+          <span className="text-base">Get Started</span>
         </Button>
       </div>
 
@@ -1805,7 +1805,7 @@ const SplashScreen: React.FC = () => {
           alt="Hushhly Logo"
           className="w-64 h-auto mb-6 brightness-0 invert"
         />
-        <h2 className="text-white text-xl font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
+        <h2 className="text-white text-lg font-medium mb-6 animate-fade-in">Find Your Calm, Anytime, Anywhere</h2>
         <div>
           <img
             src="/lovable-uploads/cc30d1e6-ebff-46bd-9792-996ff84ec5cb.png"
@@ -1937,7 +1937,7 @@ const SplashScreen: React.FC = () => {
     // Show indicators for screens 2-8 (all screens with the bear)
     if (currentScreen >= 2 && currentScreen <= 8) {
       return (
-        <div className="flex space-x-2 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="flex space-x-2 absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
           {[...Array(7)].map((_, index) => (
             <div
               key={index}
