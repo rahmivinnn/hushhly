@@ -62,7 +62,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, userName }) => {
           </button>
 
           <button
-            onClick={() => handleNavigation('/sleep-stories', 'Stories')}
+            onClick={() => handleNavigation('/stories', 'Stories')}
             className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-blue-50"
           >
             <Moon size={20} className="text-blue-500" />

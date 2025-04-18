@@ -210,7 +210,7 @@ const Meditation101: React.FC = () => {
         {/* Start Button */}
         <div className="relative mb-6">
           <div className="w-64 h-64 rounded-full bg-white/20 flex items-center justify-center">
-            <div className="w-56 h-56 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+            <div className="w-56 h-56 rounded-full bg-white/20 flex items-center justify-center">
               <button
                 onClick={togglePlayPause}
                 className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg transition-all hover:shadow-xl active:scale-95"
@@ -232,49 +232,67 @@ const Meditation101: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">Background Music</h2>
 
           {/* Music Selection */}
-          <div className="flex items-center bg-white/10 rounded-lg p-3 mb-6">
-            <div className="w-16 h-16 rounded-lg overflow-hidden mr-4">
-              <img
-                src={selectedTrack.image}
-                alt={selectedTrack.title}
-                className="w-full h-full object-cover"
-              />
+          <div className="bg-white/10 rounded-xl p-3 mb-6">
+            <div className="flex items-center mb-2">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+                <span className="text-4xl">🧘</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium">{selectedTrack.title}</h3>
+                <p className="text-sm text-white/80 flex items-center">
+                  <Clock size={12} className="mr-1" />
+                  {selectedTrack.duration} • {selectedTrack.listeners}
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-medium">{selectedTrack.title}</h3>
-              <p className="text-sm text-white/80">{selectedTrack.duration} {selectedTrack.listeners}</p>
+
+            {/* Playback Controls */}
+            <div className="flex justify-between items-center mt-4 mb-4">
+              <button
+                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                onClick={handleShuffle}
+              >
+                <Shuffle size={20} />
+              </button>
+              <button
+                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                onClick={handleSkipBack}
+              >
+                <SkipBack size={20} />
+              </button>
+              <button
+                onClick={togglePlayPause}
+                className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-md hover:opacity-90 transition-colors active:scale-95"
+              >
+                {isPlaying ?
+                  <Pause size={24} fill="white" /> :
+                  <Play size={24} fill="white" className="ml-1" />
+                }
+              </button>
+              <button
+                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                onClick={handleSkipForward}
+              >
+                <SkipForward size={20} />
+              </button>
+              <button
+                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                onClick={handleShuffle}
+              >
+                <RefreshCw size={20} />
+              </button>
             </div>
-          </div>
 
-          {/* Playback Controls */}
-          <div className="flex justify-between items-center mb-8">
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors" onClick={handleShuffle}>
-              <Shuffle size={24} />
-            </button>
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors" onClick={handleSkipBack}>
-              <SkipBack size={24} />
-            </button>
-            <button
-              onClick={togglePlayPause}
-              className="w-14 h-14 bg-cyan-500 rounded-full flex items-center justify-center shadow-md hover:bg-cyan-400 transition-colors active:scale-95"
-            >
-              {isPlaying ? <Pause size={28} fill="white" /> : <Play size={28} fill="white" className="ml-1" />}
-            </button>
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors" onClick={handleSkipForward}>
-              <SkipForward size={24} />
-            </button>
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors" onClick={handleShuffle}>
-              <RefreshCw size={24} />
-            </button>
-          </div>
-
-          {/* Session Length Adjustment */}
-          <button
-            className="w-full py-3 text-center text-cyan-400 font-medium hover:text-white transition-colors"
-            onClick={adjustSessionLength}
-          >
-            Adjust Session Length
-          </button>
+            {/* Session Length Adjustment */}
+            <div className="flex justify-center mt-2">
+              <button
+                onClick={adjustSessionLength}
+                className="bg-gradient-to-br from-cyan-500 to-blue-600 hover:opacity-90 text-white border border-white/20 rounded-full px-4 py-2 text-sm flex items-center justify-center transition-colors active:scale-95"
+              >
+                <Clock size={14} className="mr-2" />
+                Adjust Session Length
+              </button>
+            </div>
         </div>
       </div>
 

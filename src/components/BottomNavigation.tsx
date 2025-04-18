@@ -50,8 +50,8 @@ const BottomNavigation: React.FC = () => {
           </button>
 
           <button
-            onClick={() => handleNavigation('/sleep-stories', 'Sleep')}
-            className={`transition-transform flex flex-col items-center ${isActive('/sleep-stories') ? 'text-white scale-110' : 'text-white/80 hover:text-white'}`}
+            onClick={() => handleNavigation('/stories', 'Stories')}
+            className={`transition-transform flex flex-col items-center ${isActive('/stories') || isActive('/sleep-stories') ? 'text-white scale-110' : 'text-white/80 hover:text-white'}`}
           >
             <Moon size={24} />
             <span className="text-xs mt-1 font-medium">Stories</span>

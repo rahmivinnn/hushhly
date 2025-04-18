@@ -1579,9 +1579,10 @@ const SplashScreen: React.FC = () => {
           style={{ animationDuration: '3s' }}
         />
       </div>
-      <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+      <p className="text-sm text-gray-600 mb-4 animate-slide-up">
         A smarter way to experience <br /> the benefits of daily meditation <br /> and mindfulness
       </p>
+      <div className="flex-grow"></div>
       <Button
         onClick={handleNext}
         className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
@@ -1626,9 +1627,10 @@ const SplashScreen: React.FC = () => {
             style={{ animationDuration: '3s' }}
           />
         </div>
-        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+        <p className="text-sm text-gray-600 mb-4 animate-slide-up">
           Tailored meditations based on your <br /> goals, mood, and schedule to <br /> maximize benefits
         </p>
+        <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
@@ -1674,9 +1676,10 @@ const SplashScreen: React.FC = () => {
             style={{ animationDuration: '3s' }}
           />
         </div>
-        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+        <p className="text-sm text-gray-600 mb-4 animate-slide-up">
           Our AI learns your preferences to <br /> improve your mindfulness journey <br /> over time
         </p>
+        <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
@@ -1722,9 +1725,10 @@ const SplashScreen: React.FC = () => {
             style={{ animationDuration: '3s' }}
           />
         </div>
-        <p className="text-sm text-gray-600 mb-10 animate-slide-up">
+        <p className="text-sm text-gray-600 mb-4 animate-slide-up">
           Track your meditation journey and <br /> get personalized insights to <br /> improve
         </p>
+        <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
           className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"

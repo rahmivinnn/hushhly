@@ -437,109 +437,76 @@ const Profile: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-white py-3 px-4 flex items-center justify-between border-b border-gray-200">
-        <button className="text-gray-600">
-          <Settings size={20} />
-        </button>
-
-        <div className="flex items-center">
-          <img
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
-            alt="Shh"
-            className="h-6"
-          />
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <button className="text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+      {/* Header with gradient background */}
+      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 py-4 px-4 text-white">
+        {/* Top navigation */}
+        <div className="flex items-center justify-between mb-6">
+          <button className="text-white">
+            <Settings size={20} />
           </button>
-          <button className="text-amber-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </button>
-        </div>
-      </div>
 
-      {/* User Profile */}
-      <div className="px-6 py-6 flex items-center">
-        <div className="mr-4 relative">
-          <Avatar className="h-20 w-20 border-2 border-white" onClick={handleAvatarClick}>
-            <AvatarImage src={userProfile.avatar} alt={userProfile.fullName} />
-            <AvatarFallback>{userProfile.fullName.substring(0, 2)}</AvatarFallback>
-          </Avatar>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="hidden"
-            accept="image/*"
-          />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold">{userProfile.fullName}</h2>
-          <p className="text-gray-600">{userProfile.email}</p>
-        </div>
-      </div>
+          <div className="flex items-center">
+            <h1 className="text-white text-3xl font-bold">shh.</h1>
+          </div>
 
-      {/* Premium Membership */}
-      <div className="mx-6 mb-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-5 text-white">
-        {isPremium && subscriptionDetails ? (
-          <>
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h3 className="text-2xl font-bold mb-1">Premium Member</h3>
-                <p className="opacity-90">{subscriptionDetails.plan === 'annual' ? 'Annual' : 'Monthly'} Plan</p>
-              </div>
-              <div className="bg-white/20 px-3 py-1 rounded-full text-sm">
-                {subscriptionDetails.status === 'active' ? 'Active' : 'Canceled'}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <div className="flex justify-between text-sm opacity-90 mb-1">
-                <span>Next billing date:</span>
-                <span>{new Date(subscriptionDetails.endDate).toLocaleDateString()}</span>
-              </div>
-              {subscriptionDetails.status === 'canceled' && (
-                <div className="text-sm bg-white/20 p-2 rounded mt-2">
-                  Your subscription is canceled but remains active until the end of the billing period.
-                </div>
-              )}
-            </div>
-
-            <div className="flex space-x-2">
-              <button
-                onClick={handleUpgrade}
-                className="bg-white text-blue-600 font-semibold py-2 px-4 rounded-full hover:bg-blue-50 transition-colors flex-1 flex items-center justify-center"
-              >
-                <CreditCard size={16} className="mr-1" />
-                Manage
-              </button>
-
-              {subscriptionDetails.status === 'active' && (
-                <button
-                  onClick={handleCancelSubscription}
-                  className="bg-white/20 text-white font-semibold py-2 px-4 rounded-full hover:bg-white/30 transition-colors flex-1"
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <h3 className="text-2xl font-bold mb-1">Premium Membership</h3>
-            <p className="mb-4 opacity-90">Upgrade for more features</p>
-
-            <button
-              onClick={handleUpgrade}
-              className="bg-white text-blue-600 font-semibold py-2 px-6 rounded-full hover:bg-blue-50 transition-colors"
-            >
-              Upgrade
+          <div className="flex items-center space-x-4">
+            <button className="text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
             </button>
-          </>
-        )}
+            <button className="text-amber-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Profile title and edit button */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-white">My Profile</h2>
+          <button
+            onClick={handleEditProfile}
+            className="flex items-center text-white"
+          >
+            <Edit2 size={18} className="mr-1" />
+            <span>Edit</span>
+          </button>
+        </div>
+
+        {/* User Profile */}
+        <div className="flex items-center">
+          <div className="mr-4 relative">
+            <Avatar className="h-20 w-20 border-2 border-white bg-amber-50" onClick={handleAvatarClick}>
+              <AvatarImage src={userProfile.avatar} alt={userProfile.fullName} />
+              <AvatarFallback>{userProfile.fullName.substring(0, 2)}</AvatarFallback>
+            </Avatar>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept="image/*"
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white">{userProfile.fullName}</h2>
+            <p className="text-white opacity-90">{userProfile.email}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* User Stats */}
+      <div className="flex justify-between px-6 py-6 border-b border-gray-100">
+        <div className="text-center">
+          <h3 className="text-3xl font-bold text-cyan-500">128h</h3>
+          <p className="text-gray-600 text-sm">Total Hours</p>
+        </div>
+        <div className="text-center">
+          <h3 className="text-3xl font-bold text-cyan-500">15</h3>
+          <p className="text-gray-600 text-sm">Day Streak</p>
+        </div>
+        <div className="text-center">
+          <h3 className="text-3xl font-bold text-cyan-500">8</h3>
+          <p className="text-gray-600 text-sm">Badges</p>
+        </div>
       </div>
 
       {/* Settings Section */}
@@ -647,44 +614,69 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Sessions - Added to match the request for more session data */}
-      <div className="px-6 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Recent Sessions</h3>
-          <button className="text-blue-500 text-sm">View All</button>
-        </div>
+      {/* Recent Sessions */}
+      <div className="px-6 py-4">
+        <h3 className="text-xl font-bold mb-4">Recent Sessions</h3>
 
-        <div className="space-y-3">
-          {recentSessions.map(session => (
-            <div key={session.id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-full">
-                  {session.type === "Meditation" && <User size={20} className="text-blue-600" />}
-                  {session.type === "Breathing" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>}
-                  {session.type === "Sleep Story" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M17.5 12.5 15 15l2.5 2.5M2 20h20M2 4h20M4 8h10M4 12h6M4 16h6"></path></svg>}
-                  {session.type === "Focus" && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>}
-                </div>
-                <div className="ml-3">
-                  <span className="font-medium">{session.title}</span>
-                  <p className="text-xs text-gray-500">{session.date}</p>
-                </div>
+        <div className="space-y-4">
+          <div className="border-b border-gray-100 pb-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-medium">Morning Calm</h4>
+                <p className="text-sm text-gray-500">Feb 15, 8:30 AM</p>
               </div>
-              <div className="text-right">
-                <span className="text-sm font-medium">{session.duration}</span>
-                {session.completed && (
-                  <p className="text-xs text-green-500">Completed</p>
-                )}
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span className="text-gray-600 font-medium">10 min</span>
               </div>
             </div>
-          ))}
+          </div>
 
-          <button
-            onClick={handleIncreaseSessions}
-            className="w-full p-3 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center"
-          >
-            <Plus size={18} className="mr-2" />
-            Start New Session
-          </button>
+          <div className="border-b border-gray-100 pb-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-medium">Sleep Well</h4>
+                <p className="text-sm text-gray-500">Feb 14, 10:15 PM</p>
+              </div>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span className="text-gray-600 font-medium">20 min</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-b border-gray-100 pb-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-medium">Stress Relief</h4>
+                <p className="text-sm text-gray-500">Feb 14, 3:45 PM</p>
+              </div>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span className="text-gray-600 font-medium">07 min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Groups Joined */}
+      <div className="px-6 py-4 mb-16">
+        <h3 className="text-xl font-bold mb-4">Groups Joined</h3>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 flex items-start">
+          <div className="bg-cyan-500 rounded-full p-3 mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div>
+            <h4 className="font-medium mb-1">Mindful Parenting</h4>
+            <p className="text-sm text-gray-500">Gentle parenting, emotional regulation, and fostering deep connections with your child.</p>
+          </div>
         </div>
       </div>
 
@@ -982,7 +974,49 @@ const Profile: React.FC = () => {
         </div>
       )}
 
-      <BottomNavigation />
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-xl">
+        <div className="flex justify-around items-center py-2">
+          <button className="flex flex-col items-center p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span className="text-xs text-white">Home</span>
+          </button>
+          <button className="flex flex-col items-center p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span className="text-xs text-white">Library</span>
+          </button>
+          <button className="flex flex-col items-center p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span className="text-xs text-white">Community</span>
+          </button>
+          <button className="flex flex-col items-center p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <span className="text-xs text-white">Stories</span>
+          </button>
+          <button className="flex flex-col items-center p-2">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span className="text-xs text-white font-bold">Profile</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

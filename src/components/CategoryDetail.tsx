@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ArrowLeft, Clock, Calendar, Play, ArrowRight, Check } from 'lucide-react';
+import { X, ArrowLeft, Clock, Calendar, Play, ArrowRight, Check, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import reminderService from '@/services/reminderService';
 
 interface Meditation {
   id: string;
@@ -66,10 +67,10 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'qr-3',
             title: 'Mindful Minute',
-            description: 'Reset your mind in just 60 seconds',
+            description: 'Reset your nervous system quickly',
             duration: '1 Min',
             image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'rnDiXEhkBd8'
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Mindful Parenting':
@@ -79,159 +80,159 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
             title: 'Patience Practice',
             description: 'Cultivate patience during challenging moments',
             duration: '10 Min',
-            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
-            videoId: 'XqeAt45goBI'
-          },
-          {
-            id: 'mp-2',
-            title: 'Emotional Regulation',
-            description: 'Techniques for managing strong emotions',
-            duration: '12 Min',
             image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
             videoId: 'nRkP3lKj_lY'
           },
           {
+            id: 'mp-2',
+            title: 'Emotional Regulation',
+            description: 'Manage your emotions during parenting challenges',
+            duration: '12 Min',
+            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
+            videoId: 'U5o8UiYxfeY'
+          },
+          {
             id: 'mp-3',
             title: 'Present Moment Parenting',
-            description: 'Being fully present with your children',
+            description: 'Be fully present with your children',
             duration: '15 Min',
             image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'U5o8UiYxfeY'
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Deep Sleep Recovery':
         return [
           {
-            id: 'ds-1',
+            id: 'dsr-1',
             title: 'Bedtime Wind-Down',
             description: 'Prepare your mind and body for deep sleep',
             duration: '20 Min',
-            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'rnDiXEhkBd8'
+            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
+            videoId: 'nRkP3lKj_lY'
           },
           {
-            id: 'ds-2',
+            id: 'dsr-2',
             title: 'Racing Thoughts Relief',
             description: 'Calm an overactive mind before sleep',
             duration: '15 Min',
-            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
-            videoId: 'XqeAt45goBI'
+            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
+            videoId: 'U5o8UiYxfeY'
           },
           {
-            id: 'ds-3',
-            title: 'Night Waking Meditation',
-            description: 'Return to sleep after waking in the night',
+            id: 'dsr-3',
+            title: 'Night Waking Rescue',
+            description: 'Return to sleep after middle-of-night waking',
             duration: '10 Min',
-            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
-            videoId: 'nRkP3lKj_lY'
+            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Start Your Day Calm':
         return [
           {
-            id: 'sd-1',
+            id: 'sydc-1',
             title: 'Morning Affirmations',
-            description: 'Positive affirmations to start your day',
+            description: 'Begin your day with positive intentions',
             duration: '8 Min',
+            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
+            videoId: 'nRkP3lKj_lY'
+          },
+          {
+            id: 'sydc-2',
+            title: 'Grounding Practice',
+            description: 'Center yourself before the day begins',
+            duration: '10 Min',
             image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
             videoId: 'U5o8UiYxfeY'
           },
           {
-            id: 'sd-2',
-            title: 'Grounding Practice',
-            description: 'Connect with the present moment',
-            duration: '10 Min',
-            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'rnDiXEhkBd8'
-          },
-          {
-            id: 'sd-3',
+            id: 'sydc-3',
             title: 'Intention Setting',
-            description: 'Set your intentions for a mindful day',
+            description: 'Set clear intentions for your day',
             duration: '12 Min',
-            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
-            videoId: 'XqeAt45goBI'
+            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Parent–Child Bonding':
         return [
           {
-            id: 'pc-1',
+            id: 'pcb-1',
             title: 'Shared Breathing',
-            description: 'Breathing exercises to do together',
-            duration: '7 Min',
+            description: 'Breathe together to build connection',
+            duration: '5 Min',
             image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
             videoId: 'nRkP3lKj_lY'
           },
           {
-            id: 'pc-2',
+            id: 'pcb-2',
             title: 'Mindful Listening',
-            description: 'Practice listening to each other fully',
-            duration: '10 Min',
+            description: 'Practice truly hearing your child',
+            duration: '8 Min',
             image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
             videoId: 'U5o8UiYxfeY'
           },
           {
-            id: 'pc-3',
+            id: 'pcb-3',
             title: 'Bedtime Connection',
-            description: 'Special time before sleep',
-            duration: '15 Min',
+            description: 'Create a peaceful bedtime ritual',
+            duration: '10 Min',
             image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'rnDiXEhkBd8'
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Emotional First Aid':
         return [
           {
-            id: 'ef-1',
+            id: 'efa-1',
             title: 'Anxiety Relief',
-            description: 'Techniques to reduce anxiety quickly',
-            duration: '8 Min',
-            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'XqeAt45goBI'
-          },
-          {
-            id: 'ef-2',
-            title: 'Guilt Release',
-            description: 'Let go of parental guilt and shame',
-            duration: '12 Min',
+            description: 'Calm anxiety in the moment',
+            duration: '7 Min',
             image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
             videoId: 'nRkP3lKj_lY'
           },
           {
-            id: 'ef-3',
-            title: 'Frustration Diffuser',
-            description: 'Calm intense frustration in the moment',
-            duration: '5 Min',
+            id: 'efa-2',
+            title: 'Mom Guilt Antidote',
+            description: 'Release parenting guilt and shame',
+            duration: '12 Min',
             image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
             videoId: 'U5o8UiYxfeY'
+          },
+          {
+            id: 'efa-3',
+            title: 'Frustration Release',
+            description: 'Let go of building frustration',
+            duration: '8 Min',
+            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       case 'Affirmations & Mantras':
         return [
           {
             id: 'am-1',
-            title: 'Confidence Boosters',
-            description: 'Affirmations to build self-confidence',
+            title: 'Self-Worth Affirmations',
+            description: 'Strengthen your sense of self-worth',
             duration: '10 Min',
-            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
-            videoId: 'rnDiXEhkBd8'
+            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
+            videoId: 'nRkP3lKj_lY'
           },
           {
             id: 'am-2',
             title: 'Calming Mantras',
-            description: 'Mantras for stress and anxiety',
+            description: 'Simple phrases to return to calm',
             duration: '8 Min',
-            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
-            videoId: 'XqeAt45goBI'
+            image: '/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png',
+            videoId: 'U5o8UiYxfeY'
           },
           {
             id: 'am-3',
-            title: 'Self-Compassion Practice',
-            description: 'Cultivate kindness toward yourself',
-            duration: '15 Min',
-            image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
-            videoId: 'nRkP3lKj_lY'
+            title: 'Confidence Boosters',
+            description: 'Build confidence through positive self-talk',
+            duration: '12 Min',
+            image: '/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png',
+            videoId: 'c1Ndym-IsQg'
           }
         ];
       default:
@@ -239,12 +240,34 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'default-1',
             title: 'Basic Meditation',
-            description: 'A simple meditation practice',
+            description: 'A simple meditation for beginners',
             duration: '10 Min',
             image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png',
-            videoId: 'U5o8UiYxfeY'
+            videoId: 'nRkP3lKj_lY'
           }
         ];
+    }
+  };
+
+  // Get the appropriate icon for each category
+  const getCategoryIcon = (categoryTitle: string): string => {
+    switch (categoryTitle) {
+      case 'Quick Reset':
+        return '🧠';
+      case 'Mindful Parenting':
+        return '💞';
+      case 'Deep Sleep Recovery':
+        return '🌙';
+      case 'Start Your Day Calm':
+        return '☀️';
+      case 'Parent–Child Bonding':
+        return '🧸';
+      case 'Emotional First Aid':
+        return '🛠';
+      case 'Affirmations & Mantras':
+        return '🌺';
+      default:
+        return '🧘';
     }
   };
 
@@ -256,17 +279,17 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'qrt-1',
             title: 'Box Breathing',
-            content: 'Inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat 3-5 times for an instant reset.'
+            content: 'Inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat 3-5 times.'
           },
           {
             id: 'qrt-2',
             title: '5-4-3-2-1 Technique',
-            content: 'Notice 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste.'
+            content: 'Notice 5 things you see, 4 things you feel, 3 things you hear, 2 things you smell, and 1 thing you taste.'
           },
           {
             id: 'qrt-3',
-            title: 'Hand on Heart',
-            content: 'Place your hand on your heart, close your eyes, and take 3 deep breaths while focusing on the sensation of your hand.'
+            title: 'Hand Tracing',
+            content: 'Trace your hand with your finger, breathing in as you go up each finger and out as you go down.'
           }
         ];
       case 'Mindful Parenting':
@@ -274,51 +297,33 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'mpt-1',
             title: 'Pause Before Responding',
-            content: 'When feeling triggered, take a deep breath before responding to your child.'
+            content: 'Take a deep breath before responding to challenging behavior. This creates space for a thoughtful response.'
           },
           {
             id: 'mpt-2',
-            title: 'Name the Emotion',
-            content: 'Help your child name their emotions: "You seem frustrated right now. Is that how you\'re feeling?"'
+            title: 'Notice Your Triggers',
+            content: 'Identify what triggers your stress or frustration. Awareness is the first step to responding differently.'
           },
           {
             id: 'mpt-3',
-            title: 'Special Time',
-            content: 'Set aside 10 minutes of uninterrupted, child-led play time daily to strengthen your connection.'
+            title: 'Daily Connection Moments',
+            content: 'Create small daily rituals of connection with each child, even just 2-3 minutes of focused attention.'
           }
         ];
       case 'Deep Sleep Recovery':
         return [
           {
-            id: 'dst-1',
+            id: 'dsrt-1',
             title: 'Digital Sunset',
-            content: 'Turn off all screens 1 hour before bedtime to help your brain prepare for sleep.'
+            content: 'Turn off screens 1-2 hours before bed to allow your brain to produce melatonin naturally.'
           },
           {
-            id: 'dst-2',
-            title: 'Body Scan',
-            content: 'Lying in bed, mentally scan from head to toe, relaxing each body part as you go.'
-          },
-          {
-            id: 'dst-3',
-            title: 'Sleep Environment',
-            content: 'Keep your bedroom cool, dark, and quiet. Consider using white noise if helpful.'
-          }
-        ];
-      case 'Start Your Day Calm':
-        return [
-          {
-            id: 'sdt-1',
-            title: 'Morning Mindfulness',
-            content: 'Before checking your phone, take 3 deep breaths and set an intention for the day.'
-          },
-          {
-            id: 'sdt-2',
+            id: 'dsrt-2',
             title: 'Gratitude Practice',
-            content: 'Name three things you're grateful for before getting out of bed.'
+            content: "Name three things you're grateful for before getting out of bed."
           },
           {
-            id: 'sdt-3',
+            id: 'dsrt-3',
             title: 'Mindful Morning Routine',
             content: 'Choose one morning activity (brushing teeth, showering, making coffee) to do with full awareness.'
           }
@@ -338,7 +343,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'pct-3',
             title: 'Gratitude Sharing',
-            content: 'At dinner or bedtime, share one thing you're each grateful for from the day.'
+            content: "At dinner or bedtime, share one thing you're each grateful for from the day."
           }
         ];
       case 'Emotional First Aid':
@@ -346,7 +351,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           {
             id: 'eft-1',
             title: 'STOP Technique',
-            content: 'Stop, Take a breath, Observe how you're feeling, Proceed with awareness.'
+            content: 'Stop, Take a breath, Observe how you\'re feeling, Proceed with awareness.'
           },
           {
             id: 'eft-2',
@@ -398,7 +403,13 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     });
 
     setTimeout(() => {
-      navigate('/meditation');
+      navigate('/category-meditation', {
+        state: {
+          title: meditation.title,
+          category: category.title,
+          duration: meditation.duration
+        }
+      });
     }, 1000);
   };
 
@@ -407,7 +418,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     setShowScheduleModal(true);
   };
 
-  const handleSaveSchedule = () => {
+  const handleSaveSchedule = async () => {
     if (!selectedMeditation || !scheduledTime) {
       toast({
         title: "Missing Information",
@@ -425,9 +436,10 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     const hour12 = hour % 12 || 12;
     const formattedTime = `${hour12}:${minuteStr} ${period}`;
 
-    // Create a session object
+    // Create a session object with unique ID
+    const sessionId = `ws-custom-${Date.now()}`;
     const session = {
-      id: `ws-custom-${Date.now()}`,
+      id: sessionId,
       title: selectedMeditation.title,
       description: selectedMeditation.description,
       duration: selectedMeditation.duration,
@@ -448,10 +460,29 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     // Save to localStorage
     localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
 
-    toast({
-      title: "Meditation Scheduled",
-      description: `${selectedMeditation.title} scheduled for ${formattedTime}`,
-    });
+    // Request notification permission if needed
+    const hasPermission = await reminderService.requestNotificationPermission();
+
+    // Schedule a reminder
+    if (hasPermission) {
+      reminderService.scheduleReminder(
+        sessionId,
+        selectedMeditation.title,
+        formattedTime,
+        scheduledDate,
+        selectedMeditation.duration
+      );
+
+      toast({
+        title: "Meditation Scheduled with Reminder",
+        description: `${selectedMeditation.title} scheduled for ${formattedTime}. You'll receive a reminder.`,
+      });
+    } else {
+      toast({
+        title: "Meditation Scheduled",
+        description: `${selectedMeditation.title} scheduled for ${formattedTime}. Enable notifications for reminders.`,
+      });
+    }
 
     setShowScheduleModal(false);
   };
@@ -515,12 +546,8 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
                   className="bg-gray-50 rounded-xl p-4 shadow-sm"
                 >
                   <div className="flex">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
-                      <img
-                        src={meditation.image}
-                        alt={meditation.title}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                      <span className="text-3xl">{getCategoryIcon(category.title)}</span>
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{meditation.title}</h3>

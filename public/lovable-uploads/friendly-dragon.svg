@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#FFD6E0"/>
+  
+  <!-- Sky -->
+  <rect width="400" height="250" fill="#FFB6C1"/>
+  
+  <!-- Hills -->
+  <path d="M0,250 Q100,200 200,250 Q300,300 400,250 L400,400 L0,400 Z" fill="#90EE90"/>
+  
+  <!-- Dragon body -->
+  <ellipse cx="200" cy="220" rx="80" ry="40" fill="#9370DB"/>
+  
+  <!-- Dragon neck -->
+  <path d="M150,220 Q130,180 150,150 Q170,130 200,140" stroke="#9370DB" stroke-width="30" fill="none"/>
+  
+  <!-- Dragon head -->
+  <circle cx="200" cy="140" r="30" fill="#9370DB"/>
+  
+  <!-- Dragon snout -->
+  <path d="M200,140 L240,150 L200,160 Z" fill="#9370DB"/>
+  
+  <!-- Dragon eye -->
+  <circle cx="190" cy="130" r="5" fill="white"/>
+  <circle cx="190" cy="130" r="2" fill="black"/>
+  
+  <!-- Dragon horns -->
+  <path d="M180,120 L170,100 L190,110 Z" fill="#9370DB"/>
+  <path d="M210,120 L220,100 L200,110 Z" fill="#9370DB"/>
+  
+  <!-- Dragon tail -->
+  <path d="M280,220 Q320,200 340,230 Q360,260 380,250" stroke="#9370DB" stroke-width="20" fill="none"/>
+  
+  <!-- Dragon wings -->
+  <path d="M200,200 L150,150 L120,180 L150,200 Z" fill="#B19CD9"/>
+  <path d="M200,200 L250,150 L280,180 L250,200 Z" fill="#B19CD9"/>
+  
+  <!-- Dragon legs -->
+  <rect x="160" y="240" width="15" height="30" fill="#9370DB"/>
+  <rect x="225" y="240" width="15" height="30" fill="#9370DB"/>
+  
+  <!-- Dragon feet -->
+  <path d="M160,270 L150,280 L160,280 L170,280 L180,280 Z" fill="#9370DB"/>
+  <path d="M225,270 L215,280 L225,280 L235,280 L245,280 Z" fill="#9370DB"/>
+  
+  <!-- Smoke from dragon -->
+  <circle cx="250" cy="145" r="5" fill="#E6E6FA" opacity="0.7"/>
+  <circle cx="260" cy="140" r="8" fill="#E6E6FA" opacity="0.5"/>
+  <circle cx="275" cy="135" r="12" fill="#E6E6FA" opacity="0.3"/>
+  
+  <!-- Sun -->
+  <circle cx="50" cy="50" r="30" fill="#FFD700"/>
+  <circle cx="50" cy="50" r="40" fill="#FFD700" opacity="0.3"/>
+  
+  <!-- Clouds -->
+  <ellipse cx="150" cy="80" rx="30" ry="20" fill="white" opacity="0.7"/>
+  <ellipse cx="180" cy="70" rx="40" ry="25" fill="white" opacity="0.7"/>
+  <ellipse cx="210" cy="85" rx="30" ry="20" fill="white" opacity="0.7"/>
+  
+  <ellipse cx="300" cy="60" rx="25" ry="15" fill="white" opacity="0.7"/>
+  <ellipse cx="330" cy="50" rx="35" ry="20" fill="white" opacity="0.7"/>
+  <ellipse cx="360" cy="65" rx="25" ry="15" fill="white" opacity="0.7"/>
+</svg>

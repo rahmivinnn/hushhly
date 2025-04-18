@@ -69,7 +69,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#0098c1] to-[#4c5ab3]">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-cyan-500 to-blue-600">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <button
@@ -91,7 +91,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
       <AnimatePresence>
         {showIntro && (
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center bg-[#0098c1] bg-opacity-90 z-10 px-6"
+            className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 bg-opacity-90 z-10 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -131,7 +131,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
 
         {analyzing && (
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center bg-[#0098c1] bg-opacity-90 z-10 px-6"
+            className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 bg-opacity-90 z-10 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -250,14 +250,14 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                     <h3 className="text-white font-medium">{recommendation ? recommendation.title : 'Mindfulness Meditation'}</h3>
                     <p className="text-white/80 text-sm">{recommendation ? recommendation.duration : '15 minutes'} • Guided</p>
                   </div>
-                  <div>
-                    <img src={recommendation ? recommendation.image : "/lovable-uploads/5fb79525-1502-45a7-993c-fd3ee0eafc90.png"} alt="Meditation" className="w-12 h-12 rounded-lg" />
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                    <span className="text-3xl">🧘</span>
                   </div>
                 </div>
 
                 <Button
                   onClick={nextStep}
-                  className="w-full bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
+                  className="w-full bg-gradient-to-br from-white to-white/90 text-[#0098c1] hover:opacity-90 rounded-full py-3 flex items-center justify-center shadow-md"
                 >
                   See Why This Works For You
                 </Button>
@@ -310,13 +310,13 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                 <div className="flex space-x-3">
                   <Button
                     onClick={prevStep}
-                    className="flex-1 bg-white/20 text-white hover:bg-white/30 rounded-full py-3"
+                    className="flex-1 bg-gradient-to-br from-white/20 to-white/30 text-white hover:opacity-90 rounded-full py-3 shadow-md"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={nextStep}
-                    className="flex-1 bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3"
+                    className="flex-1 bg-gradient-to-br from-white to-white/90 text-[#0098c1] hover:opacity-90 rounded-full py-3 shadow-md"
                   >
                     Next
                   </Button>
@@ -362,13 +362,13 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
                 <div className="flex space-x-3 mb-4">
                   <Button
                     onClick={prevStep}
-                    className="flex-1 bg-white/20 text-white hover:bg-white/30 rounded-full py-3"
+                    className="flex-1 bg-gradient-to-br from-white/20 to-white/30 text-white hover:opacity-90 rounded-full py-3 shadow-md"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={handleStartMeditation}
-                    className="flex-1 bg-white text-[#0098c1] hover:bg-white/90 rounded-full py-3 flex items-center justify-center"
+                    className="flex-1 bg-gradient-to-br from-white to-white/90 text-[#0098c1] hover:opacity-90 rounded-full py-3 flex items-center justify-center shadow-md"
                   >
                     <Play size={18} className="mr-2" />
                     Start Now
@@ -377,7 +377,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({ onClose }) => {
 
                 <Button
                   onClick={onClose}
-                  className="w-full bg-transparent border border-white text-white hover:bg-white/10 rounded-full py-3"
+                  className="w-full bg-gradient-to-br from-transparent to-white/5 border border-white text-white hover:bg-white/10 rounded-full py-3 shadow-md"
                 >
                   Maybe Later
                 </Button>

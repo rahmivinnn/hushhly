@@ -17,100 +17,100 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const userId = user?.id || 'guest';
-  
+
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [activePlan, setActivePlan] = useState<AIPersonalizedPlan | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     // Simulate AI processing time
     setIsLoading(true);
-    
+
     setTimeout(() => {
       // Get personalized recommendations
       const personalizedRecommendations = aiRecommendationService.getPersonalizedRecommendations(userId, 3);
       setRecommendations(personalizedRecommendations);
-      
+
       // Get insights
       const personalizedInsights = aiRecommendationService.getPersonalizedInsights(userId, 2);
       setInsights(personalizedInsights);
-      
+
       // Get active plan
       const plan = aiRecommendationService.getActivePersonalizedPlan(userId);
       setActivePlan(plan);
-      
+
       setIsLoading(false);
     }, 1500);
   }, [userId]);
-  
+
   const handleStartMeditation = (recommendation: AIRecommendation) => {
     toast({
       title: `Starting ${recommendation.title}`,
       description: `Beginning your ${recommendation.duration} session now.`,
     });
-    
+
     setTimeout(() => {
       navigate('/meditation');
     }, 1000);
   };
-  
+
   const handleScheduleMeditation = (recommendation: AIRecommendation) => {
     toast({
       title: `Schedule ${recommendation.title}`,
       description: `Opening scheduler for ${recommendation.title} session.`,
     });
-    
+
     setTimeout(() => {
       navigate('/work');
     }, 1000);
   };
-  
+
   const handleCreatePlan = () => {
     setIsLoading(true);
-    
+
     setTimeout(() => {
       const newPlan = aiRecommendationService.createPersonalizedPlan(userId, 7);
       setActivePlan(newPlan);
       setIsLoading(false);
-      
+
       toast({
         title: "Personalized Plan Created",
         description: "Your 7-day meditation journey is ready!",
       });
     }, 1500);
   };
-  
+
   const handleCompleteMeditation = (day: number) => {
     if (!activePlan) return;
-    
+
     aiRecommendationService.updateMeditationCompletion(userId, activePlan.id, day, true);
-    
+
     // Update local state
     setActivePlan(prev => {
       if (!prev) return null;
-      
-      const updatedMeditations = prev.dailyMeditations.map(med => 
+
+      const updatedMeditations = prev.dailyMeditations.map(med =>
         med.day === day ? { ...med, completed: true } : med
       );
-      
+
       return {
         ...prev,
         dailyMeditations: updatedMeditations
       };
     });
-    
+
     toast({
       title: "Meditation Completed",
       description: "Great job! Your progress has been saved.",
     });
   };
-  
+
   return (
     <div className="bg-white min-h-screen pb-20">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-500 to-purple-500 pt-6 pb-8 px-4 text-white">
+      <header className="bg-gradient-to-br from-cyan-500 to-blue-600 pt-6 pb-8 px-4 text-white">
         <div className="flex justify-between items-start mb-4">
           <div>
             <div className="flex items-center">
@@ -125,16 +125,16 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
             </button>
           )}
         </div>
-        
+
         <Button
           onClick={() => setShowChat(true)}
-          className="bg-white text-blue-500 hover:bg-white/90 rounded-full px-4 py-2 text-sm flex items-center"
+          className="bg-gradient-to-br from-white to-white/90 text-blue-500 hover:opacity-90 rounded-full px-4 py-2 text-sm flex items-center shadow-md"
         >
           <MessageSquare size={16} className="mr-2" />
           Chat with Meditation AI
         </Button>
       </header>
-      
+
       {/* Loading State */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12">
@@ -149,7 +149,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
               <Brain size={18} className="mr-2 text-blue-500" />
               Your Personalized Recommendations
             </h2>
-            
+
             <div className="space-y-4">
               {recommendations.map((recommendation) => (
                 <motion.div
@@ -160,12 +160,27 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                   className="bg-blue-50 rounded-xl p-4 shadow-sm"
                 >
                   <div className="flex">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
-                      <img
-                        src={recommendation.image}
-                        alt={recommendation.title}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-16 h-16 rounded-xl mr-3 flex items-center justify-center">
+                      {recommendation.title.includes('Morning') && (
+                        <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">☀️</span>
+                        </div>
+                      )}
+                      {recommendation.title.includes('Stress') && (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">💧</span>
+                        </div>
+                      )}
+                      {recommendation.title.includes('Mindful') && (
+                        <div className="w-full h-full bg-gradient-to-br from-green-400 to-teal-500 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">🌿</span>
+                        </div>
+                      )}
+                      {!recommendation.title.includes('Morning') && !recommendation.title.includes('Stress') && !recommendation.title.includes('Mindful') && (
+                        <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-600 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">🧘</span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center">
@@ -195,9 +210,9 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                     </Button>
                     <Button
                       onClick={() => handleStartMeditation(recommendation)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs flex-1 flex items-center justify-center"
+                      className={`${recommendation.title.includes('Morning') ? 'bg-yellow-400 hover:bg-yellow-500' : recommendation.title.includes('Stress') ? 'bg-blue-500 hover:bg-blue-600' : recommendation.title.includes('Mindful') ? 'bg-green-500 hover:bg-green-600' : 'bg-purple-500 hover:bg-purple-600'} text-white rounded-full px-3 py-1 text-xs flex-1 flex items-center justify-center`}
                     >
-                      <Play size={12} className="mr-1" fill="white" />
+                      <Play size={12} className="mr-1" fill="currentColor" />
                       Start Now
                     </Button>
                   </div>
@@ -205,11 +220,11 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
               ))}
             </div>
           </section>
-          
+
           {/* AI Insights */}
           <section className="mb-8">
             <h2 className="text-lg font-semibold mb-4">AI Insights</h2>
-            
+
             <div className="space-y-3">
               {insights.map((insight) => (
                 <motion.div
@@ -225,7 +240,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                       <h3 className="font-medium text-gray-900">{insight.title}</h3>
                       <p className="text-sm text-gray-600">{insight.content}</p>
                       <div className="mt-1 inline-block px-2 py-0.5 bg-gray-100 rounded-full text-xs text-gray-600">
-                        {insight.type === 'insight' ? 'Research Insight' : 
+                        {insight.type === 'insight' ? 'Research Insight' :
                          insight.type === 'tip' ? 'Helpful Tip' : 'Daily Challenge'}
                       </div>
                     </div>
@@ -234,16 +249,16 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
               ))}
             </div>
           </section>
-          
+
           {/* Personalized Plan */}
           <section className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Your Meditation Journey</h2>
-            
+
             {activePlan ? (
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 shadow-sm">
                 <h3 className="font-medium text-gray-900">{activePlan.title}</h3>
                 <p className="text-sm text-gray-600 mb-4">{activePlan.description}</p>
-                
+
                 <div className="space-y-3 mt-4">
                   {activePlan.dailyMeditations.map((meditation) => (
                     <div
@@ -252,10 +267,10 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                         meditation.completed ? 'bg-green-50 border border-green-100' : 'bg-white border border-gray-100'
                       }`}
                     >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                        meditation.completed ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${
+                        meditation.completed ? 'bg-gradient-to-br from-green-400 to-teal-500 text-white' : 'bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600'
                       }`}>
-                        {meditation.day}
+                        <span className="text-lg font-medium">{meditation.day}</span>
                       </div>
                       <div className="flex-1">
                         <h4 className="font-medium text-sm">{meditation.title}</h4>
@@ -269,7 +284,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                       ) : (
                         <Button
                           onClick={() => handleCompleteMeditation(meditation.day)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs"
+                          className={`bg-gradient-to-br ${meditation.title.includes('Morning') ? 'from-yellow-400 to-orange-500' : meditation.title.includes('Stress') ? 'from-blue-400 to-blue-600' : meditation.title.includes('Mindful') ? 'from-green-400 to-teal-500' : 'from-purple-400 to-indigo-600'} text-white rounded-full px-3 py-1 text-xs`}
                         >
                           Start
                         </Button>
@@ -283,7 +298,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                 <p className="text-gray-600 mb-4">No personalized plan yet. Let our AI create a custom meditation journey for you.</p>
                 <Button
                   onClick={handleCreatePlan}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm inline-flex items-center"
+                  className="bg-gradient-to-br from-cyan-500 to-blue-600 hover:opacity-90 text-white rounded-full px-4 py-2 text-sm inline-flex items-center shadow-md"
                 >
                   <Sparkles size={16} className="mr-2" />
                   Create My 7-Day Plan
@@ -293,7 +308,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
           </section>
         </div>
       )}
-      
+
       {/* AI Chat */}
       <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
     </div>

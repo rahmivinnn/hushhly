@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Moon, ArrowRight, Calendar, Play, Clock } from 'lucide-react';
+import { Bell, Search, Moon, ArrowRight, Calendar, Play, Clock, Sparkles, Brain } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import VideoPopup from '@/components/VideoPopup';
@@ -26,6 +26,7 @@ interface MeditationCard {
   description: string;
   duration: string;
   image: string;
+  icon?: string;
 }
 
 interface CategoryCard {
@@ -126,22 +127,39 @@ const Home: React.FC = () => {
       title: "Meditation 101",
       description: "Techniques, Benefits, and a Beginner's How-To",
       duration: "15 Min",
-      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png",
+      icon: "🧘"
     },
     {
       title: "Cardio Meditation",
       description: "Basics of Yoga for Beginners Professionals",
       duration: "10 Min",
-      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png"
+      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png",
+      icon: "🧘"
     }
   ];
 
   const quickReliefMeditations: MeditationCard[] = [
     {
-      title: "Focused meditation",
-      description: "Quick meditation for stress relief and focus.",
+      title: "5-Minute Breath Focus",
+      description: "A quick reset for busy moments",
       duration: "5 Min",
-      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
+      image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png",
+      icon: "🧠"
+    },
+    {
+      title: "Instant Calm",
+      description: "Rapid stress relief technique",
+      duration: "3 Min",
+      image: "/lovable-uploads/601731bf-474a-425f-a8e9-132cd7ffa027.png",
+      icon: "🧠"
+    },
+    {
+      title: "Mindful Minute",
+      description: "Reset your nervous system quickly",
+      duration: "1 Min",
+      image: "/lovable-uploads/4954d683-5247-4b61-889b-1baaa2eb1a0d.png",
+      icon: "🧠"
     }
   ];
 
@@ -207,11 +225,17 @@ const Home: React.FC = () => {
   };
 
   const handleStartMeditation = () => {
-    navigate('/meditation');
+    navigate('/category-meditation', {
+      state: {
+        title: "Meditation 101",
+        category: "default",
+        duration: "15 Min"
+      }
+    });
   };
 
   const goToSleepStories = () => {
-    navigate('/sleep-stories');
+    navigate('/stories');
   };
 
   const handleMoodSelection = (moodType: 'calm' | 'relax' | 'focus' | 'anxious') => {
@@ -295,17 +319,64 @@ const Home: React.FC = () => {
     });
 
     setTimeout(() => {
-      navigate('/meditation');
+      navigate('/category-meditation', {
+        state: {
+          title: title,
+          category: 'Quick Reset',
+          duration: duration
+        }
+      });
     }, 1500);
   };
 
   const handleScheduleSession = (category: string) => {
+    // Create a default meditation for this category
+    const meditation = {
+      id: `${category.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+      title: `${category} Meditation`,
+      description: `A meditation session for ${category}`,
+      duration: '15 Min',
+      image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png'
+    };
+
+    // Get current time and add 30 minutes
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 30);
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const hour12 = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedTime = `${hour12}:${formattedMinutes} ${period}`;
+
+    // Create a session object
+    const session = {
+      id: `ws-custom-${Date.now()}`,
+      title: meditation.title,
+      description: meditation.description,
+      duration: meditation.duration,
+      time: formattedTime,
+      date: 'Today',
+      image: meditation.image,
+      completed: false
+    };
+
+    // Get existing calendar events
+    const savedEvents = localStorage.getItem('workCalendarEvents');
+    const calendarEvents = savedEvents ? JSON.parse(savedEvents) : [];
+
+    // Add new session
+    const newCalendarEvents = [...calendarEvents, session];
+
+    // Save to localStorage
+    localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
+
     toast({
-      title: `Schedule ${category}`,
-      description: `Opening scheduler for ${category} session.`,
+      title: `${category} Scheduled`,
+      description: `Your ${category} meditation has been scheduled for ${formattedTime}`,
     });
 
-    // In a real app, this would open a scheduling interface
+    // Navigate to work page to show the scheduled session
     setTimeout(() => {
       navigate('/work');
     }, 1000);
@@ -318,7 +389,13 @@ const Home: React.FC = () => {
     });
 
     setTimeout(() => {
-      navigate('/meditation');
+      navigate('/category-meditation', {
+        state: {
+          title: `${category} Meditation`,
+          category: category,
+          duration: '15 Min'
+        }
+      });
     }, 1000);
   };
 
@@ -353,7 +430,7 @@ const Home: React.FC = () => {
             </button>
             <button
               className="text-yellow-500"
-              onClick={() => navigate('/sleep-stories')}
+              onClick={() => navigate('/stories')}
             >
               <Moon size={20} fill="currentColor" />
             </button>
@@ -475,7 +552,7 @@ const Home: React.FC = () => {
         </div>
 
         <div className="bg-blue-100 rounded-xl p-3 mb-2">
-          <h3 className="text-sm font-medium text-gray-900">{dailyMeditations[0].title}</h3>
+          <h3 className="text-sm font-medium text-gray-900">{dailyMeditations[0].icon} {dailyMeditations[0].title}</h3>
           <p className="text-xs text-gray-600 mb-1">{dailyMeditations[0].description}</p>
           <div className="flex items-center mb-2">
             <div className="flex items-center text-gray-500 text-xs">

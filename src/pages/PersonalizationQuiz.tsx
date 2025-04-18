@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface QuizQuestion {
   id: number;
@@ -12,8 +13,10 @@ interface QuizQuestion {
 const PersonalizationQuiz: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(4);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [answers, setAnswers] = useState<string[]>([]);
 
   // Mock questions
   const questions: QuizQuestion[] = [
@@ -44,7 +47,7 @@ const PersonalizationQuiz: React.FC = () => {
     }
   ];
 
-  const currentQuestion = questions[currentQuestionIndex];
+  const currentQuestion = questions[currentQuestionIndex] || questions[0];
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
@@ -70,19 +73,34 @@ const PersonalizationQuiz: React.FC = () => {
     }
 
     // Save the response
-    // In a real app, you'd save this to state/context/backend
+    const newAnswers = [...answers];
+    newAnswers[currentQuestionIndex] = selectedOption;
+    setAnswers(newAnswers);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
     } else {
-      // Last question, redirect to home or next screen
+      // Last question, show completion screen
+      setQuizCompleted(true);
+
+      // Save quiz results to localStorage
+      const quizResults = {
+        completedAt: new Date().toISOString(),
+        answers: newAnswers
+      };
+      localStorage.setItem('personalizationQuizResults', JSON.stringify(quizResults));
+
+      // Show toast notification
       toast({
         title: "Quiz completed!",
         description: "Your preferences have been saved.",
       });
-      navigate("/home");
     }
+  };
+
+  const handleGoToHome = () => {
+    navigate('/home');
   };
 
   const handleSkip = () => {
@@ -95,104 +113,145 @@ const PersonalizationQuiz: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white relative">
-      {/* Top bar */}
-      <div className="bg-blue-500 text-white h-14 flex items-center px-4">
-        <div className="w-full text-center font-semibold text-lg">9:41</div>
-        <div className="absolute right-4 flex items-center space-x-1">
-          <svg className="w-4 h-4" viewBox="0 0 15 15" fill="none">
-            <rect x="0" y="3" width="3" height="9" rx="1" fill="white" />
-            <rect x="4" y="1" width="3" height="13" rx="1" fill="white" />
-            <rect x="8" y="5" width="3" height="7" rx="1" fill="white" />
-            <rect x="12" y="7" width="3" height="5" rx="1" fill="white" />
-          </svg>
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-            <path d="M12 4a8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8 8 8 0 0 0-8-8m0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6" fill="white"/>
-          </svg>
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="4" width="18" height="10" rx="2" stroke="white" strokeWidth="2" />
-            <path d="M9 14h6v4H9z" fill="white" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Back button */}
-      <div className="mt-4 px-4">
-        <button onClick={handleBack} className="p-2">
-          <ArrowLeft className="text-black" size={24} />
-        </button>
-      </div>
-
-      {/* Logo */}
-      <div className="flex justify-center my-8">
-        <img
-          src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
-          alt="Hushhly Logo"
-          className="h-16"
-        />
-      </div>
-
-      {/* Quiz content */}
-      <div className="px-6 flex-1">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Personalization Quiz</h1>
-
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Q{currentQuestion.id}: {currentQuestion.question}
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          {currentQuestion.options.map((option, index) => (
-            <div key={index} className="flex items-center">
-              <label className="flex items-center cursor-pointer">
-                <div
-                  className={`w-6 h-6 rounded-full border-2 ${
-                    selectedOption === option
-                      ? 'border-blue-500 bg-white'
-                      : 'border-gray-300 bg-white'
-                  } flex items-center justify-center mr-3`}
-                >
-                  {selectedOption === option && (
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  )}
-                </div>
-                <span className="text-lg">{option}</span>
-              </label>
+      {!quizCompleted ? (
+        // Quiz Questions Screen
+        <>
+          {/* Top bar */}
+          <div className="bg-blue-500 text-white h-14 flex items-center px-4">
+            <div className="w-full text-center font-semibold text-lg">9:41</div>
+            <div className="absolute right-4 flex items-center space-x-1">
+              <svg className="w-4 h-4" viewBox="0 0 15 15" fill="none">
+                <rect x="0" y="3" width="3" height="9" rx="1" fill="white" />
+                <rect x="4" y="1" width="3" height="13" rx="1" fill="white" />
+                <rect x="8" y="5" width="3" height="7" rx="1" fill="white" />
+                <rect x="12" y="7" width="3" height="5" rx="1" fill="white" />
+              </svg>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <path d="M12 4a8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8 8 8 0 0 0-8-8m0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6" fill="white"/>
+              </svg>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="10" rx="2" stroke="white" strokeWidth="2" />
+                <path d="M9 14h6v4H9z" fill="white" />
+              </svg>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* Bottom buttons */}
-      <div className="px-4 mb-32">
-        <button
-          onClick={handleSaveResponse}
-          className="w-full py-4 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 text-white font-semibold text-lg"
-        >
-          Save My Response
-        </button>
+          {/* Back button */}
+          <div className="mt-4 px-4">
+            <button onClick={handleBack} className="p-2">
+              <ArrowLeft className="text-black" size={24} />
+            </button>
+          </div>
 
-        <button
-          onClick={handleSkip}
-          className="w-full py-3 mt-4 text-blue-500 font-medium"
-        >
-          Skip for Now
-        </button>
-      </div>
-
-      {/* Progress indicator */}
-      <div className="flex justify-center mt-4 mb-24">
-        <div className="flex space-x-2">
-          {questions.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1 w-12 rounded-full ${
-                index === currentQuestionIndex ? 'bg-blue-500' : 'bg-gray-300'
-              }`}
+          {/* Logo */}
+          <div className="flex justify-center my-8">
+            <img
+              src="/lovable-uploads/cc8b384e-95bb-4fbf-af3b-70bbc53bfd59.png"
+              alt="Hushhly Logo"
+              className="h-16"
             />
-          ))}
+          </div>
+
+          {/* Quiz content */}
+          <div className="px-6 flex-1">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">Personalization Quiz</h1>
+
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Q{currentQuestion.id}: {currentQuestion.question}
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {currentQuestion.options.map((option, index) => (
+                <div key={index} className="flex items-center">
+                  <label className="flex items-center cursor-pointer">
+                    <div
+                      className={`w-6 h-6 rounded-full border-2 ${
+                        selectedOption === option
+                          ? 'border-blue-500 bg-white'
+                          : 'border-gray-300 bg-white'
+                      } flex items-center justify-center mr-3`}
+                    >
+                      {selectedOption === option && (
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      )}
+                    </div>
+                    <span className="text-lg">{option}</span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom buttons */}
+          <div className="px-4 mb-32">
+            <button
+              onClick={handleSaveResponse}
+              className="w-full py-4 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 text-white font-semibold text-lg"
+            >
+              Save My Response
+            </button>
+
+            <button
+              onClick={handleSkip}
+              className="w-full py-3 mt-4 text-blue-500 font-medium"
+            >
+              Skip for Now
+            </button>
+          </div>
+
+          {/* Progress indicator */}
+          <div className="flex justify-center mt-4 mb-24">
+            <div className="flex space-x-2">
+              {questions.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1 w-12 rounded-full ${
+                    index === currentQuestionIndex ? 'bg-blue-500' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        // Quiz Completion Screen
+        <div className="flex flex-col items-center justify-center h-full px-8 py-12">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center mb-6 animate-bounce-slow">
+              <CheckCircle size={48} className="text-blue-500" />
+            </div>
+
+            <h1 className="text-3xl font-bold text-blue-800 mb-4">Quiz Completed!</h1>
+
+            <p className="text-gray-600 mb-8 max-w-md">
+              Thank you for completing the personalization quiz. We've saved your preferences and will use them to customize your meditation experience.
+            </p>
+
+            <div className="w-full max-w-sm bg-blue-50 rounded-xl p-6 mb-8">
+              <h3 className="text-lg font-semibold text-blue-800 mb-3">Your Personalized Plan</h3>
+              <p className="text-gray-600 mb-4">
+                Based on your answers, we've created a personalized meditation plan for you. Check it out on your home screen.
+              </p>
+              <div className="flex items-center justify-between text-sm text-gray-500">
+                <span>Personalization</span>
+                <span className="font-semibold text-blue-500">100% Complete</span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
+                <div className="h-full bg-blue-500 w-full" />
+              </div>
+            </div>
+
+            <Button
+              onClick={handleGoToHome}
+              className="w-full max-w-sm h-12 bg-gradient-to-r from-blue-400 to-indigo-600 text-white font-semibold rounded-xl flex items-center justify-center"
+            >
+              Go to Home <Home className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Wave and Shh logo */}
       <div className="absolute bottom-0 left-0 right-0 w-full h-64 overflow-hidden">

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stories Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    .back-button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .invite-button {
+      color: #4a90e2;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .search-bar {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 10px 10px 10px 40px;
+      border-radius: 20px;
+      border: none;
+      background-color: #f0f0f0;
+      font-size: 14px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    .featured-story {
+      position: relative;
+      height: 200px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      background-color: #4a90e2;
+    }
+    .featured-story-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: 20px;
+      color: white;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      width: 100%;
+    }
+    .featured-story-title {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+    }
+    .featured-story-description {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .play-button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .play-icon {
+      margin-left: 5px;
+    }
+    .story-section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .story-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .story-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .story-thumbnail {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background-color: #4a90e2;
+      margin-right: 10px;
+    }
+    .story-info {
+      flex: 1;
+    }
+    .story-title {
+      margin: 0 0 3px 0;
+      font-size: 14px;
+    }
+    .story-duration {
+      margin: 0;
+      font-size: 12px;
+      color: #666;
+    }
+    .story-play-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .view-all-button {
+      width: 100%;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      padding: 8px 0;
+      border-radius: 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #eee;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .nav-icon {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    .nav-text {
+      font-size: 10px;
+      color: #666;
+    }
+    .nav-item.active .nav-text {
+      color: #4a90e2;
+    }
+    .center-button {
+      width: 50px;
+      height: 50px;
+      background-color: #4a90e2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin-top: -20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <button class="back-button">←</button>
+      <div class="title">
+        <span style="color: #4a90e2;">shh.</span> Stories <span style="color: #f0c14b;">✨</span>
+      </div>
+      <button class="invite-button">Invite</button>
+    </header>
+
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" placeholder="Search Stories">
+    </div>
+
+    <div class="featured-story">
+      <div class="featured-story-content">
+        <h2 class="featured-story-title">The Whispering Forest</h2>
+        <p class="featured-story-description">A walk through a magical, quiet woodland.</p>
+        <button class="play-button">
+          Play Now <span class="play-icon">▶</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="story-section">
+      <h3 class="section-title">Featured Stories</h3>
+      <ul class="story-list">
+        <li class="story-item">
+          <div class="story-thumbnail"></div>
+          <div class="story-info">
+            <h4 class="story-title">The Whispering Forest</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #10b981;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Starlit Dreams</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #8b5cf6;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Ocean Whispers</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #ef4444;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Mountain Serenity</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+      </ul>
+      <button class="view-all-button">View All</button>
+    </div>
+
+    <div class="story-section">
+      <h3 class="section-title">Short Stories for Quick Sleep</h3>
+      <ul class="story-list">
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #8b5cf6;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Ocean Whispers</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #ef4444;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Mountain Serenity</h4>
+            <p class="story-duration">15 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+      </ul>
+      <button class="view-all-button">View All</button>
+    </div>
+
+    <div class="story-section">
+      <h3 class="section-title">Long Relaxing Tales</h3>
+      <ul class="story-list">
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #f59e0b;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Desert Journey</h4>
+            <p class="story-duration">30 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #3b82f6;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Rainforest Adventure</h4>
+            <p class="story-duration">30 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+      </ul>
+      <button class="view-all-button">View All</button>
+    </div>
+
+    <div class="story-section">
+      <h3 class="section-title">Parent & Child Bonding Stories</h3>
+      <ul class="story-list">
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #ec4899;"></div>
+          <div class="story-info">
+            <h4 class="story-title">The Friendly Dragon</h4>
+            <p class="story-duration">20 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+        <li class="story-item">
+          <div class="story-thumbnail" style="background-color: #f97316;"></div>
+          <div class="story-info">
+            <h4 class="story-title">Magical Garden</h4>
+            <p class="story-duration">20 min</p>
+          </div>
+          <button class="story-play-button">▶</button>
+        </li>
+      </ul>
+      <button class="view-all-button">View All</button>
+    </div>
+
+    <!-- Add padding at the bottom to account for the fixed navigation -->
+    <div style="height: 70px;"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-text">Home</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-text">Library</div>
+    </div>
+    <div class="nav-item">
+      <div class="center-button">▶</div>
+    </div>
+    <div class="nav-item active">
+      <div class="nav-icon" style="color: #4a90e2;">🌙</div>
+      <div class="nav-text">Stories</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div class="nav-text">Profile</div>
+    </div>
+  </div>
+
+  <script>
+    // Add event listeners for buttons
+    document.querySelector('.back-button').addEventListener('click', function() {
+      window.history.back();
+    });
+
+    document.querySelector('.invite-button').addEventListener('click', function() {
+      alert('Invite feature coming soon!');
+    });
+
+    document.querySelectorAll('.play-button, .story-play-button').forEach(button => {
+      button.addEventListener('click', function() {
+        alert('Playing story...');
+      });
+    });
+
+    document.querySelectorAll('.view-all-button').forEach(button => {
+      button.addEventListener('click', function() {
+        alert('Loading more stories...');
+      });
+    });
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        if (this.querySelector('.nav-text').textContent === 'Home') {
+          window.location.href = '/home';
+        } else if (this.querySelector('.nav-text').textContent === 'Library') {
+          alert('Library feature coming soon!');
+        } else if (this.querySelector('.nav-text').textContent === 'Profile') {
+          window.location.href = '/profile';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
