@@ -15,10 +15,10 @@ interface MoodSelectionDialogProps {
   onSelectMood: (mood: 'overwhelmed' | 'calm' | 'exhausted' | 'anxious' | 'tired') => void;
 }
 
-const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSelectMood 
+const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
+  isOpen,
+  onClose,
+  onSelectMood
 }) => {
   const moodOptions = [
     { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-purple-500', textColor: 'text-purple-500' },
@@ -31,43 +31,43 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.9 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       scale: 1,
-      transition: { 
+      transition: {
         duration: 0.4,
         ease: "easeOut"
       }
     }
   };
-  
+
   const titleVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { 
+      transition: {
         delay: 0.2,
         duration: 0.4
       }
     }
   };
-  
+
   const buttonVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: (custom: number) => ({ 
-      opacity: 1, 
+    visible: (custom: number) => ({
+      opacity: 1,
       y: 0,
-      transition: { 
+      transition: {
         delay: 0.3 + (custom * 0.1),
         duration: 0.4
       }
     }),
-    hover: { 
+    hover: {
       scale: 1.05,
       transition: { duration: 0.2 }
     },
-    tap: { 
+    tap: {
       scale: 0.95,
       transition: { duration: 0.1 }
     }
@@ -80,7 +80,7 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl border-0 bg-white shadow-lg overflow-hidden p-6">
+      <DialogContent className="sm:max-w-[425px] rounded-2xl border-0 bg-white shadow-lg overflow-hidden p-6 z-[100]">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -93,7 +93,7 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
               </DialogTitle>
             </motion.div>
           </DialogHeader>
-          
+
           <div className="space-y-3 mt-6">
             {moodOptions.map((mood, index) => (
               <motion.div
@@ -103,7 +103,7 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
                 whileHover="hover"
                 whileTap="tap"
               >
-                <Button 
+                <Button
                   onClick={() => handleSelectMood(mood.id as any)}
                   className={`w-full rounded-full py-3 px-4 border border-gray-100 bg-white hover:bg-gray-50 shadow-sm flex items-center justify-between group transition-all`}
                   variant="outline"

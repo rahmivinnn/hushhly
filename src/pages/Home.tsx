@@ -64,15 +64,9 @@ const Home: React.FC = () => {
       }
     }
 
-    // Show the features popup immediately when the component mounts
+    // Show both popups immediately when the component mounts
     setShowFeaturesPopup(true);
-
-    // After a short delay, show the mood selection dialog
-    const moodTimer = setTimeout(() => {
-      setShowMoodSelection(true);
-    }, 500);
-
-    return () => clearTimeout(moodTimer);
+    setShowMoodSelection(true);
   }, []);
 
   const moodOptions: MoodOption[] = [

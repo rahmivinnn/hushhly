@@ -12,11 +12,11 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md mx-4 bg-gradient-to-b from-blue-400 to-blue-600 rounded-xl overflow-hidden shadow-xl">
         <div className="relative p-6 text-white">
           {/* Close button */}
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-4 right-4 text-white/80 hover:text-white"
           >
@@ -27,7 +27,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
           <h2 className="text-2xl font-bold text-center mt-4 mb-2">
             Free
           </h2>
-          
+
           {/* Description */}
           <p className="text-center mb-6">
             Discover new daily meditations and soothing bedtime stories tailored to your journey.
@@ -36,20 +36,20 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
           {/* Tabs */}
           <Tabs defaultValue="features" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-white/20 rounded-full mb-6">
-              <TabsTrigger 
-                value="features" 
+              <TabsTrigger
+                value="features"
                 className="rounded-full data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all"
               >
                 Features
               </TabsTrigger>
-              <TabsTrigger 
-                value="pricing" 
+              <TabsTrigger
+                value="pricing"
                 className="rounded-full data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all"
               >
                 Pricing
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="features" className="mt-0">
               <div className="space-y-4">
                 {/* Feature 1 */}
@@ -62,7 +62,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                     <p className="text-white/90 text-sm">New content added every day</p>
                   </div>
                 </div>
-                
+
                 {/* Feature 2 */}
                 <div className="bg-white/10 rounded-lg p-4 flex items-start">
                   <div className="bg-blue-300 p-2 rounded-full mr-3">
@@ -73,7 +73,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                     <p className="text-white/90 text-sm">Content tailored to your needs</p>
                   </div>
                 </div>
-                
+
                 {/* Feature 3 */}
                 <div className="bg-white/10 rounded-lg p-4 flex items-start">
                   <div className="bg-white p-2 rounded-full mr-3">
@@ -86,7 +86,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="pricing" className="mt-0">
               <div className="space-y-4">
                 <div className="bg-white/10 rounded-lg p-4">
@@ -104,7 +104,7 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
                     </li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-white/20 rounded-lg p-4 border border-white/30">
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="font-semibold text-white">Premium Plan</h3>
@@ -141,10 +141,10 @@ const FeaturesPopup: React.FC<FeaturesPopupProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
-        
+
         {/* Action button */}
         <div className="bg-white p-4 flex justify-center">
-          <Button 
+          <Button
             onClick={onClose}
             className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 py-2 font-medium"
           >
