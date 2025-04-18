@@ -52,7 +52,16 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
     });
 
     setTimeout(() => {
-      navigate('/meditation');
+      navigate('/meditation', { 
+        state: { 
+          meditationType: recommendation.title,
+          duration: recommendation.duration,
+          gradient: recommendation.title.includes('Emotional Balance') ? 'from-pink-400 to-purple-500' :
+                   recommendation.title.includes('Body Scan') ? 'from-blue-300 to-indigo-500' :
+                   recommendation.title.includes('Loving-Kindness') ? 'from-rose-400 to-pink-600' :
+                   'from-teal-400 to-emerald-600'
+        }
+      });
     }, 1000);
   };
 
@@ -161,23 +170,23 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                 >
                   <div className="flex">
                     <div className="w-16 h-16 rounded-xl mr-3 flex items-center justify-center">
-                      {recommendation.title.includes('Morning') && (
-                        <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
-                          <span className="text-4xl">☀️</span>
+                      {recommendation.title.includes('Emotional Balance') && (
+                        <div className="w-full h-full bg-gradient-to-br from-pink-400 to-purple-500 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">🌸</span>
                         </div>
                       )}
-                      {recommendation.title.includes('Stress') && (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
-                          <span className="text-4xl">💧</span>
+                      {recommendation.title.includes('Body Scan') && (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-300 to-indigo-500 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">✨</span>
                         </div>
                       )}
-                      {recommendation.title.includes('Mindful') && (
-                        <div className="w-full h-full bg-gradient-to-br from-green-400 to-teal-500 rounded-xl flex items-center justify-center">
-                          <span className="text-4xl">🌿</span>
+                      {recommendation.title.includes('Loving-Kindness') && (
+                        <div className="w-full h-full bg-gradient-to-br from-rose-400 to-pink-600 rounded-xl flex items-center justify-center">
+                          <span className="text-4xl">💝</span>
                         </div>
                       )}
-                      {!recommendation.title.includes('Morning') && !recommendation.title.includes('Stress') && !recommendation.title.includes('Mindful') && (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-600 rounded-xl flex items-center justify-center">
+                      {!recommendation.title.includes('Emotional Balance') && !recommendation.title.includes('Body Scan') && !recommendation.title.includes('Loving-Kindness') && (
+                        <div className="w-full h-full bg-gradient-to-br from-teal-400 to-emerald-600 rounded-xl flex items-center justify-center">
                           <span className="text-4xl">🧘</span>
                         </div>
                       )}
@@ -210,7 +219,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                     </Button>
                     <Button
                       onClick={() => handleStartMeditation(recommendation)}
-                      className={`${recommendation.title.includes('Morning') ? 'bg-yellow-400 hover:bg-yellow-500' : recommendation.title.includes('Stress') ? 'bg-blue-500 hover:bg-blue-600' : recommendation.title.includes('Mindful') ? 'bg-green-500 hover:bg-green-600' : 'bg-purple-500 hover:bg-purple-600'} text-white rounded-full px-3 py-1 text-xs flex-1 flex items-center justify-center`}
+                      className={`${recommendation.title.includes('Emotional Balance') ? 'bg-gradient-to-r from-pink-400 to-purple-500' : recommendation.title.includes('Body Scan') ? 'bg-gradient-to-r from-blue-300 to-indigo-500' : recommendation.title.includes('Loving-Kindness') ? 'bg-gradient-to-r from-rose-400 to-pink-600' : 'bg-gradient-to-r from-teal-400 to-emerald-600'} text-white rounded-full px-3 py-1 text-xs flex-1 flex items-center justify-center hover:opacity-90 transition-opacity`}
                     >
                       <Play size={12} className="mr-1" fill="currentColor" />
                       Start Now

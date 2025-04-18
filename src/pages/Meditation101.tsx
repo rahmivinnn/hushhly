@@ -9,26 +9,26 @@ import { useToast } from "@/hooks/use-toast";
 // List of available tracks
 const availableTracks = [
   {
-    title: "Painting Forest",
+    title: "Inner Peace Journey",
     duration: "15 Min",
     listeners: "59899 Listening",
     image: "/lovable-uploads/0f00c731-51b5-47e8-8604-6a9fbde4fe91.png"
   },
   {
-    title: "The Whispering Forest",
-    duration: "15 Min",
+    title: "Emotional Harmony",
+    duration: "12 Min",
     listeners: "48750 Listening",
     image: "/lovable-uploads/f3796138-3de0-44f8-9fab-6a71b48c7632.png"
   },
   {
-    title: "Starlit Dreams",
-    duration: "15 Min",
+    title: "Mindful Emotions",
+    duration: "10 Min",
     listeners: "39084 Listening",
     image: "/lovable-uploads/97bc74f2-226d-4977-aa93-9b0d386fca75.png"
   },
   {
-    title: "The Gentle Night",
-    duration: "15 Min",
+    title: "Balance & Clarity",
+    duration: "8 Min",
     listeners: "42568 Listening",
     image: "/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png"
   }
@@ -183,10 +183,10 @@ const Meditation101: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-500 to-red-600 text-white">
       {/* Header */}
-      <header className="flex items-center justify-between p-4">
-        <button className="text-white" onClick={handleBack}>
+      <header className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-md">
+        <button className="text-white hover:bg-white/20 p-2 rounded-full transition-all" onClick={handleBack}>
           <Menu size={24} />
         </button>
         <div className="flex items-center">
@@ -196,51 +196,58 @@ const Meditation101: React.FC = () => {
             className="h-8 brightness-0 invert"
           />
         </div>
-        <div className="flex items-center space-x-4">
-          <Bell size={24} />
-          <Trophy size={24} />
+        <div className="flex items-center space-x-2">
+          <button className="hover:bg-white/20 p-2 rounded-full transition-all">
+            <Bell size={24} />
+          </button>
+          <button className="hover:bg-white/20 p-2 rounded-full transition-all">
+            <Trophy size={24} />
+          </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col items-center px-6 pt-4 pb-12">
-        <h1 className="text-3xl font-semibold mb-2">Meditation 101</h1>
-        <p className="text-lg mb-8">Tap the start button when ready</p>
+      <div className="flex flex-col items-center px-6 pt-8 pb-12 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/20 backdrop-blur-sm rounded-3xl -mx-2 mt-4"></div>
+        <h1 className="text-3xl font-bold mb-2 relative">Loving Kindness Meditation</h1>
+        <p className="text-lg mb-8 text-white/90 relative">Cultivate compassion and inner warmth</p>
 
         {/* Start Button */}
         <div className="relative mb-6">
-          <div className="w-64 h-64 rounded-full bg-white/20 flex items-center justify-center">
-            <div className="w-56 h-56 rounded-full bg-white/20 flex items-center justify-center">
+          <div className="w-64 h-64 rounded-full bg-gradient-to-br from-orange-500/30 to-red-500/30 flex items-center justify-center animate-pulse">
+            <div className="w-56 h-56 rounded-full bg-gradient-to-br from-orange-400/40 to-red-400/40 flex items-center justify-center">
               <button
                 onClick={togglePlayPause}
-                className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg transition-all hover:shadow-xl active:scale-95"
+                className="w-48 h-48 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.5)] transition-all hover:shadow-[0_0_40px_rgba(249,115,22,0.6)] active:scale-95 group"
               >
-                <span className="text-4xl font-bold">{isPlaying ? 'Pause' : 'Start'}</span>
+                <span className="text-4xl font-bold group-hover:scale-110 transition-transform">{isPlaying ? 'Pause' : 'Start'}</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Timer Display */}
-        <div className="flex items-center justify-center mb-6">
-          <Clock size={20} className="mr-2" />
-          <span className="text-lg">{sessionLength} Min</span>
+        <div className="flex items-center justify-center mb-6 bg-white/10 px-6 py-3 rounded-full backdrop-blur-sm">
+          <Clock size={20} className="mr-2 text-pink-300" />
+          <span className="text-lg font-medium">{sessionLength} Min</span>
         </div>
 
         {/* Background Music Section */}
-        <div className="w-full">
-          <h2 className="text-2xl font-semibold mb-4">Background Music</h2>
+        <div className="w-full relative">
+          <h2 className="text-2xl font-bold mb-4 flex items-center">
+            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Background Music</span>
+          </h2>
 
           {/* Music Selection */}
-          <div className="bg-white/10 rounded-xl p-3 mb-6">
-            <div className="flex items-center mb-2">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+          <div className="bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md rounded-2xl p-4 mb-6 shadow-lg border border-white/20">
+            <div className="flex items-center mb-3">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center mr-3 flex-shrink-0 shadow-[0_0_15px_rgba(219,39,119,0.3)]">
                 <span className="text-4xl">🧘</span>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-medium">{selectedTrack.title}</h3>
-                <p className="text-sm text-white/80 flex items-center">
-                  <Clock size={12} className="mr-1" />
+                <h3 className="text-lg font-bold bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent">{selectedTrack.title}</h3>
+                <p className="text-sm text-white/90 flex items-center">
+                  <Clock size={12} className="mr-1 text-pink-300" />
                   {selectedTrack.duration} • {selectedTrack.listeners}
                 </p>
               </div>
@@ -249,58 +256,59 @@ const Meditation101: React.FC = () => {
             {/* Playback Controls */}
             <div className="flex justify-between items-center mt-4 mb-4">
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/20 rounded-full transition-all active:scale-95 backdrop-blur-sm"
                 onClick={handleShuffle}
               >
-                <Shuffle size={20} />
+                <Shuffle size={20} className="text-pink-300" />
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/20 rounded-full transition-all active:scale-95 backdrop-blur-sm"
                 onClick={handleSkipBack}
               >
-                <SkipBack size={20} />
+                <SkipBack size={20} className="text-pink-300" />
               </button>
               <button
                 onClick={togglePlayPause}
-                className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-md hover:opacity-90 transition-colors active:scale-95"
+                className="w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(219,39,119,0.4)] hover:shadow-[0_0_25px_rgba(219,39,119,0.5)] transition-all active:scale-95"
               >
                 {isPlaying ?
-                  <Pause size={24} fill="white" /> :
-                  <Play size={24} fill="white" className="ml-1" />
+                  <Pause size={28} fill="white" /> :
+                  <Play size={28} fill="white" className="ml-1" />
                 }
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/20 rounded-full transition-all active:scale-95 backdrop-blur-sm"
                 onClick={handleSkipForward}
               >
-                <SkipForward size={20} />
+                <SkipForward size={20} className="text-pink-300" />
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/20 rounded-full transition-all active:scale-95 backdrop-blur-sm"
                 onClick={handleShuffle}
               >
-                <RefreshCw size={20} />
+                <RefreshCw size={20} className="text-pink-300" />
               </button>
             </div>
 
             {/* Session Length Adjustment */}
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center mt-3">
               <button
                 onClick={adjustSessionLength}
-                className="bg-gradient-to-br from-cyan-500 to-blue-600 hover:opacity-90 text-white border border-white/20 rounded-full px-4 py-2 text-sm flex items-center justify-center transition-colors active:scale-95"
+                className="bg-gradient-to-br from-pink-500 to-purple-600 hover:opacity-90 text-white shadow-[0_0_15px_rgba(219,39,119,0.3)] hover:shadow-[0_0_20px_rgba(219,39,119,0.4)] rounded-full px-6 py-2.5 text-sm font-medium flex items-center justify-center transition-all active:scale-95"
               >
-                <Clock size={14} className="mr-2" />
+                <Clock size={16} className="mr-2" />
                 Adjust Session Length
               </button>
             </div>
+          </div>
         </div>
-      </div>
 
-      {/* Audio Element (hidden) */}
-      <audio ref={audioRef} loop>
-        <source src="/meditation-sound.mp3" type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
+        {/* Audio Element (hidden) */}
+        <audio ref={audioRef} loop>
+          <source src="/meditation-sound.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
