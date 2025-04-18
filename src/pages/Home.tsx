@@ -9,6 +9,7 @@ import MoodIcon from '@/components/MoodIcon';
 import SideMenu from '@/components/SideMenu';
 import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
 import AIRecommendation from '@/components/AIRecommendation';
+import FeaturesPopup from '@/components/FeaturesPopup';
 
 interface MoodOption {
   icon: React.ReactNode;
@@ -43,6 +44,7 @@ const Home: React.FC = () => {
   const [showMoodFeedback, setShowMoodFeedback] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
+  const [showFeaturesPopup, setShowFeaturesPopup] = useState<boolean>(false);
 
   useEffect(() => {
     // Try to get user data from localStorage
@@ -60,32 +62,17 @@ const Home: React.FC = () => {
       }
     }
 
-    // Force show the "How was your day" popup immediately
-    setSelectedMood('calm');
-    setShowMoodFeedback(true);
+    // Show the features popup immediately when the component mounts
+    setShowFeaturesPopup(true);
 
-    // Always show subscription notification immediately after component mounts
-    // This ensures it appears every time the home screen is loaded
-    const subscriptionTimer = setTimeout(() => {
-      toast({
-        title: "Experience Hushhly for Free",
-        description: "Try our premium features with a 7-day free trial.",
-        action: (
-          <button
-            onClick={() => {
-              navigate('/subscription');
-            }}
-            className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs"
-          >
-            Try Free
-          </button>
-        ),
-        duration: 0, // Don't auto-dismiss
-      });
-    }, 500); // Show very quickly after component mounts
+    // After a short delay, show the mood feedback dialog
+    const moodTimer = setTimeout(() => {
+      setSelectedMood('calm');
+      setShowMoodFeedback(true);
+    }, 500);
 
-    return () => clearTimeout(subscriptionTimer);
-  }, [navigate, toast]);
+    return () => clearTimeout(moodTimer);
+  }, []);
 
   const moodOptions: MoodOption[] = [
     {
@@ -456,6 +443,12 @@ const Home: React.FC = () => {
           onClose={() => setShowVideoPopup(false)}
         />
       )}
+
+      {/* Features Popup */}
+      <FeaturesPopup
+        isOpen={showFeaturesPopup}
+        onClose={() => setShowFeaturesPopup(false)}
+      />
 
       {/* Bottom Navigation */}
       <BottomNavigation />
