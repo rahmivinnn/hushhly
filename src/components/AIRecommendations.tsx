@@ -8,6 +8,7 @@ import { aiRecommendationService, AIRecommendation, AIInsight, AIPersonalizedPla
 import { motion, AnimatePresence } from 'framer-motion';
 import AIChat from './AIChat';
 import InteractiveTips from './InteractiveTips';
+import ScheduleModal from './ScheduleModal';
 
 interface AIRecommendationsProps {
   onClose?: () => void;
@@ -26,6 +27,8 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showTips, setShowTips] = useState(false);
   const [currentRecommendation, setCurrentRecommendation] = useState<AIRecommendation | null>(null);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [recommendationToSchedule, setRecommendationToSchedule] = useState<AIRecommendation | null>(null);
 
   useEffect(() => {
     // Simulate AI processing time
@@ -60,14 +63,17 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   };
 
   const handleScheduleMeditation = (recommendation: AIRecommendation) => {
-    toast({
-      title: `Schedule ${recommendation.title}`,
-      description: `Opening scheduler for ${recommendation.title} session.`,
-    });
+    // Set the recommendation to schedule and show the modal
+    setRecommendationToSchedule(recommendation);
+    setShowScheduleModal(true);
+  };
 
-    setTimeout(() => {
-      navigate('/work');
-    }, 1000);
+  const handleScheduleComplete = (scheduledDate: Date, scheduledTime: string) => {
+    // Handle the scheduled meditation
+    toast({
+      title: "Meditation Scheduled",
+      description: `Your meditation has been scheduled for ${scheduledTime}.`,
+    });
   };
 
   const handleCreatePlan = () => {
@@ -324,6 +330,17 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
                    currentRecommendation.title.includes('Body Scan') ? 'from-blue-300 to-indigo-500' :
                    currentRecommendation.title.includes('Loving-Kindness') ? 'from-rose-400 to-pink-600' :
                    'from-teal-400 to-emerald-600'}
+        />
+      )}
+
+      {/* Schedule Modal */}
+      {showScheduleModal && recommendationToSchedule && (
+        <ScheduleModal
+          isOpen={showScheduleModal}
+          onClose={() => setShowScheduleModal(false)}
+          meditationTitle={recommendationToSchedule.title}
+          meditationDuration={recommendationToSchedule.duration}
+          onScheduled={handleScheduleComplete}
         />
       )}
     </div>
