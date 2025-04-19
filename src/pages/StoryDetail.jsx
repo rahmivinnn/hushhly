@@ -38,7 +38,7 @@ const StoryDetail = () => {
       {/* Header */}
       <header className="flex items-center justify-between px-6 pt-6 pb-4">
         <button onClick={handleBack} className="text-white">
-          <Menu size={24} />
+          <ArrowLeft size={24} />
         </button>
         <div className="text-white">
           <img src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" alt="shh" className="h-8 brightness-0 invert" />
@@ -119,47 +119,7 @@ const StoryDetail = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 pb-6 z-30">
-        <div className="mx-auto w-11/12 max-w-md bg-gradient-to-r from-blue-500 to-blue-600 rounded-full py-3 px-4">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => navigate('/home')}
-              className="text-white flex flex-col items-center"
-            >
-              <Home size={20} />
-              <span className="text-xs mt-1 font-medium">Home</span>
-            </button>
-            <button
-              onClick={() => navigate('/work')}
-              className="text-white flex flex-col items-center"
-            >
-              <BookOpen size={20} />
-              <span className="text-xs mt-1 font-medium">Your Guided Day</span>
-            </button>
-            <button
-              onClick={() => navigate('/community')}
-              className="text-white flex flex-col items-center"
-            >
-              <Users size={20} />
-              <span className="text-xs mt-1 font-medium">Community</span>
-            </button>
-            <button
-              onClick={() => navigate('/stories')}
-              className="text-white flex flex-col items-center"
-            >
-              <Moon size={20} />
-              <span className="text-xs mt-1 font-medium">Stories</span>
-            </button>
-            <button
-              onClick={() => navigate('/profile')}
-              className="text-white flex flex-col items-center"
-            >
-              <User size={20} />
-              <span className="text-xs mt-1 font-medium">Profile</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <BottomNavigation />
     </div>
   );
 };

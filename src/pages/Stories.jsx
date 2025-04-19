@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ArrowLeft, Bell, Moon } from 'lucide-react';
+import BottomNavigation from '@/components/BottomNavigation';
 
 const Stories = () => {
   const navigate = useNavigate();
@@ -99,9 +100,7 @@ const Stories = () => {
               className="p-2 text-gray-800"
               onClick={handleBack}
             >
-              <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
-              <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
-              <div className="w-6 h-0.5 bg-gray-800"></div>
+              <ArrowLeft size={24} />
             </button>
 
             <div className="flex items-center">
@@ -291,31 +290,7 @@ const Stories = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="flex justify-around items-center py-2">
-          <button className="flex flex-col items-center p-2">
-            <span className="text-gray-500 text-xl">🏠</span>
-            <span className="text-xs text-gray-500">Home</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <span className="text-gray-500 text-xl">📚</span>
-            <span className="text-xs text-gray-500">Library</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white -mt-5">
-              ▶
-            </div>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <span className="text-blue-500 text-xl">🌙</span>
-            <span className="text-xs text-blue-500">Stories</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <span className="text-gray-500 text-xl">👤</span>
-            <span className="text-xs text-gray-500">Profile</span>
-          </button>
-        </div>
-      </div>
+      <BottomNavigation />
     </div>
   );
 };
