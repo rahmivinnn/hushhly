@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft, Heart, Wind, Brain, Sun, Moon, MessageSquare,
   ChevronLeft, ChevronRight, Zap, Focus, Sparkles,
-  Flame, CloudFog, Waves, Timer, Activity
+  Flame, CloudFog, Waves, Timer, Activity, Play
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ type SimulationStep = {
   duration: number; // in seconds
   animation?: string;
   icon?: React.ReactNode;
+  color?: string;
 };
 
 type Simulation = {
@@ -29,6 +30,12 @@ type Simulation = {
   description: string;
   steps: SimulationStep[];
   benefits: string[];
+  theme: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    text: string;
+  };
 };
 
 const InteractiveTips: React.FC<InteractiveTipsProps> = ({
@@ -154,6 +161,12 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         'Calms racing thoughts',
         'Improves focus and clarity'
       ],
+      theme: {
+        primary: 'from-blue-500 to-cyan-400',
+        secondary: 'bg-blue-400/30',
+        accent: 'bg-cyan-300/50',
+        text: 'text-blue-50'
+      },
       steps: [
         {
           instruction: 'Find a comfortable position and close your eyes',
@@ -179,13 +192,25 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Repeat the cycle 3 more times',
-          duration: 42,
-          animation: 'cycle',
-          icon: <Activity size={32} />
+          instruction: 'Feel the tension leaving your body with each exhale',
+          duration: 5,
+          animation: 'breatheOut',
+          icon: <CloudFog size={32} />
         },
         {
-          instruction: 'Notice how your body feels more relaxed',
+          instruction: 'Imagine a peaceful blue light surrounding you',
+          duration: 8,
+          animation: 'pulse',
+          icon: <Sparkles size={32} />
+        },
+        {
+          instruction: 'With each breath, let go of any worries or stress',
+          duration: 10,
+          animation: 'breatheOut',
+          icon: <CloudFog size={32} />
+        },
+        {
+          instruction: 'Notice how your body feels lighter and more relaxed',
           duration: 5,
           icon: <Sparkles size={32} />
         }
@@ -193,13 +218,19 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
     },
     focusEnhancement: {
       title: 'Focus Enhancement',
-      description: 'A quick exercise to sharpen your concentration and mental clarity',
+      description: 'A powerful exercise to sharpen your concentration and mental clarity',
       benefits: [
         'Improves attention span',
         'Reduces mental chatter',
         'Enhances cognitive performance',
         'Builds mental stamina'
       ],
+      theme: {
+        primary: 'from-indigo-600 to-purple-500',
+        secondary: 'bg-indigo-500/30',
+        accent: 'bg-purple-400/50',
+        text: 'text-indigo-50'
+      },
       steps: [
         {
           instruction: 'Sit upright with a straight spine and relaxed shoulders',
@@ -212,27 +243,34 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
           icon: <Focus size={32} />
         },
         {
-          instruction: 'Begin counting your breaths from 1 to 10',
-          duration: 5,
-          icon: <Brain size={32} />
+          instruction: 'Visualize a bright golden light at the center of your forehead',
+          duration: 8,
+          animation: 'pulse',
+          icon: <Sparkles size={32} />
         },
         {
-          instruction: 'Inhale... 1',
+          instruction: 'Take three deep, focused breaths',
+          duration: 10,
+          animation: 'breatheIn',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Now count each breath - Inhale: 1',
           duration: 4,
           animation: 'breatheIn',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Exhale... 2',
+          instruction: 'Exhale: 2',
           duration: 4,
           animation: 'breatheOut',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Continue counting each breath cycle up to 10',
-          duration: 40,
-          animation: 'cycle',
-          icon: <Activity size={32} />
+          instruction: 'With each number, increase your mental clarity',
+          duration: 10,
+          animation: 'pulse',
+          icon: <Brain size={32} />
         },
         {
           instruction: 'If your mind wanders, gently return to counting',
@@ -240,7 +278,13 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
           icon: <Brain size={32} />
         },
         {
-          instruction: 'Notice how your mind feels more clear and focused',
+          instruction: 'Feel your concentration becoming sharper and stronger',
+          duration: 8,
+          animation: 'pulse',
+          icon: <Focus size={32} />
+        },
+        {
+          instruction: 'Notice how your mind feels clear, alert and focused',
           duration: 5,
           icon: <Sparkles size={32} />
         }
@@ -248,13 +292,19 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
     },
     energyBoost: {
       title: 'Quick Energy Boost',
-      description: 'A 1-minute exercise to increase energy and alertness',
+      description: 'A dynamic 1-minute exercise to instantly increase energy and alertness',
       benefits: [
         'Increases oxygen flow',
         'Stimulates the nervous system',
         'Improves mental alertness',
         'Boosts physical energy'
       ],
+      theme: {
+        primary: 'from-orange-500 to-red-500',
+        secondary: 'bg-orange-500/30',
+        accent: 'bg-yellow-400/50',
+        text: 'text-orange-50'
+      },
       steps: [
         {
           instruction: 'Stand up straight with feet shoulder-width apart',
@@ -262,30 +312,49 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
           icon: <Zap size={32} />
         },
         {
-          instruction: 'Take a deep breath in while raising your arms overhead',
+          instruction: 'Shake out your hands and arms vigorously for 5 seconds',
+          duration: 5,
+          animation: 'shake',
+          icon: <Activity size={32} />
+        },
+        {
+          instruction: 'Take a powerful breath in while raising your arms overhead',
           duration: 3,
           animation: 'breatheIn',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Exhale forcefully while bringing arms down quickly',
+          instruction: 'Exhale forcefully with a "HA" sound while bringing arms down',
           duration: 2,
           animation: 'breatheOut',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Repeat this energizing breath 5 times',
-          duration: 25,
-          animation: 'cycle',
-          icon: <Activity size={32} />
-        },
-        {
-          instruction: 'Gently tap your body from head to toe with fingertips',
-          duration: 15,
+          instruction: 'Visualize bright orange energy filling your body',
+          duration: 5,
+          animation: 'pulse',
           icon: <Flame size={32} />
         },
         {
-          instruction: 'Take one final deep breath and feel the energy flowing',
+          instruction: 'Tap rapidly on your chest, arms, and legs to activate energy',
+          duration: 8,
+          animation: 'shake',
+          icon: <Activity size={32} />
+        },
+        {
+          instruction: 'Jump up and down gently 5 times',
+          duration: 5,
+          animation: 'bounce',
+          icon: <Zap size={32} />
+        },
+        {
+          instruction: 'Take one final powerful breath and feel the energy surging',
+          duration: 5,
+          animation: 'breatheIn',
+          icon: <Flame size={32} />
+        },
+        {
+          instruction: 'Feel the vibrant energy flowing through your entire body',
           duration: 5,
           icon: <Sparkles size={32} />
         }
@@ -502,54 +571,63 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
               transition={{ duration: 0.5, delay: 0.3 }}
               className="w-full max-w-md mx-auto mb-6"
             >
-              <h3 className="text-white text-sm mb-2 text-center font-medium">Try an Interactive Exercise</h3>
-              <div className="grid grid-cols-1 gap-2">
+              <h3 className="text-white text-sm mb-3 text-center font-medium">Try an Interactive Exercise</h3>
+              <div className="grid grid-cols-1 gap-3">
                 <Button
                   onClick={() => startSimulation('stressRelief')}
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:opacity-90 transition-opacity border border-white/10 shadow-lg"
                 >
                   <div className="flex items-center">
-                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                    <div className="bg-blue-400/30 p-2 rounded-full mr-3">
                       <CloudFog size={20} />
                     </div>
                     <div className="text-left">
                       <span className="font-medium">Stress Relief</span>
-                      <p className="text-xs text-white/80">2-min guided breathing</p>
+                      <p className="text-xs text-white/90">2-min guided breathing</p>
                     </div>
                   </div>
-                  <ChevronRight size={18} />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium">Start</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </Button>
 
                 <Button
                   onClick={() => startSimulation('focusEnhancement')}
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-500 text-white hover:opacity-90 transition-opacity border border-white/10 shadow-lg"
                 >
                   <div className="flex items-center">
-                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                    <div className="bg-indigo-500/30 p-2 rounded-full mr-3">
                       <Focus size={20} />
                     </div>
                     <div className="text-left">
                       <span className="font-medium">Focus Enhancement</span>
-                      <p className="text-xs text-white/80">3-min concentration exercise</p>
+                      <p className="text-xs text-white/90">3-min concentration exercise</p>
                     </div>
                   </div>
-                  <ChevronRight size={18} />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium">Start</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </Button>
 
                 <Button
                   onClick={() => startSimulation('energyBoost')}
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90 transition-opacity border border-white/10 shadow-lg"
                 >
                   <div className="flex items-center">
-                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                    <div className="bg-orange-500/30 p-2 rounded-full mr-3">
                       <Zap size={20} />
                     </div>
                     <div className="text-left">
                       <span className="font-medium">Quick Energy Boost</span>
-                      <p className="text-xs text-white/80">1-min energizing practice</p>
+                      <p className="text-xs text-white/90">1-min energizing practice</p>
                     </div>
                   </div>
-                  <ChevronRight size={18} />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium">Start</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </Button>
               </div>
             </motion.div>
@@ -657,7 +735,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         </div>
       ) : (
         /* Simulation Mode */
-        <div className="flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4">
+        <div className={`flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4 bg-gradient-to-br ${simulations[currentSimulation]?.theme.primary || gradient}`}>
           {currentSimulation && (
             <>
               {/* Simulation Info */}
@@ -667,14 +745,14 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md mx-auto mb-4"
               >
-                <p className="text-white/80 text-sm text-center mb-2">
+                <p className={`${simulations[currentSimulation].theme.text} text-sm text-center mb-2`}>
                   {simulations[currentSimulation].description}
                 </p>
 
                 {/* Benefits */}
                 <div className="flex flex-wrap justify-center gap-2 mb-4">
                   {simulations[currentSimulation].benefits.map((benefit, index) => (
-                    <div key={index} className="bg-white/10 rounded-full px-3 py-1 text-xs text-white">
+                    <div key={index} className={`${simulations[currentSimulation].theme.secondary} rounded-full px-3 py-1 text-xs ${simulations[currentSimulation].theme.text}`}>
                       {benefit}
                     </div>
                   ))}
@@ -687,17 +765,17 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-full mb-6 relative overflow-hidden"
+                  className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-full mb-6 relative overflow-hidden border border-white/20"
                 >
                   {/* Timer */}
-                  <div className="absolute top-4 right-4 bg-white/30 rounded-full h-10 w-10 flex items-center justify-center">
-                    <span className="text-white font-medium">{timerSeconds}</span>
+                  <div className={`absolute top-4 right-4 ${simulations[currentSimulation].theme.secondary} rounded-full h-10 w-10 flex items-center justify-center`}>
+                    <span className={`${simulations[currentSimulation].theme.text} font-medium`}>{timerSeconds}</span>
                   </div>
 
                   {/* Step Progress */}
                   <div className="w-full bg-white/10 rounded-full h-1 mb-6">
                     <div
-                      className="bg-white h-1 rounded-full transition-all duration-300"
+                      className={`${simulations[currentSimulation].theme.accent} h-1 rounded-full transition-all duration-300`}
                       style={{
                         width: `${(simulationStep / (simulations[currentSimulation].steps.length - 1)) * 100}%`
                       }}
@@ -706,7 +784,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
 
                   {/* Step Content */}
                   <div className="flex flex-col items-center justify-center py-6">
-                    <div className="bg-white/30 p-4 rounded-full mb-6">
+                    <div className={`${simulations[currentSimulation].theme.secondary} p-4 rounded-full mb-6`}>
                       {simulations[currentSimulation].steps[simulationStep].icon}
                     </div>
 
@@ -735,7 +813,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                               duration: 4,
                               repeatType: 'reverse'
                             }}
-                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4`}
                           />
                         )}
 
@@ -750,7 +828,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                               duration: 4,
                               repeatType: 'reverse'
                             }}
-                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4`}
                           />
                         )}
 
@@ -764,7 +842,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                               duration: 2,
                               repeatType: 'reverse'
                             }}
-                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4`}
                           />
                         )}
 
@@ -781,8 +859,63 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                               times: [0, 0.3, 0.6, 1],
                               repeatType: 'loop'
                             }}
-                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4`}
                           />
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'pulse' && (
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.1, 1],
+                              opacity: [0.7, 1, 0.7],
+                              boxShadow: [
+                                '0 0 0 rgba(255,255,255,0.3)',
+                                '0 0 30px rgba(255,255,255,0.7)',
+                                '0 0 0 rgba(255,255,255,0.3)'
+                              ]
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 2,
+                              ease: 'easeInOut'
+                            }}
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4`}
+                          />
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'shake' && (
+                          <motion.div
+                            animate={{
+                              x: [0, -10, 10, -10, 10, 0],
+                              y: [0, -5, 5, -5, 5, 0],
+                              rotate: [0, -5, 5, -5, 5, 0]
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 1,
+                              ease: 'easeInOut'
+                            }}
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4 flex items-center justify-center`}
+                          >
+                            <Activity size={24} className="text-white" />
+                          </motion.div>
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'bounce' && (
+                          <motion.div
+                            animate={{
+                              y: [0, -20, 0],
+                              scale: [1, 0.9, 1]
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 0.8,
+                              ease: 'easeInOut'
+                            }}
+                            className={`w-16 h-16 ${simulations[currentSimulation].theme.accent} rounded-full mx-auto mt-4 flex items-center justify-center`}
+                          >
+                            <Zap size={24} className="text-white" />
+                          </motion.div>
                         )}
                       </motion.div>
                     </AnimatePresence>
@@ -793,15 +926,26 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                 <div className="flex justify-center space-x-4 w-full max-w-xs">
                   <Button
                     onClick={toggleSimulationTimer}
-                    className="flex-1 bg-white/20 hover:bg-white/30 text-white rounded-xl py-3"
+                    className={`flex-1 ${simulations[currentSimulation].theme.secondary} hover:opacity-80 ${simulations[currentSimulation].theme.text} rounded-xl py-3 flex items-center justify-center gap-2`}
                   >
-                    {isTimerRunning ? 'Pause' : 'Resume'}
+                    {isTimerRunning ? (
+                      <>
+                        <Timer size={18} />
+                        <span>Pause</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play size={18} />
+                        <span>Resume</span>
+                      </>
+                    )}
                   </Button>
                   <Button
                     onClick={resetSimulation}
-                    className="flex-1 bg-white/20 hover:bg-white/30 text-white rounded-xl py-3"
+                    className={`flex-1 ${simulations[currentSimulation].theme.secondary} hover:opacity-80 ${simulations[currentSimulation].theme.text} rounded-xl py-3 flex items-center justify-center gap-2`}
                   >
-                    Restart
+                    <Activity size={18} />
+                    <span>Restart</span>
                   </Button>
                 </div>
               </div>
@@ -813,7 +957,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                     <div
                       key={index}
                       className={`w-2 h-2 rounded-full ${
-                        index === simulationStep ? 'bg-white' : 'bg-white/30'
+                        index === simulationStep ? simulations[currentSimulation].theme.accent : 'bg-white/30'
                       }`}
                     />
                   ))}
@@ -821,9 +965,10 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
 
                 <Button
                   onClick={exitSimulation}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white rounded-xl py-3"
+                  className={`w-full ${simulations[currentSimulation].theme.secondary} hover:opacity-80 ${simulations[currentSimulation].theme.text} rounded-xl py-3 flex items-center justify-center gap-2 border border-white/10`}
                 >
-                  Exit Exercise
+                  <ArrowLeft size={18} />
+                  <span>Exit Exercise</span>
                 </Button>
               </div>
             </>
