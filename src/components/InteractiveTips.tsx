@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft, Heart, Wind, Brain, Sun, Moon, MessageSquare,
   ChevronLeft, ChevronRight, Zap, Focus, Sparkles,
-  Flame, CloudFog, Waves, Timer, Activity, Play
+  Flame, CloudFog, Waves, Timer, Activity, Play,
+  Pause, RotateCcw, Check, X, Music, Volume2, VolumeX,
+  Droplets, Flower, Leaf, Cloud, Snowflake, Sunrise
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -35,7 +37,13 @@ type Simulation = {
     secondary: string;
     accent: string;
     text: string;
+    background?: string;
   };
+  layout?: 'standard' | 'breathwork' | 'energy' | 'focus';
+  backgroundElements?: React.ReactNode;
+  hasAudio?: boolean;
+  audioTitle?: string;
+  interactiveElements?: React.ReactNode;
 };
 
 const InteractiveTips: React.FC<InteractiveTipsProps> = ({
@@ -57,6 +65,12 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
   const [simulationStep, setSimulationStep] = useState(0);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [showBreathCircle, setShowBreathCircle] = useState(false);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('inhale');
+  const [interactionCount, setInteractionCount] = useState(0);
+  const [showCompletionScreen, setShowCompletionScreen] = useState(false);
+  const [completionMessage, setCompletionMessage] = useState('');
 
   // Define tip categories
   const tipCategories = {
@@ -154,7 +168,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
   const simulations: Record<string, Simulation> = {
     stressRelief: {
       title: 'Stress Relief Breathing',
-      description: 'A guided 2-minute exercise to quickly reduce stress and anxiety',
+      description: 'A guided ocean-themed breathing exercise to reduce stress and anxiety',
       benefits: [
         'Lowers cortisol levels',
         'Reduces muscle tension',
@@ -165,60 +179,99 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         primary: 'from-blue-500 to-cyan-400',
         secondary: 'bg-blue-400/30',
         accent: 'bg-cyan-300/50',
-        text: 'text-blue-50'
+        text: 'text-blue-50',
+        background: 'bg-gradient-to-b from-blue-600 via-blue-500 to-cyan-400'
       },
+      layout: 'breathwork',
+      hasAudio: true,
+      audioTitle: 'Ocean Waves',
+      backgroundElements: (
+        <>
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-24 bg-blue-400/20 rounded-t-full"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-16 bg-blue-300/20 rounded-t-full"
+            animate={{ y: [0, -15, 0] }}
+            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
+          />
+          <motion.div
+            className="absolute top-20 right-10 text-blue-200/30"
+            animate={{ y: [0, -10, 0], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          >
+            <Cloud size={40} />
+          </motion.div>
+          <motion.div
+            className="absolute top-40 left-10 text-blue-200/30"
+            animate={{ y: [0, -5, 0], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+          >
+            <Cloud size={30} />
+          </motion.div>
+          <motion.div
+            className="absolute bottom-20 right-20 text-cyan-200/30"
+            animate={{ y: [0, -8, 0], opacity: [0.2, 0.6, 0.2] }}
+            transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 2 }}
+          >
+            <Droplets size={25} />
+          </motion.div>
+        </>
+      ),
       steps: [
         {
-          instruction: 'Find a comfortable position and close your eyes',
+          instruction: 'Find a comfortable position and imagine yourself by the ocean',
           duration: 5,
-          icon: <CloudFog size={32} />
+          icon: <Waves size={32} />
         },
         {
-          instruction: 'Take a deep breath in through your nose for 4 counts',
+          instruction: 'Watch the circle expand and inhale deeply through your nose',
           duration: 4,
           animation: 'breatheIn',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Hold your breath for 4 counts',
+          instruction: 'Hold your breath as the circle pauses',
           duration: 4,
           animation: 'hold',
           icon: <Timer size={32} />
         },
         {
-          instruction: 'Exhale slowly through your mouth for 6 counts',
+          instruction: 'Exhale slowly as the circle contracts',
           duration: 6,
           animation: 'breatheOut',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Feel the tension leaving your body with each exhale',
+          instruction: 'Feel the tension flowing away like receding waves',
           duration: 5,
           animation: 'breatheOut',
-          icon: <CloudFog size={32} />
+          icon: <Waves size={32} />
         },
         {
-          instruction: 'Imagine a peaceful blue light surrounding you',
+          instruction: 'Imagine a peaceful blue light surrounding you like ocean water',
           duration: 8,
           animation: 'pulse',
           icon: <Sparkles size={32} />
         },
         {
-          instruction: 'With each breath, let go of any worries or stress',
+          instruction: 'With each breath, let your worries drift away with the tide',
           duration: 10,
           animation: 'breatheOut',
           icon: <CloudFog size={32} />
         },
         {
-          instruction: 'Notice how your body feels lighter and more relaxed',
+          instruction: 'Notice how your body feels lighter, like floating in water',
           duration: 5,
-          icon: <Sparkles size={32} />
+          icon: <Droplets size={32} />
         }
       ]
     },
     focusEnhancement: {
       title: 'Focus Enhancement',
-      description: 'A powerful exercise to sharpen your concentration and mental clarity',
+      description: 'A forest-inspired meditation to sharpen your concentration and mental clarity',
       benefits: [
         'Improves attention span',
         'Reduces mental chatter',
@@ -226,73 +279,109 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         'Builds mental stamina'
       ],
       theme: {
-        primary: 'from-indigo-600 to-purple-500',
-        secondary: 'bg-indigo-500/30',
-        accent: 'bg-purple-400/50',
-        text: 'text-indigo-50'
+        primary: 'from-emerald-600 to-green-500',
+        secondary: 'bg-emerald-600/30',
+        accent: 'bg-green-400/50',
+        text: 'text-emerald-50',
+        background: 'bg-gradient-to-b from-emerald-700 via-emerald-600 to-green-500'
       },
+      layout: 'focus',
+      hasAudio: true,
+      audioTitle: 'Forest Sounds',
+      backgroundElements: (
+        <>
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-32 bg-green-900/30"
+          />
+          <motion.div
+            className="absolute bottom-10 left-10 text-green-400/40"
+            animate={{ rotate: [0, 5, 0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
+          >
+            <Leaf size={30} />
+          </motion.div>
+          <motion.div
+            className="absolute bottom-20 right-20 text-green-300/40"
+            animate={{ rotate: [0, -5, 0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut", delay: 1 }}
+          >
+            <Leaf size={25} />
+          </motion.div>
+          <motion.div
+            className="absolute top-40 right-10 text-green-200/30"
+            animate={{ y: [0, -5, 0], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+          >
+            <Flower size={20} />
+          </motion.div>
+          <motion.div
+            className="absolute top-60 left-20 text-green-200/30"
+            animate={{ y: [0, -3, 0], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 2 }}
+          >
+            <Flower size={15} />
+          </motion.div>
+        </>
+      ),
       steps: [
         {
-          instruction: 'Sit upright with a straight spine and relaxed shoulders',
+          instruction: 'Sit upright with a straight spine, as strong as a tree',
           duration: 5,
-          icon: <Focus size={32} />
+          icon: <Leaf size={32} />
         },
         {
-          instruction: 'Focus your gaze on a single point in front of you',
+          instruction: 'Imagine yourself in a peaceful forest clearing',
           duration: 5,
-          icon: <Focus size={32} />
+          icon: <Flower size={32} />
         },
         {
-          instruction: 'Visualize a bright golden light at the center of your forehead',
+          instruction: 'Focus on a single point, like sunlight through leaves',
           duration: 8,
           animation: 'pulse',
-          icon: <Sparkles size={32} />
+          icon: <Sunrise size={32} />
         },
         {
-          instruction: 'Take three deep, focused breaths',
+          instruction: 'Take three deep breaths, inhaling the fresh forest air',
           duration: 10,
           animation: 'breatheIn',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Now count each breath - Inhale: 1',
-          duration: 4,
+          instruction: 'With each breath, your mind becomes clearer like a forest stream',
+          duration: 8,
           animation: 'breatheIn',
-          icon: <Wind size={32} />
+          icon: <Droplets size={32} />
         },
         {
-          instruction: 'Exhale: 2',
-          duration: 4,
-          animation: 'breatheOut',
-          icon: <Wind size={32} />
-        },
-        {
-          instruction: 'With each number, increase your mental clarity',
-          duration: 10,
-          animation: 'pulse',
-          icon: <Brain size={32} />
-        },
-        {
-          instruction: 'If your mind wanders, gently return to counting',
+          instruction: 'If your mind wanders, gently return to the forest scene',
           duration: 5,
-          icon: <Brain size={32} />
+          icon: <Leaf size={32} />
         },
         {
-          instruction: 'Feel your concentration becoming sharper and stronger',
+          instruction: 'Feel your roots growing deeper, your focus strengthening',
           duration: 8,
           animation: 'pulse',
           icon: <Focus size={32} />
         },
         {
-          instruction: 'Notice how your mind feels clear, alert and focused',
+          instruction: 'Your mind is now clear and alert, like a watchful forest animal',
           duration: 5,
           icon: <Sparkles size={32} />
         }
-      ]
+      ],
+      interactiveElements: (
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.div
+            className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-green-400/20 rounded-full"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          />
+        </div>
+      )
     },
     energyBoost: {
       title: 'Quick Energy Boost',
-      description: 'A dynamic 1-minute exercise to instantly increase energy and alertness',
+      description: 'A dynamic fire-inspired exercise to instantly increase energy and alertness',
       benefits: [
         'Increases oxygen flow',
         'Stimulates the nervous system',
@@ -303,62 +392,127 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         primary: 'from-orange-500 to-red-500',
         secondary: 'bg-orange-500/30',
         accent: 'bg-yellow-400/50',
-        text: 'text-orange-50'
+        text: 'text-orange-50',
+        background: 'bg-gradient-to-b from-red-600 via-orange-500 to-yellow-500'
       },
+      layout: 'energy',
+      hasAudio: true,
+      audioTitle: 'Energizing Beats',
+      backgroundElements: (
+        <>
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-24 bg-red-500/20"
+            animate={{ height: [80, 100, 120, 90, 80] }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-16 bg-orange-400/20"
+            animate={{ height: [60, 90, 70, 100, 60] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.5 }}
+          />
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-12 bg-yellow-300/20"
+            animate={{ height: [40, 70, 50, 80, 40] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div
+            className="absolute bottom-40 right-10 text-yellow-300/40"
+            animate={{ y: [0, -10, 0], rotate: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          >
+            <Flame size={30} />
+          </motion.div>
+          <motion.div
+            className="absolute bottom-60 left-20 text-orange-400/40"
+            animate={{ y: [0, -15, 0], rotate: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", delay: 0.5 }}
+          >
+            <Flame size={25} />
+          </motion.div>
+          <motion.div
+            className="absolute top-40 left-10 text-red-300/30"
+            animate={{ y: [0, -5, 0], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ repeat: Infinity, duration: 1, ease: "easeInOut" }}
+          >
+            <Zap size={20} />
+          </motion.div>
+        </>
+      ),
       steps: [
         {
-          instruction: 'Stand up straight with feet shoulder-width apart',
+          instruction: 'Stand up with feet shoulder-width apart, feel the energy rising',
           duration: 3,
           icon: <Zap size={32} />
         },
         {
-          instruction: 'Shake out your hands and arms vigorously for 5 seconds',
+          instruction: 'Shake your hands and arms vigorously like flames dancing',
           duration: 5,
           animation: 'shake',
           icon: <Activity size={32} />
         },
         {
-          instruction: 'Take a powerful breath in while raising your arms overhead',
+          instruction: 'Take a powerful breath in while raising your arms like rising fire',
           duration: 3,
           animation: 'breatheIn',
-          icon: <Wind size={32} />
+          icon: <Flame size={32} />
         },
         {
-          instruction: 'Exhale forcefully with a "HA" sound while bringing arms down',
+          instruction: 'Exhale forcefully with a "HA" sound, releasing energy',
           duration: 2,
           animation: 'breatheOut',
           icon: <Wind size={32} />
         },
         {
-          instruction: 'Visualize bright orange energy filling your body',
-          duration: 5,
-          animation: 'pulse',
-          icon: <Flame size={32} />
-        },
-        {
-          instruction: 'Tap rapidly on your chest, arms, and legs to activate energy',
+          instruction: 'Tap rapidly on your chest and arms to spark your inner fire',
           duration: 8,
           animation: 'shake',
           icon: <Activity size={32} />
         },
         {
-          instruction: 'Jump up and down gently 5 times',
+          instruction: 'Jump up and down, letting energy surge through your body',
           duration: 5,
           animation: 'bounce',
           icon: <Zap size={32} />
         },
         {
-          instruction: 'Take one final powerful breath and feel the energy surging',
+          instruction: 'Visualize bright flames of energy filling your entire body',
           duration: 5,
-          animation: 'breatheIn',
+          animation: 'pulse',
           icon: <Flame size={32} />
         },
         {
-          instruction: 'Feel the vibrant energy flowing through your entire body',
+          instruction: 'Feel the vibrant energy radiating from your core like the sun',
           duration: 5,
           icon: <Sparkles size={32} />
         }
-      ]
+      ],
+      interactiveElements: (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 flex justify-around"
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {[...Array(7)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="w-10 h-32 bg-gradient-to-t from-red-500 via-orange-400 to-yellow-300 rounded-t-full opacity-40"
+                animate={{
+                  height: [120, 160 + (i * 10) % 40, 100, 140 + (i * 15) % 50, 120],
+                  opacity: [0.3, 0.5, 0.4, 0.6, 0.3]
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2 + (i * 0.2),
+                  ease: "easeInOut",
+                  delay: i * 0.1
+                }}
+              />
+            ))}
+          </motion.div>
+        </div>
+      )
     }
   };
 
@@ -391,15 +545,46 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
             if (currentSimulation) {
               const currentSim = simulations[currentSimulation];
               if (simulationStep < currentSim.steps.length - 1) {
+                // Update breath phase based on the next step's animation
+                const nextStep = currentSim.steps[simulationStep + 1];
+                if (nextStep.animation === 'breatheIn') {
+                  setBreathPhase('inhale');
+                  setShowBreathCircle(true);
+                } else if (nextStep.animation === 'hold') {
+                  setBreathPhase('hold');
+                  setShowBreathCircle(true);
+                } else if (nextStep.animation === 'breatheOut') {
+                  setBreathPhase('exhale');
+                  setShowBreathCircle(true);
+                } else {
+                  setShowBreathCircle(false);
+                }
+
+                // Increment interaction counter for energy layout
+                if (currentSim.layout === 'energy' &&
+                    (nextStep.animation === 'shake' || nextStep.animation === 'bounce')) {
+                  setInteractionCount(prev => prev + 1);
+                }
+
                 setSimulationStep(prev => prev + 1);
-                return currentSim.steps[simulationStep + 1].duration;
+                return nextStep.duration;
               } else {
                 // End of simulation
                 setIsTimerRunning(false);
-                toast({
-                  title: "Simulation Complete",
-                  description: "Great job! How do you feel?",
-                });
+
+                // Show completion screen with appropriate message
+                let message = "You've completed the exercise successfully!";
+                if (currentSimulation === 'stressRelief') {
+                  message = "Your mind and body should feel more relaxed now. Take this calm feeling with you throughout your day.";
+                } else if (currentSimulation === 'focusEnhancement') {
+                  message = "Your mind is now clear and focused. You're ready to tackle any task with improved concentration.";
+                } else if (currentSimulation === 'energyBoost') {
+                  message = "Feel that energy flowing through you! You're recharged and ready to take on the day.";
+                }
+
+                setCompletionMessage(message);
+                setShowCompletionScreen(true);
+
                 return 0;
               }
             }
@@ -418,12 +603,36 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
   // Start a simulation
   const startSimulation = (simulationKey: string) => {
     if (simulations[simulationKey]) {
+      // Reset all states
       setCurrentSimulation(simulationKey);
       setSimulationStep(0);
       setTimerSeconds(simulations[simulationKey].steps[0].duration);
       setIsTimerRunning(true);
       setShowSimulation(true);
+      setShowCompletionScreen(false);
+      setInteractionCount(0);
+      setAudioEnabled(false);
 
+      // Set initial breath phase based on first step
+      const firstStep = simulations[simulationKey].steps[0];
+      if (simulations[simulationKey].layout === 'breathwork') {
+        if (firstStep.animation === 'breatheIn') {
+          setBreathPhase('inhale');
+          setShowBreathCircle(true);
+        } else if (firstStep.animation === 'hold') {
+          setBreathPhase('hold');
+          setShowBreathCircle(true);
+        } else if (firstStep.animation === 'breatheOut') {
+          setBreathPhase('exhale');
+          setShowBreathCircle(true);
+        } else {
+          setShowBreathCircle(false);
+        }
+      } else {
+        setShowBreathCircle(false);
+      }
+
+      // Show toast notification
       toast({
         title: `Starting ${simulations[simulationKey].title}`,
         description: "Follow the guided instructions",
@@ -443,6 +652,33 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
       setSimulationStep(0);
       setTimerSeconds(simulations[currentSimulation].steps[0].duration);
       setIsTimerRunning(true);
+      setShowCompletionScreen(false);
+      setInteractionCount(0);
+
+      // Reset breath phase if needed
+      const firstStep = simulations[currentSimulation].steps[0];
+      if (simulations[currentSimulation].layout === 'breathwork') {
+        if (firstStep.animation === 'breatheIn') {
+          setBreathPhase('inhale');
+          setShowBreathCircle(true);
+        } else if (firstStep.animation === 'hold') {
+          setBreathPhase('hold');
+          setShowBreathCircle(true);
+        } else if (firstStep.animation === 'breatheOut') {
+          setBreathPhase('exhale');
+          setShowBreathCircle(true);
+        } else {
+          setShowBreathCircle(false);
+        }
+      } else {
+        setShowBreathCircle(false);
+      }
+
+      toast({
+        title: "Exercise Restarted",
+        description: "Starting from the beginning",
+        duration: 2000,
+      });
     }
   };
 
@@ -453,6 +689,10 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
     setSimulationStep(0);
     setTimerSeconds(0);
     setIsTimerRunning(false);
+    setShowCompletionScreen(false);
+    setShowBreathCircle(false);
+    setAudioEnabled(false);
+    setInteractionCount(0);
   };
 
   // Handle category change
@@ -735,7 +975,10 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         </div>
       ) : (
         /* Simulation Mode */
-        <div className={`flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4 bg-gradient-to-br ${simulations[currentSimulation]?.theme.primary || gradient}`}>
+        <div className={`flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4 relative overflow-hidden ${simulations[currentSimulation]?.theme.background || `bg-gradient-to-br ${simulations[currentSimulation]?.theme.primary || gradient}`}`}>
+          {/* Background Elements */}
+          {currentSimulation && simulations[currentSimulation].backgroundElements}
+
           {currentSimulation && (
             <>
               {/* Simulation Info */}
@@ -743,7 +986,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md mx-auto mb-4"
+                className="w-full max-w-md mx-auto mb-4 relative z-10"
               >
                 <p className={`${simulations[currentSimulation].theme.text} text-sm text-center mb-2`}>
                   {simulations[currentSimulation].description}
@@ -757,10 +1000,25 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {/* Audio Controls */}
+                {simulations[currentSimulation].hasAudio && (
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <button
+                      onClick={() => setAudioEnabled(prev => !prev)}
+                      className={`${simulations[currentSimulation].theme.secondary} p-2 rounded-full ${simulations[currentSimulation].theme.text}`}
+                    >
+                      {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                    </button>
+                    <span className={`text-xs ${simulations[currentSimulation].theme.text}`}>
+                      {audioEnabled ? `${simulations[currentSimulation].audioTitle} Playing` : `${simulations[currentSimulation].audioTitle} Muted`}
+                    </span>
+                  </div>
+                )}
               </motion.div>
 
               {/* Current Step Display */}
-              <div className="w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center">
+              <div className="w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center relative z-10">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -782,8 +1040,36 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                     />
                   </div>
 
+                  {/* Interactive Elements */}
+                  {simulations[currentSimulation].interactiveElements}
+
+                  {/* Breath Circle for Breathwork Layout */}
+                  {simulations[currentSimulation].layout === 'breathwork' && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <motion.div
+                        animate={{
+                          scale: breathPhase === 'inhale' ? [1, 1.5] :
+                                 breathPhase === 'hold' ? 1.5 :
+                                 breathPhase === 'exhale' ? [1.5, 1] : 1,
+                          opacity: breathPhase === 'hold' ? [0.8, 1, 0.8] : 0.8,
+                          borderColor: breathPhase === 'hold' ? ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.3)'] : 'rgba(255,255,255,0.3)'
+                        }}
+                        transition={{
+                          duration: breathPhase === 'inhale' ? 4 :
+                                   breathPhase === 'hold' ? 4 :
+                                   breathPhase === 'exhale' ? 6 : 1,
+                          ease: "easeInOut",
+                          repeat: breathPhase === 'hold' ? Infinity : 0,
+                          repeatType: "reverse"
+                        }}
+                        className="w-40 h-40 rounded-full border-2 border-white/30 absolute opacity-0"
+                        style={{ opacity: showBreathCircle ? 0.8 : 0 }}
+                      />
+                    </div>
+                  )}
+
                   {/* Step Content */}
-                  <div className="flex flex-col items-center justify-center py-6">
+                  <div className="flex flex-col items-center justify-center py-6 relative z-10">
                     <div className={`${simulations[currentSimulation].theme.secondary} p-4 rounded-full mb-6`}>
                       {simulations[currentSimulation].steps[simulationStep].icon}
                     </div>
@@ -930,7 +1216,7 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                   >
                     {isTimerRunning ? (
                       <>
-                        <Timer size={18} />
+                        <Pause size={18} />
                         <span>Pause</span>
                       </>
                     ) : (
@@ -944,14 +1230,14 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                     onClick={resetSimulation}
                     className={`flex-1 ${simulations[currentSimulation].theme.secondary} hover:opacity-80 ${simulations[currentSimulation].theme.text} rounded-xl py-3 flex items-center justify-center gap-2`}
                   >
-                    <Activity size={18} />
+                    <RotateCcw size={18} />
                     <span>Restart</span>
                   </Button>
                 </div>
               </div>
 
               {/* Step Indicators */}
-              <div className="w-full max-w-md mx-auto mb-4">
+              <div className="w-full max-w-md mx-auto mb-4 relative z-10">
                 <div className="flex justify-center space-x-1 mb-4">
                   {simulations[currentSimulation].steps.map((_, index) => (
                     <div
@@ -971,6 +1257,53 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
                   <span>Exit Exercise</span>
                 </Button>
               </div>
+
+              {/* Completion Screen */}
+              {showCompletionScreen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6"
+                >
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className={`bg-gradient-to-b ${simulations[currentSimulation].theme.primary} p-6 rounded-2xl max-w-md w-full text-center`}
+                  >
+                    <div className="bg-white/20 rounded-full w-20 h-20 mx-auto flex items-center justify-center mb-4">
+                      <Check size={40} className="text-white" />
+                    </div>
+
+                    <h3 className="text-white text-xl font-bold mb-2">Great Job!</h3>
+                    <p className="text-white/90 mb-6">{completionMessage}</p>
+
+                    <div className="flex gap-4">
+                      <Button
+                        onClick={() => {
+                          setShowCompletionScreen(false);
+                          resetSimulation();
+                        }}
+                        className={`flex-1 bg-white/20 hover:bg-white/30 text-white rounded-xl py-3 flex items-center justify-center gap-2`}
+                      >
+                        <RotateCcw size={18} />
+                        <span>Repeat</span>
+                      </Button>
+
+                      <Button
+                        onClick={() => {
+                          setShowCompletionScreen(false);
+                          exitSimulation();
+                        }}
+                        className={`flex-1 bg-white hover:bg-white/90 text-blue-600 rounded-xl py-3 flex items-center justify-center gap-2`}
+                      >
+                        <Check size={18} />
+                        <span>Done</span>
+                      </Button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
             </>
           )}
         </div>
