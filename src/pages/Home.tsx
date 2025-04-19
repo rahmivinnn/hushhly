@@ -71,16 +71,13 @@ const Home: React.FC = () => {
     // Check if this is the first time the app is being opened in this session
     const isFirstVisit = sessionStorage.getItem('home_visited') !== 'true';
 
-    // Show popups on the first visit to home page in this session
+    // Only show popups on the first visit to the home page in this session
     if (isFirstVisit) {
       // Mark that the home page has been visited in this session
       sessionStorage.setItem('home_visited', 'true');
 
-      // Show the free trial popup first
+      // Show the features popup (free trial) first
       setShowFeaturesPopup(true);
-
-      // We'll show the mood selection popup after the features popup is closed
-      // (see the onClose handler for FeaturesPopup component)
     }
   }, []);
 
@@ -608,13 +605,10 @@ const Home: React.FC = () => {
         isOpen={showFeaturesPopup}
         onClose={() => {
           setShowFeaturesPopup(false);
-          // Show mood selection popup after features popup is closed
-          // but only if this is the first visit to home in this session
+          // Show mood selection dialog after closing features popup
+          // but only during the first visit to home in this session
           if (sessionStorage.getItem('home_visited') === 'true') {
-            // Small delay to avoid immediate popup transition
-            setTimeout(() => {
-              setShowMoodSelection(true);
-            }, 300);
+            setShowMoodSelection(true);
           }
         }}
       />
