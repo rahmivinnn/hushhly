@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Heart, Wind, Brain, Sun, Moon, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ArrowLeft, Heart, Wind, Brain, Sun, Moon, MessageSquare,
+  ChevronLeft, ChevronRight, Zap, Focus, Sparkles,
+  Flame, CloudFog, Waves, Timer, Activity
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -13,10 +17,24 @@ interface InteractiveTipsProps {
   gradient?: string;
 }
 
-const InteractiveTips: React.FC<InteractiveTipsProps> = ({ 
-  onClose, 
-  category = 'Mindfulness', 
-  gradient = 'from-cyan-500 to-blue-600' 
+type SimulationStep = {
+  instruction: string;
+  duration: number; // in seconds
+  animation?: string;
+  icon?: React.ReactNode;
+};
+
+type Simulation = {
+  title: string;
+  description: string;
+  steps: SimulationStep[];
+  benefits: string[];
+};
+
+const InteractiveTips: React.FC<InteractiveTipsProps> = ({
+  onClose,
+  category = 'Mindfulness',
+  gradient = 'from-cyan-500 to-blue-600'
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -27,6 +45,11 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
   const [currentCategory, setCurrentCategory] = useState('mindfulness');
   const [showChat, setShowChat] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showSimulation, setShowSimulation] = useState(false);
+  const [currentSimulation, setCurrentSimulation] = useState<string | null>(null);
+  const [simulationStep, setSimulationStep] = useState(0);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   // Define tip categories
   const tipCategories = {
@@ -52,37 +75,220 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         'Pursed Lip Breathing: Inhale through nose, exhale slowly through pursed lips'
       ]
     },
-    motivation: {
+    stress: {
+      icon: <CloudFog size={24} />,
+      title: 'Stress Relief',
+      tips: [
+        'Progressive muscle relaxation: tense and release each muscle group',
+        'Visualize a peaceful place where you feel safe and calm',
+        'Practice self-compassion by treating yourself with kindness',
+        'Try a body scan meditation to release tension from head to toe',
+        'Use the 5-4-3-2-1 technique: notice 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste'
+      ]
+    },
+    focus: {
+      icon: <Focus size={24} />,
+      title: 'Focus Enhancement',
+      tips: [
+        'Set a clear intention for your meditation or work session',
+        'Use a single point of focus like a candle flame or your breath',
+        'Count your breaths from 1 to 10, then start over if your mind wanders',
+        'Practice the Pomodoro technique: 25 minutes of focus, then a 5-minute break',
+        'Create a distraction-free environment before beginning your practice'
+      ]
+    },
+    energy: {
+      icon: <Zap size={24} />,
+      title: 'Energy Boost',
+      tips: [
+        'Try energizing "breath of fire" - rapid, rhythmic breathing through the nose',
+        'Perform a quick 1-minute stretching routine to increase blood flow',
+        'Use stimulating pressure points: tap the top of your head, between eyebrows, and under your nose',
+        'Visualize bright, warm energy filling your body from head to toe',
+        'Take 10 deep, full breaths while standing with arms raised overhead'
+      ]
+    },
+    sleep: {
+      icon: <Moon size={24} />,
+      title: 'Better Sleep',
+      tips: [
+        'Practice the 4-7-8 breathing technique while lying in bed',
+        'Progressively relax each part of your body from toes to head',
+        'Visualize yourself in a peaceful, safe place as you drift off',
+        'Count backward slowly from 100, focusing only on the numbers',
+        'Listen to gentle nature sounds or white noise to mask distractions'
+      ]
+    },
+    gratitude: {
       icon: <Heart size={24} />,
-      title: 'Motivational Quotes',
+      title: 'Gratitude Practice',
+      tips: [
+        'Name three things you\'re grateful for that happened today',
+        'Write a mental thank-you note to someone who helped you recently',
+        'Notice five simple pleasures you experienced in the last 24 hours',
+        'Appreciate one aspect of your body and what it allows you to do',
+        'Find gratitude for a challenge that helped you grow stronger'
+      ]
+    },
+    quotes: {
+      icon: <MessageSquare size={24} />,
+      title: 'Wisdom Quotes',
       tips: [
         '"The present moment is the only moment available to us, and it is the door to all moments." - Thich Nhat Hanh',
         '"Peace comes from within. Do not seek it without." - Buddha',
         '"You are the sky. Everything else is just the weather." - Pema Chödrön',
         '"Quiet the mind, and the soul will speak." - Ma Jaya Sati Bhagavati',
-        '"The goal of meditation isn't to control your thoughts, it's to stop letting them control you." - Unknown'
+        "\"The goal of meditation is not to control your thoughts, it is to stop letting them control you.\" - Unknown"
+      ]
+    }
+  };
+
+  // Define interactive simulations
+  const simulations: Record<string, Simulation> = {
+    stressRelief: {
+      title: 'Stress Relief Breathing',
+      description: 'A guided 2-minute exercise to quickly reduce stress and anxiety',
+      benefits: [
+        'Lowers cortisol levels',
+        'Reduces muscle tension',
+        'Calms racing thoughts',
+        'Improves focus and clarity'
+      ],
+      steps: [
+        {
+          instruction: 'Find a comfortable position and close your eyes',
+          duration: 5,
+          icon: <CloudFog size={32} />
+        },
+        {
+          instruction: 'Take a deep breath in through your nose for 4 counts',
+          duration: 4,
+          animation: 'breatheIn',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Hold your breath for 4 counts',
+          duration: 4,
+          animation: 'hold',
+          icon: <Timer size={32} />
+        },
+        {
+          instruction: 'Exhale slowly through your mouth for 6 counts',
+          duration: 6,
+          animation: 'breatheOut',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Repeat the cycle 3 more times',
+          duration: 42,
+          animation: 'cycle',
+          icon: <Activity size={32} />
+        },
+        {
+          instruction: 'Notice how your body feels more relaxed',
+          duration: 5,
+          icon: <Sparkles size={32} />
+        }
       ]
     },
-    morning: {
-      icon: <Sun size={24} />,
-      title: 'Morning Practices',
-      tips: [
-        'Start with three deep breaths before getting out of bed',
-        'Set a positive intention for your day ahead',
-        'Practice gratitude by naming three things you're thankful for',
-        'Stretch your body gently to awaken your muscles',
-        'Drink a glass of water mindfully to hydrate your body'
+    focusEnhancement: {
+      title: 'Focus Enhancement',
+      description: 'A quick exercise to sharpen your concentration and mental clarity',
+      benefits: [
+        'Improves attention span',
+        'Reduces mental chatter',
+        'Enhances cognitive performance',
+        'Builds mental stamina'
+      ],
+      steps: [
+        {
+          instruction: 'Sit upright with a straight spine and relaxed shoulders',
+          duration: 5,
+          icon: <Focus size={32} />
+        },
+        {
+          instruction: 'Focus your gaze on a single point in front of you',
+          duration: 5,
+          icon: <Focus size={32} />
+        },
+        {
+          instruction: 'Begin counting your breaths from 1 to 10',
+          duration: 5,
+          icon: <Brain size={32} />
+        },
+        {
+          instruction: 'Inhale... 1',
+          duration: 4,
+          animation: 'breatheIn',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Exhale... 2',
+          duration: 4,
+          animation: 'breatheOut',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Continue counting each breath cycle up to 10',
+          duration: 40,
+          animation: 'cycle',
+          icon: <Activity size={32} />
+        },
+        {
+          instruction: 'If your mind wanders, gently return to counting',
+          duration: 5,
+          icon: <Brain size={32} />
+        },
+        {
+          instruction: 'Notice how your mind feels more clear and focused',
+          duration: 5,
+          icon: <Sparkles size={32} />
+        }
       ]
     },
-    evening: {
-      icon: <Moon size={24} />,
-      title: 'Evening Wind-Down',
-      tips: [
-        'Reflect on three positive moments from your day',
-        'Release tension by progressively relaxing each muscle group',
-        'Practice letting go of today's worries before sleep',
-        'Visualize a peaceful place as you prepare for rest',
-        'Set your intentions for tomorrow with calm confidence'
+    energyBoost: {
+      title: 'Quick Energy Boost',
+      description: 'A 1-minute exercise to increase energy and alertness',
+      benefits: [
+        'Increases oxygen flow',
+        'Stimulates the nervous system',
+        'Improves mental alertness',
+        'Boosts physical energy'
+      ],
+      steps: [
+        {
+          instruction: 'Stand up straight with feet shoulder-width apart',
+          duration: 3,
+          icon: <Zap size={32} />
+        },
+        {
+          instruction: 'Take a deep breath in while raising your arms overhead',
+          duration: 3,
+          animation: 'breatheIn',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Exhale forcefully while bringing arms down quickly',
+          duration: 2,
+          animation: 'breatheOut',
+          icon: <Wind size={32} />
+        },
+        {
+          instruction: 'Repeat this energizing breath 5 times',
+          duration: 25,
+          animation: 'cycle',
+          icon: <Activity size={32} />
+        },
+        {
+          instruction: 'Gently tap your body from head to toe with fingertips',
+          duration: 15,
+          icon: <Flame size={32} />
+        },
+        {
+          instruction: 'Take one final deep breath and feel the energy flowing',
+          duration: 5,
+          icon: <Sparkles size={32} />
+        }
       ]
     }
   };
@@ -104,11 +310,87 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
     setCurrentTipIndex((prev) => (prev - 1 + currentTips.length) % currentTips.length);
   };
 
+  // Timer effect for simulations
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isTimerRunning && timerSeconds > 0) {
+      timer = setInterval(() => {
+        setTimerSeconds(prev => {
+          if (prev <= 1) {
+            // Move to next step when timer reaches 0
+            if (currentSimulation) {
+              const currentSim = simulations[currentSimulation];
+              if (simulationStep < currentSim.steps.length - 1) {
+                setSimulationStep(prev => prev + 1);
+                return currentSim.steps[simulationStep + 1].duration;
+              } else {
+                // End of simulation
+                setIsTimerRunning(false);
+                toast({
+                  title: "Simulation Complete",
+                  description: "Great job! How do you feel?",
+                });
+                return 0;
+              }
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isTimerRunning, timerSeconds, currentSimulation, simulationStep]);
+
+  // Start a simulation
+  const startSimulation = (simulationKey: string) => {
+    if (simulations[simulationKey]) {
+      setCurrentSimulation(simulationKey);
+      setSimulationStep(0);
+      setTimerSeconds(simulations[simulationKey].steps[0].duration);
+      setIsTimerRunning(true);
+      setShowSimulation(true);
+
+      toast({
+        title: `Starting ${simulations[simulationKey].title}`,
+        description: "Follow the guided instructions",
+        duration: 2000,
+      });
+    }
+  };
+
+  // Pause or resume simulation
+  const toggleSimulationTimer = () => {
+    setIsTimerRunning(prev => !prev);
+  };
+
+  // Reset simulation
+  const resetSimulation = () => {
+    if (currentSimulation) {
+      setSimulationStep(0);
+      setTimerSeconds(simulations[currentSimulation].steps[0].duration);
+      setIsTimerRunning(true);
+    }
+  };
+
+  // Exit simulation
+  const exitSimulation = () => {
+    setShowSimulation(false);
+    setCurrentSimulation(null);
+    setSimulationStep(0);
+    setTimerSeconds(0);
+    setIsTimerRunning(false);
+  };
+
   // Handle category change
   const handleCategoryChange = (category: string) => {
     setCurrentCategory(category);
     setCurrentTipIndex(0);
-    
+
     toast({
       title: `${tipCategories[category as keyof typeof tipCategories].title}`,
       description: "Explore new tips in this category",
@@ -119,25 +401,27 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
   return (
     <div className={`fixed inset-0 z-50 bg-gradient-to-br ${gradient} overflow-hidden`}>
       {/* Header */}
-      <motion.div 
+      <motion.div
         className="flex items-center justify-between px-4 py-3"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <button
-          onClick={onClose}
+          onClick={showSimulation ? exitSimulation : onClose}
           className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
         >
           <ArrowLeft size={24} />
         </button>
-        <motion.h1 
+        <motion.h1
           className="text-white text-lg font-semibold"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.3 }}
         >
-          {currentTitle}
+          {showSimulation && currentSimulation
+            ? simulations[currentSimulation].title
+            : currentTitle}
         </motion.h1>
         <button
           onClick={() => setShowChat(true)}
@@ -148,143 +432,404 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4">
-        {/* Tip Display */}
-        <div className="w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-full mb-6"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-white/30 p-3 rounded-full">
-                {currentIcon}
+      {!showSimulation ? (
+        <div className="flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4">
+          {/* Tip Display */}
+          <div className="w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-full mb-6"
+            >
+              <div className="flex items-center justify-center mb-4">
+                <div className="bg-white/30 p-3 rounded-full">
+                  {currentIcon}
+                </div>
               </div>
+
+              <div className="relative h-32">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${currentCategory}-${currentTipIndex}`}
+                    initial={{ opacity: 0, x: isAnimating ? 50 : -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: isAnimating ? -50 : 50 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-center absolute inset-0 flex items-center justify-center"
+                  >
+                    <p className="text-white text-lg">
+                      {currentTips[currentTipIndex]}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              <div className="flex justify-center mt-4">
+                <div className="flex space-x-1">
+                  {currentTips.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === currentTipIndex ? 'bg-white' : 'bg-white/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between w-full max-w-xs mb-6">
+              <Button
+                onClick={handlePrevTip}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-3"
+              >
+                <ChevronLeft size={24} />
+              </Button>
+              <Button
+                onClick={handleNextTip}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-3"
+              >
+                <ChevronRight size={24} />
+              </Button>
             </div>
-            
-            <div className="relative h-32">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${currentCategory}-${currentTipIndex}`}
-                  initial={{ opacity: 0, x: isAnimating ? 50 : -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: isAnimating ? -50 : 50 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-center absolute inset-0 flex items-center justify-center"
+
+            {/* Interactive Simulations */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="w-full max-w-md mx-auto mb-6"
+            >
+              <h3 className="text-white text-sm mb-2 text-center font-medium">Try an Interactive Exercise</h3>
+              <div className="grid grid-cols-1 gap-2">
+                <Button
+                  onClick={() => startSimulation('stressRelief')}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
                 >
-                  <p className="text-white text-lg">
-                    {currentTips[currentTipIndex]}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            
-            <div className="flex justify-center mt-4">
-              <div className="flex space-x-1">
-                {currentTips.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full ${
-                      index === currentTipIndex ? 'bg-white' : 'bg-white/30'
-                    }`}
-                  />
-                ))}
+                  <div className="flex items-center">
+                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                      <CloudFog size={20} />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-medium">Stress Relief</span>
+                      <p className="text-xs text-white/80">2-min guided breathing</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} />
+                </Button>
+
+                <Button
+                  onClick={() => startSimulation('focusEnhancement')}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                      <Focus size={20} />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-medium">Focus Enhancement</span>
+                      <p className="text-xs text-white/80">3-min concentration exercise</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} />
+                </Button>
+
+                <Button
+                  onClick={() => startSimulation('energyBoost')}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                      <Zap size={20} />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-medium">Quick Energy Boost</span>
+                      <p className="text-xs text-white/80">1-min energizing practice</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} />
+                </Button>
               </div>
+            </motion.div>
+          </div>
+
+          {/* Category Selection */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="w-full max-w-md mx-auto mb-4"
+          >
+            <h3 className="text-white text-sm mb-2 text-center">Choose a category</h3>
+            <div className="grid grid-cols-4 gap-2">
+              <Button
+                onClick={() => handleCategoryChange('mindfulness')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'mindfulness'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Brain size={20} />
+                <span className="text-xs mt-1">Mindful</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('breathing')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'breathing'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Wind size={20} />
+                <span className="text-xs mt-1">Breath</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('stress')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'stress'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <CloudFog size={20} />
+                <span className="text-xs mt-1">Stress</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('focus')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'focus'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Focus size={20} />
+                <span className="text-xs mt-1">Focus</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('energy')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'energy'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Zap size={20} />
+                <span className="text-xs mt-1">Energy</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('sleep')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'sleep'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Moon size={20} />
+                <span className="text-xs mt-1">Sleep</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('gratitude')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'gratitude'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <Heart size={20} />
+                <span className="text-xs mt-1">Gratitude</span>
+              </Button>
+              <Button
+                onClick={() => handleCategoryChange('quotes')}
+                className={`flex flex-col items-center p-3 rounded-xl ${
+                  currentCategory === 'quotes'
+                    ? 'bg-white text-blue-600'
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+              >
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1">Quotes</span>
+              </Button>
             </div>
           </motion.div>
-          
-          {/* Navigation Buttons */}
-          <div className="flex justify-between w-full max-w-xs mb-6">
-            <Button
-              onClick={handlePrevTip}
-              className="bg-white/20 hover:bg-white/30 text-white rounded-full p-3"
-            >
-              <ChevronLeft size={24} />
-            </Button>
-            <Button
-              onClick={handleNextTip}
-              className="bg-white/20 hover:bg-white/30 text-white rounded-full p-3"
-            >
-              <ChevronRight size={24} />
-            </Button>
-          </div>
         </div>
-        
-        {/* Category Selection */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="w-full max-w-md mx-auto mb-4"
-        >
-          <h3 className="text-white text-sm mb-2 text-center">Choose a category</h3>
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              onClick={() => handleCategoryChange('mindfulness')}
-              className={`flex flex-col items-center p-3 rounded-xl ${
-                currentCategory === 'mindfulness' 
-                  ? 'bg-white text-blue-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <Brain size={20} />
-              <span className="text-xs mt-1">Mindfulness</span>
-            </Button>
-            <Button
-              onClick={() => handleCategoryChange('breathing')}
-              className={`flex flex-col items-center p-3 rounded-xl ${
-                currentCategory === 'breathing' 
-                  ? 'bg-white text-blue-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <Wind size={20} />
-              <span className="text-xs mt-1">Breathing</span>
-            </Button>
-            <Button
-              onClick={() => handleCategoryChange('motivation')}
-              className={`flex flex-col items-center p-3 rounded-xl ${
-                currentCategory === 'motivation' 
-                  ? 'bg-white text-blue-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <Heart size={20} />
-              <span className="text-xs mt-1">Quotes</span>
-            </Button>
-            <Button
-              onClick={() => handleCategoryChange('morning')}
-              className={`flex flex-col items-center p-3 rounded-xl ${
-                currentCategory === 'morning' 
-                  ? 'bg-white text-blue-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <Sun size={20} />
-              <span className="text-xs mt-1">Morning</span>
-            </Button>
-            <Button
-              onClick={() => handleCategoryChange('evening')}
-              className={`flex flex-col items-center p-3 rounded-xl ${
-                currentCategory === 'evening' 
-                  ? 'bg-white text-blue-600' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <Moon size={20} />
-              <span className="text-xs mt-1">Evening</span>
-            </Button>
-            <Button
-              onClick={onClose}
-              className="flex flex-col items-center p-3 rounded-xl bg-white/10 text-white hover:bg-white/20"
-            >
-              <ArrowLeft size={20} />
-              <span className="text-xs mt-1">Back</span>
-            </Button>
-          </div>
-        </motion.div>
-      </div>
+      ) : (
+        /* Simulation Mode */
+        <div className="flex flex-col items-center justify-between h-[calc(100%-60px)] px-6 py-4">
+          {currentSimulation && (
+            <>
+              {/* Simulation Info */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-md mx-auto mb-4"
+              >
+                <p className="text-white/80 text-sm text-center mb-2">
+                  {simulations[currentSimulation].description}
+                </p>
+
+                {/* Benefits */}
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  {simulations[currentSimulation].benefits.map((benefit, index) => (
+                    <div key={index} className="bg-white/10 rounded-full px-3 py-1 text-xs text-white">
+                      {benefit}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Current Step Display */}
+              <div className="w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-full mb-6 relative overflow-hidden"
+                >
+                  {/* Timer */}
+                  <div className="absolute top-4 right-4 bg-white/30 rounded-full h-10 w-10 flex items-center justify-center">
+                    <span className="text-white font-medium">{timerSeconds}</span>
+                  </div>
+
+                  {/* Step Progress */}
+                  <div className="w-full bg-white/10 rounded-full h-1 mb-6">
+                    <div
+                      className="bg-white h-1 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(simulationStep / (simulations[currentSimulation].steps.length - 1)) * 100}%`
+                      }}
+                    />
+                  </div>
+
+                  {/* Step Content */}
+                  <div className="flex flex-col items-center justify-center py-6">
+                    <div className="bg-white/30 p-4 rounded-full mb-6">
+                      {simulations[currentSimulation].steps[simulationStep].icon}
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`step-${simulationStep}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-center"
+                      >
+                        <h3 className="text-white text-xl font-medium mb-2">
+                          {simulations[currentSimulation].steps[simulationStep].instruction}
+                        </h3>
+
+                        {/* Animation based on step type */}
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'breatheIn' && (
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.5],
+                              opacity: [0.7, 1]
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 4,
+                              repeatType: 'reverse'
+                            }}
+                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                          />
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'breatheOut' && (
+                          <motion.div
+                            animate={{
+                              scale: [1.5, 1],
+                              opacity: [1, 0.7]
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 4,
+                              repeatType: 'reverse'
+                            }}
+                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                          />
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'hold' && (
+                          <motion.div
+                            animate={{
+                              boxShadow: ['0 0 0 rgba(255,255,255,0.3)', '0 0 20px rgba(255,255,255,0.7)', '0 0 0 rgba(255,255,255,0.3)']
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 2,
+                              repeatType: 'reverse'
+                            }}
+                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                          />
+                        )}
+
+                        {simulations[currentSimulation].steps[simulationStep].animation === 'cycle' && (
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.5, 1.5, 1],
+                              opacity: [0.7, 1, 1, 0.7],
+                              borderRadius: ['50%', '50%', '50%', '50%']
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 8,
+                              times: [0, 0.3, 0.6, 1],
+                              repeatType: 'loop'
+                            }}
+                            className="w-16 h-16 bg-white/30 rounded-full mx-auto mt-4"
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+
+                {/* Control Buttons */}
+                <div className="flex justify-center space-x-4 w-full max-w-xs">
+                  <Button
+                    onClick={toggleSimulationTimer}
+                    className="flex-1 bg-white/20 hover:bg-white/30 text-white rounded-xl py-3"
+                  >
+                    {isTimerRunning ? 'Pause' : 'Resume'}
+                  </Button>
+                  <Button
+                    onClick={resetSimulation}
+                    className="flex-1 bg-white/20 hover:bg-white/30 text-white rounded-xl py-3"
+                  >
+                    Restart
+                  </Button>
+                </div>
+              </div>
+
+              {/* Step Indicators */}
+              <div className="w-full max-w-md mx-auto mb-4">
+                <div className="flex justify-center space-x-1 mb-4">
+                  {simulations[currentSimulation].steps.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === simulationStep ? 'bg-white' : 'bg-white/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <Button
+                  onClick={exitSimulation}
+                  className="w-full bg-white/10 hover:bg-white/20 text-white rounded-xl py-3"
+                >
+                  Exit Exercise
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* AI Chat overlay */}
       <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
