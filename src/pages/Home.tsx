@@ -69,29 +69,18 @@ const Home: React.FC = () => {
     }
 
     // Check if this is the first time the app is being opened in this session
-    const isFirstVisit = sessionStorage.getItem('app_visited') !== 'true';
+    const isFirstVisit = sessionStorage.getItem('home_visited') !== 'true';
 
-    // Only check for popups on the first visit in this session
+    // Show popups on the first visit to home page in this session
     if (isFirstVisit) {
-      // Mark that the app has been visited in this session
-      sessionStorage.setItem('app_visited', 'true');
+      // Mark that the home page has been visited in this session
+      sessionStorage.setItem('home_visited', 'true');
 
-      // Check if popups have been shown before (across all sessions)
-      const featuresPopupShown = localStorage.getItem('features_popup_shown');
-      const moodPopupShown = localStorage.getItem('mood_popup_shown');
+      // Show the free trial popup first
+      setShowFeaturesPopup(true);
 
-      // Only show the features popup if it hasn't been shown before
-      if (!featuresPopupShown) {
-        setShowFeaturesPopup(true);
-        localStorage.setItem('features_popup_shown', 'true');
-      }
-
-      // Only show the mood selection popup if it hasn't been shown before
-      // and features popup has been shown
-      if (!moodPopupShown && featuresPopupShown) {
-        setShowMoodSelection(true);
-        localStorage.setItem('mood_popup_shown', 'true');
-      }
+      // We'll show the mood selection popup after the features popup is closed
+      // (see the onClose handler for FeaturesPopup component)
     }
   }, []);
 
@@ -619,12 +608,13 @@ const Home: React.FC = () => {
         isOpen={showFeaturesPopup}
         onClose={() => {
           setShowFeaturesPopup(false);
-          // Only show mood selection if it hasn't been shown before
-          // AND this is the first visit in this session
-          const isFirstVisit = sessionStorage.getItem('app_visited') === 'true';
-          if (isFirstVisit && !localStorage.getItem('mood_popup_shown')) {
-            setShowMoodSelection(true);
-            localStorage.setItem('mood_popup_shown', 'true');
+          // Show mood selection popup after features popup is closed
+          // but only if this is the first visit to home in this session
+          if (sessionStorage.getItem('home_visited') === 'true') {
+            // Small delay to avoid immediate popup transition
+            setTimeout(() => {
+              setShowMoodSelection(true);
+            }, 300);
           }
         }}
       />
