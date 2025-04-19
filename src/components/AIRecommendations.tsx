@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { aiRecommendationService, AIRecommendation, AIInsight, AIPersonalizedPlan } from '@/services/aiRecommendationService';
 import { motion, AnimatePresence } from 'framer-motion';
 import AIChat from './AIChat';
+import InteractiveTips from './InteractiveTips';
 
 interface AIRecommendationsProps {
   onClose?: () => void;
@@ -23,6 +24,8 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const [activePlan, setActivePlan] = useState<AIPersonalizedPlan | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showTips, setShowTips] = useState(false);
+  const [currentRecommendation, setCurrentRecommendation] = useState<AIRecommendation | null>(null);
 
   useEffect(() => {
     // Simulate AI processing time
@@ -48,21 +51,12 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const handleStartMeditation = (recommendation: AIRecommendation) => {
     toast({
       title: `Starting ${recommendation.title}`,
-      description: `Beginning your ${recommendation.duration} session now.`,
+      description: `Loading interactive tips for ${recommendation.title}.`,
     });
 
-    setTimeout(() => {
-      navigate('/meditation', { 
-        state: { 
-          meditationType: recommendation.title,
-          duration: recommendation.duration,
-          gradient: recommendation.title.includes('Emotional Balance') ? 'from-pink-400 to-purple-500' :
-                   recommendation.title.includes('Body Scan') ? 'from-blue-300 to-indigo-500' :
-                   recommendation.title.includes('Loving-Kindness') ? 'from-rose-400 to-pink-600' :
-                   'from-teal-400 to-emerald-600'
-        }
-      });
-    }, 1000);
+    // Set the current recommendation and show the tips component
+    setCurrentRecommendation(recommendation);
+    setShowTips(true);
   };
 
   const handleScheduleMeditation = (recommendation: AIRecommendation) => {
@@ -320,6 +314,18 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
 
       {/* AI Chat */}
       <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
+
+      {/* Interactive Tips */}
+      {showTips && currentRecommendation && (
+        <InteractiveTips
+          onClose={() => setShowTips(false)}
+          category={currentRecommendation.title}
+          gradient={currentRecommendation.title.includes('Emotional Balance') ? 'from-pink-400 to-purple-500' :
+                   currentRecommendation.title.includes('Body Scan') ? 'from-blue-300 to-indigo-500' :
+                   currentRecommendation.title.includes('Loving-Kindness') ? 'from-rose-400 to-pink-600' :
+                   'from-teal-400 to-emerald-600'}
+        />
+      )}
     </div>
   );
 };
