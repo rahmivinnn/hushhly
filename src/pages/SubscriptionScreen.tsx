@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { paymentService, PaymentMethod, SubscriptionPlan } from '@/services/paymentService';
 import { usePromoCode } from '@/hooks/usePromoCode';
+import { X, ArrowLeft, Check, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const SubscriptionScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -145,60 +147,181 @@ const SubscriptionScreen: React.FC = () => {
     return calculateDiscountedPrice(originalPrice);
   };
 
+  const handleExit = () => {
+    navigate('/home');
+    toast({
+      title: "Subscription Skipped",
+      description: "You can subscribe anytime from your profile."
+    });
+  };
+
+  const [showInfoTooltip, setShowInfoTooltip] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 p-6 flex flex-col relative">
+      {/* Exit Button */}
+      <motion.button
+        className="absolute top-4 left-4 bg-white/20 p-2 rounded-full text-white hover:bg-white/30 transition-colors z-10"
+        onClick={handleExit}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        <X size={24} />
+      </motion.button>
+
+      {/* Back Button */}
+      <motion.button
+        className="absolute top-4 right-4 bg-white/20 p-2 rounded-full text-white hover:bg-white/30 transition-colors z-10"
+        onClick={() => navigate(-1)}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        <ArrowLeft size={24} />
+      </motion.button>
+
       {/* Header */}
-      <div className="text-center text-white mb-8">
+      <motion.div
+        className="text-center text-white mb-8 mt-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <h1 className="text-2xl font-bold mb-2">Experience Hushhly for Free</h1>
         <p className="text-lg opacity-90">
           Discover new daily meditations and soothing bedtime stories tailored to your journey.
         </p>
-      </div>
+      </motion.div>
 
       {/* Subscription Options */}
       <div className="space-y-4 flex-1">
         {/* Annual Plan */}
-        <button
+        <motion.button
           onClick={() => setSelectedPlan('annual')}
           className={`w-full p-4 rounded-xl ${
             selectedPlan === 'annual'
               ? 'bg-white text-blue-600'
               : 'bg-white/20 text-white'
-          } transition-all duration-200`}
+          } transition-all duration-200 relative overflow-hidden`}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
+          {selectedPlan === 'annual' && (
+            <motion.div
+              className="absolute inset-0 bg-white"
+              layoutId="selectedPlan"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{ zIndex: -1 }}
+            />
+          )}
           <div className="flex justify-between items-center">
             <div className="text-left">
               <div className="font-bold text-lg">Premium Annual</div>
               <div className="text-sm opacity-80">$59.99/year</div>
+              {activePromo && selectedPlan === 'annual' && (
+                <div className="text-xs text-green-600 mt-1 font-medium">
+                  {getDiscountedPrice(prices.annual).toFixed(2)} with discount
+                </div>
+              )}
             </div>
             {selectedPlan === 'annual' && (
-              <div className="text-sm font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded">
+              <motion.div
+                className="text-sm font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded flex items-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              >
+                <Check size={14} className="mr-1" />
                 Best value
-              </div>
+              </motion.div>
             )}
           </div>
-        </button>
+        </motion.button>
 
         {/* Monthly Plan */}
-        <button
+        <motion.button
           onClick={() => setSelectedPlan('monthly')}
           className={`w-full p-4 rounded-xl ${
             selectedPlan === 'monthly'
               ? 'bg-white text-blue-600'
               : 'bg-white/20 text-white'
-          } transition-all duration-200`}
+          } transition-all duration-200 relative overflow-hidden`}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
         >
+          {selectedPlan === 'monthly' && (
+            <motion.div
+              className="absolute inset-0 bg-white"
+              layoutId="selectedPlan"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{ zIndex: -1 }}
+            />
+          )}
           <div className="flex justify-between items-center">
             <div className="text-left">
               <div className="font-bold text-lg">Monthly</div>
               <div className="text-sm opacity-80">$7.99/month</div>
+              {activePromo && selectedPlan === 'monthly' && (
+                <div className="text-xs text-green-600 mt-1 font-medium">
+                  {getDiscountedPrice(prices.monthly).toFixed(2)} with discount
+                </div>
+              )}
             </div>
+            {selectedPlan === 'monthly' && (
+              <motion.div
+                className="text-sm font-bold px-2 py-1 bg-blue-100 text-blue-600 rounded flex items-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              >
+                <Check size={14} className="mr-1" />
+                Selected
+              </motion.div>
+            )}
           </div>
-        </button>
+        </motion.button>
 
         {/* Promo Code Section */}
-        <div className="mt-6 p-4 rounded-xl bg-white/20">
-          <div className="text-white text-left mb-2">Have a code?</div>
+        <motion.div
+          className="mt-6 p-4 rounded-xl bg-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <div className="flex items-center text-white text-left mb-2">
+            <span>Have a code?</span>
+            <motion.button
+              className="ml-2 text-white/70 hover:text-white"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowInfoTooltip(!showInfoTooltip)}
+            >
+              <Info size={14} />
+            </motion.button>
+
+            {/* Info Tooltip */}
+            <AnimatePresence>
+              {showInfoTooltip && (
+                <motion.div
+                  className="absolute bg-white text-blue-600 p-2 rounded-lg shadow-lg text-xs max-w-[200px] z-10"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Enter a valid promo code to get a discount on your subscription.
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="flex items-center space-x-2">
             <Input
               type="text"
@@ -207,40 +330,104 @@ const SubscriptionScreen: React.FC = () => {
               onChange={(e) => setPromoCode(e.target.value)}
               className="flex-1 p-2 rounded-lg bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:border-white"
             />
-            <Button
-              variant="ghost"
-              className="text-white hover:bg-white/20"
-              onClick={handlePromoCodeSubmit}
-            >
-              Redeem
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                className="text-white hover:bg-white/20"
+                onClick={handlePromoCodeSubmit}
+              >
+                Redeem
+              </Button>
+            </motion.div>
           </div>
-          {activePromo && (
-            <div className="mt-2 text-white text-sm">
-              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs mr-2">Applied</span>
-              {activePromo.discount}
-            </div>
-          )}
-        </div>
+
+          <AnimatePresence>
+            {activePromo && (
+              <motion.div
+                className="mt-2 text-white text-sm"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs mr-2 inline-flex items-center">
+                  <Check size={12} className="mr-1" />
+                  Applied
+                </span>
+                {activePromo.discount}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       {/* Action Buttons */}
       <div className="mt-6 space-y-4">
-        <Button
-          onClick={handleSubscribe}
-          className="w-full bg-white text-blue-600 hover:bg-blue-50 py-6 text-lg font-semibold rounded-xl"
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
         >
-          Subscribe Now
-        </Button>
-        <div className="text-center">
+          <Button
+            onClick={handleSubscribe}
+            className="w-full bg-white text-blue-600 hover:bg-blue-50 py-6 text-lg font-semibold rounded-xl shadow-lg"
+          >
+            Subscribe Now
+          </Button>
+        </motion.div>
+
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
           <p className="text-white/80 text-sm">Cancel anytime</p>
-        </div>
+        </motion.div>
+
+        <motion.button
+          onClick={handleExit}
+          className="w-full text-white/70 hover:text-white py-2 text-sm font-medium"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
+        >
+          Skip for now
+        </motion.button>
       </div>
 
       {/* Payment Modal */}
-      {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-4 w-11/12 max-w-sm max-h-[85vh] overflow-y-auto">
+      <AnimatePresence>
+        {showPaymentModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl p-4 w-11/12 max-w-sm max-h-[85vh] overflow-y-auto relative"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Close button for payment modal */}
+              {!processingPayment && !paymentSuccess && (
+                <motion.button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10"
+                  onClick={() => setShowPaymentModal(false)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={20} />
+                </motion.button>
+              )}
             {paymentSuccess ? (
               <div className="p-4 text-center">
                 <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -385,9 +572,10 @@ const SubscriptionScreen: React.FC = () => {
                 </div>
               </>
             )}
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
