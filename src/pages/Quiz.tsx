@@ -276,16 +276,16 @@ const Quiz = () => {
               d="M0,288L60,261.3C120,235,240,181,360,176C480,171,600,213,720,218.7C840,224,960,192,1080,197.3C1200,203,1320,245,1380,266.7L1440,288L1440,400L1380,400C1320,400,1200,400,1080,400C960,400,840,400,720,400C600,400,480,400,360,400C240,400,120,400,60,400L0,400Z"
             ></path>
           </svg>
-
-          {/* Add the white SHH logo to bottom left */}
-          <div className="fixed bottom-4 left-4 z-20">
-            <img
-              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
-              alt="Shh"
-              className="w-16 h-auto"
-            />
-          </div>
         </div>
+      </div>
+
+      {/* Add the white SHH logo to bottom left - positioned separately for better visibility */}
+      <div className="fixed bottom-4 left-4 z-50">
+        <img
+          src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+          alt="Shh"
+          className="w-12 h-auto"
+        />
       </div>
     </div>
   );

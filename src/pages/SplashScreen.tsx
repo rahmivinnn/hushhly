@@ -1585,7 +1585,7 @@ const SplashScreen: React.FC = () => {
       <div className="flex-grow"></div>
       <Button
         onClick={handleNext}
-        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-16"
       >
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
@@ -1633,7 +1633,7 @@ const SplashScreen: React.FC = () => {
         <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-16"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -1682,7 +1682,7 @@ const SplashScreen: React.FC = () => {
         <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-16"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -1731,7 +1731,7 @@ const SplashScreen: React.FC = () => {
         <div className="flex-grow"></div>
         <Button
           onClick={handleNext}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-16"
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -1923,7 +1923,7 @@ const SplashScreen: React.FC = () => {
         </p>
         <Button
           onClick={handleNext}
-          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-6"
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8 rounded-full flex items-center animate-scale-in mb-16"
         >
           Next <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
@@ -1941,7 +1941,7 @@ const SplashScreen: React.FC = () => {
     // Show indicators for screens 2-8 (all screens with the bear)
     if (currentScreen >= 2 && currentScreen <= 8) {
       return (
-        <div className="flex space-x-2 absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="flex space-x-2 absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
           {[...Array(7)].map((_, index) => (
             <div
               key={index}
