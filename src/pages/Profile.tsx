@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, Lock, ChevronRight, Award, Clock, Calendar, BarChart2, Edit2, LogOut, Camera, Plus, Shield, Star, HelpCircle, X, CreditCard } from 'lucide-react';
+import { User, Settings, Lock, ChevronRight, Award, Clock, Calendar, BarChart2, Edit2, LogOut, Camera, Plus, Shield, Star, HelpCircle, X, CreditCard, RefreshCw, Check } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import { Button } from '@/components/ui/button';
@@ -59,6 +60,10 @@ const Profile: React.FC = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showRateReviewModal, setShowRateReviewModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [totalHours, setTotalHours] = useState(128);
+  const [dayStreak, setDayStreak] = useState(15);
+  const [badges, setBadges] = useState(8);
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
     fullName: "Katif",
@@ -163,6 +168,26 @@ const Profile: React.FC = () => {
     }
   ]);
 
+  // Function to update stats in real-time
+  const updateStats = () => {
+    setIsStatsLoading(true);
+
+    // Simulate API call to get updated stats
+    setTimeout(() => {
+      // Randomly increase stats for demo purposes
+      setTotalHours(prev => prev + Math.floor(Math.random() * 2));
+      setDayStreak(prev => prev + Math.floor(Math.random() * 2));
+      setBadges(prev => Math.min(prev + Math.floor(Math.random() * 2), 12)); // Max 12 badges
+
+      setIsStatsLoading(false);
+
+      toast({
+        title: "Stats Updated",
+        description: "Your profile statistics have been refreshed",
+      });
+    }, 1000);
+  };
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -187,6 +212,14 @@ const Profile: React.FC = () => {
         console.error("Error parsing user data:", error);
       }
     }
+
+    // Update stats when component mounts
+    updateStats();
+
+    // Set up interval to update stats every 30 seconds for demo purposes
+    const statsInterval = setInterval(updateStats, 30000);
+
+    return () => clearInterval(statsInterval);
   }, []);
 
   const handleAvatarClick = () => {
@@ -446,7 +479,11 @@ const Profile: React.FC = () => {
           </button>
 
           <div className="flex items-center">
-            <h1 className="text-white text-3xl font-bold">shh.</h1>
+            <img
+              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+              alt="Shh Logo"
+              className="h-8"
+            />
           </div>
 
           <div className="flex items-center space-x-4">
@@ -494,19 +531,59 @@ const Profile: React.FC = () => {
       </div>
 
       {/* User Stats */}
-      <div className="flex justify-between px-6 py-6 border-b border-gray-100">
-        <div className="text-center">
-          <h3 className="text-3xl font-bold text-cyan-500">128h</h3>
-          <p className="text-gray-600 text-sm">Total Hours</p>
+      <div className="relative">
+        <div className="flex justify-between px-6 py-6 border-b border-gray-100">
+          <div className="text-center">
+            <motion.h3
+              className="text-3xl font-bold text-cyan-500"
+              key={totalHours}
+              initial={{ scale: 0.8, opacity: 0.5 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {totalHours}h
+            </motion.h3>
+            <p className="text-gray-600 text-sm">Total Hours</p>
+          </div>
+          <div className="text-center">
+            <motion.h3
+              className="text-3xl font-bold text-cyan-500"
+              key={dayStreak}
+              initial={{ scale: 0.8, opacity: 0.5 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {dayStreak}
+            </motion.h3>
+            <p className="text-gray-600 text-sm">Day Streak</p>
+          </div>
+          <div className="text-center">
+            <motion.h3
+              className="text-3xl font-bold text-cyan-500"
+              key={badges}
+              initial={{ scale: 0.8, opacity: 0.5 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {badges}
+            </motion.h3>
+            <p className="text-gray-600 text-sm">Badges</p>
+          </div>
         </div>
-        <div className="text-center">
-          <h3 className="text-3xl font-bold text-cyan-500">15</h3>
-          <p className="text-gray-600 text-sm">Day Streak</p>
-        </div>
-        <div className="text-center">
-          <h3 className="text-3xl font-bold text-cyan-500">8</h3>
-          <p className="text-gray-600 text-sm">Badges</p>
-        </div>
+
+        {/* Refresh Stats Button */}
+        <button
+          onClick={updateStats}
+          disabled={isStatsLoading}
+          className="absolute top-2 right-2 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+        >
+          <motion.div
+            animate={{ rotate: isStatsLoading ? 360 : 0 }}
+            transition={{ duration: 1, repeat: isStatsLoading ? Infinity : 0, ease: "linear" }}
+          >
+            <RefreshCw size={16} className="text-cyan-500" />
+          </motion.div>
+        </button>
       </div>
 
       {/* Settings Section */}
@@ -514,44 +591,47 @@ const Profile: React.FC = () => {
         <h3 className="text-xl font-bold mb-4">Setting</h3>
 
         <div className="space-y-3">
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handleEditProfile}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <User size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-blue-50">
+                <User size={24} className="text-blue-500" />
               </div>
               <span className="ml-3 font-medium">Profile</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
 
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handlePasswordSettings}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <Lock size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-purple-50">
+                <Lock size={24} className="text-purple-500" />
               </div>
               <span className="ml-3 font-medium">Password</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
 
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handleNotificationSettings}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+              <div className="p-2 rounded-full bg-amber-50">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
               </div>
               <span className="ml-3 font-medium">Notifications</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -560,57 +640,61 @@ const Profile: React.FC = () => {
         <h3 className="text-xl font-bold mb-4">More</h3>
 
         <div className="space-y-3">
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handlePrivacyPolicy}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <Shield size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-green-50">
+                <Shield size={24} className="text-green-500" />
               </div>
               <span className="ml-3 font-medium">Privacy & Policy</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
 
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handleRateReview}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <Star size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-amber-50">
+                <Star size={24} className="text-amber-500" />
               </div>
               <span className="ml-3 font-medium">Rate & Review</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
 
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handleHelp}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <HelpCircle size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-cyan-50">
+                <HelpCircle size={24} className="text-cyan-500" />
               </div>
               <span className="ml-3 font-medium">Help</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
 
-          <div
-            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer"
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={handleLogout}
           >
             <div className="flex items-center">
-              <div className="p-2 rounded-full">
-                <LogOut size={24} className="text-gray-800" />
+              <div className="p-2 rounded-full bg-red-50">
+                <LogOut size={24} className="text-red-500" />
               </div>
               <span className="ml-3 font-medium">Log out</span>
             </div>
             <ChevronRight size={20} className="text-gray-400" />
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -975,48 +1059,7 @@ const Profile: React.FC = () => {
       )}
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-xl">
-        <div className="flex justify-around items-center py-2">
-          <button className="flex flex-col items-center p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span className="text-xs text-white">Home</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
-            <span className="text-xs text-white">Library</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <span className="text-xs text-white">Community</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-            <span className="text-xs text-white">Stories</span>
-          </button>
-          <button className="flex flex-col items-center p-2">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <span className="text-xs text-white font-bold">Profile</span>
-          </button>
-        </div>
-      </div>
+      <BottomNavigation />
     </div>
   );
 };
