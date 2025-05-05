@@ -4,36 +4,51 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
-
-  return {
-    base: './',
-    server: {
-      host: "::",
-      port: 8080,
-      historyApiFallback: true,
+export default defineConfig({
+  base: '/',
+  server: {
+    port: 8080,
+    strictPort: false,
+    open: true,
+    cors: true,
+    hmr: {
+      overlay: true,
     },
-    preview: {
-      port: 8080,
-      historyApiFallback: true,
-    },
-    build: {
-      outDir: 'dist',
-      assetsDir: 'assets',
-      emptyOutDir: true,
-      sourcemap: !isProduction,
-      minify: isProduction,
-      target: 'es2015',
-    },
-    plugins: [
-      react(),
-      mode === 'development' && componentTagger(),
-    ].filter(Boolean),
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
+  },
+  preview: {
+    port: 8080,
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
+    sourcemap: true,
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+          return;
+        }
+        warn(warning);
       },
     },
-  };
+  },
+  plugins: [
+    react({
+      jsxImportSource: 'react',
+      plugins: [],
+    }),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+  },
 });
