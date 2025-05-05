@@ -27,17 +27,28 @@ const StoryMeditation = () => {
     icon: '🌲'
   };
 
+  // Format seconds to time string (mm:ss)
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   // Convert duration string to seconds
   const getDurationInSeconds = () => {
     if (!storyDetails.duration) return 900; // Default 15 minutes
-    
-    if (storyDetails.duration.includes('Min')) {
+
+    if (typeof storyDetails.duration === 'string' && storyDetails.duration.includes('Min')) {
       const minutes = parseInt(storyDetails.duration.split(' ')[0]);
       return minutes * 60;
     }
-    
-    const [minutes, seconds] = storyDetails.duration.split(':').map(Number);
-    return minutes * 60 + (seconds || 0);
+
+    if (typeof storyDetails.duration === 'string' && storyDetails.duration.includes(':')) {
+      const [minutes, seconds] = storyDetails.duration.split(':').map(Number);
+      return minutes * 60 + (seconds || 0);
+    }
+
+    return 900; // Default 15 minutes as fallback
   };
 
   const totalDurationInSeconds = getDurationInSeconds();
@@ -52,12 +63,7 @@ const StoryMeditation = () => {
     setWaveformBars(bars);
   }, []);
 
-  // Format seconds to time string (mm:ss)
-  function formatTime(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
+  // Format seconds to time string (mm:ss) - already defined above
 
   // Toggle play/pause
   const togglePlayPause = () => {
@@ -69,7 +75,7 @@ const StoryMeditation = () => {
         audioRef.current.currentTime = 0;
       }
     }
-    
+
     if (isPlaying) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -85,7 +91,7 @@ const StoryMeditation = () => {
           });
         });
       }
-      
+
       // Simulate playback progress
       intervalRef.current = setInterval(() => {
         setProgress((prev) => {
@@ -98,16 +104,16 @@ const StoryMeditation = () => {
             }
             return 100;
           }
-          
+
           // Update current time based on progress
           const currentSeconds = Math.floor(totalDurationInSeconds * prev / 100);
           setCurrentTime(formatTime(currentSeconds));
-          
+
           return prev + (100 / (totalDurationInSeconds / 0.5));
         });
       }, 500);
     }
-    
+
     setIsPlaying(!isPlaying);
   };
 
@@ -145,7 +151,7 @@ const StoryMeditation = () => {
   // Get background gradient based on story title
   const getBackgroundGradient = () => {
     const title = storyDetails.title.toLowerCase();
-    
+
     if (title.includes('forest') || title.includes('nature') || title.includes('garden')) {
       return 'from-green-600 to-blue-800';
     } else if (title.includes('night') || title.includes('star') || title.includes('dream') || title.includes('sleep')) {
@@ -162,7 +168,7 @@ const StoryMeditation = () => {
   // Get emoji icon based on story title
   const getStoryIcon = () => {
     const title = storyDetails.title.toLowerCase();
-    
+
     if (title.includes('forest') || title.includes('tree')) {
       return '🌲';
     } else if (title.includes('night') || title.includes('star') || title.includes('dream')) {
@@ -194,11 +200,11 @@ const StoryMeditation = () => {
           <ArrowLeft size={24} />
         </button>
         <div className="text-white">
-          <img 
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-            alt="shh" 
-            className="h-8" 
-            style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }} 
+          <img
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+            alt="shh"
+            className="h-8"
+            style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
           />
         </div>
         <button className="text-white" onClick={toggleMute}>
@@ -209,13 +215,13 @@ const StoryMeditation = () => {
       <AnimatePresence>
         {showCompletionScreen ? (
           /* Meditation Completion Screen */
-          <motion.div 
+          <motion.div
             className="flex-1 flex flex-col items-center justify-center px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
+            <motion.div
               className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md w-full text-center"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
@@ -224,13 +230,13 @@ const StoryMeditation = () => {
               <div className="w-20 h-20 rounded-full bg-green-500/30 backdrop-blur-sm flex items-center justify-center mx-auto mb-6">
                 <Heart size={40} className="text-white" />
               </div>
-              
+
               <h2 className="text-2xl font-bold mb-2 text-white">Story Complete</h2>
               <p className="text-white/80 mb-6">
-                You've completed "{storyDetails.title}". 
+                You've completed "{storyDetails.title}".
                 We hope you enjoyed it.
               </p>
-              
+
               <div className="flex space-x-3">
                 <button
                   onClick={handleBack}
@@ -312,6 +318,7 @@ const StoryMeditation = () => {
 
       {/* Audio Element (hidden) */}
       <audio ref={audioRef} loop>
+        <source src="/lovable-uploads/meditation-sound.mp3" type="audio/mpeg" />
         <source src="/meditation-sound.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
