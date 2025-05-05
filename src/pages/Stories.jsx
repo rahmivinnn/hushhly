@@ -20,8 +20,16 @@ const Stories = () => {
       // Navigate to subscription page for premium stories
       navigate('/subscription');
     } else {
-      // Navigate to story detail page for free stories
-      navigate('/story-detail', { state: { story } });
+      // Navigate directly to story meditation with story details
+      navigate('/story-meditation', {
+        state: {
+          title: story.title,
+          description: story.description,
+          image: story.image,
+          duration: story.duration || '15:00',
+          icon: story.icon
+        }
+      });
     }
   };
 
