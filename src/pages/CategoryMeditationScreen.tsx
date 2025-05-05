@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Bell, Play, Pause, Clock, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Bell, Play, Pause, Clock, Volume2, VolumeX, Moon, Sun, Heart, Cloud, Wave } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from 'framer-motion';
 import '@/styles/animations.css';
+import BreathingAnimation from '@/components/BreathingAnimation';
+import GuidedMeditationPrompts from '@/components/GuidedMeditationPrompts';
+import AmbientBackground from '@/components/AmbientBackground';
 
 // Define category-specific animations and icons
 interface CategoryVisuals {
@@ -155,11 +158,21 @@ const CategoryMeditationScreen: React.FC = () => {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [remainingTime, setRemainingTime] = useState(initialDuration * 60); // in seconds
+  const [elapsedTime, setElapsedTime] = useState(0); // in seconds
   const [isMuted, setIsMuted] = useState(false);
   const [showBreathingGuide, setShowBreathingGuide] = useState(false);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('inhale');
+  const [ambientSoundType, setAmbientSoundType] = useState<'nature' | 'rain' | 'waves' | 'white-noise'>('nature');
+  const [showCompletionScreen, setShowCompletionScreen] = useState(false);
+  const [meditationStats, setMeditationStats] = useState({
+    totalSessions: 0,
+    totalMinutes: 0,
+    currentStreak: 0
+  });
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const breathTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const mainAudioRef = useRef<HTMLAudioElement>(null);
+  const ambientAudioRef = useRef<HTMLAudioElement>(null);
 
   // Get the visuals for this category
   const visuals = getCategoryVisuals(category);
@@ -174,9 +187,25 @@ const CategoryMeditationScreen: React.FC = () => {
             // Timer completed
             clearInterval(timerRef.current!);
             setIsPlaying(false);
-            if (audioRef.current) {
-              audioRef.current.pause();
+
+            // Pause all audio
+            if (mainAudioRef.current) {
+              mainAudioRef.current.pause();
             }
+            if (ambientAudioRef.current) {
+              ambientAudioRef.current.pause();
+            }
+
+            // Show completion screen
+            setShowCompletionScreen(true);
+
+            // Update meditation stats
+            setMeditationStats(prev => ({
+              totalSessions: prev.totalSessions + 1,
+              totalMinutes: prev.totalMinutes + initialDuration,
+              currentStreak: prev.currentStreak + 1
+            }));
+
             toast({
               title: "Meditation Complete",
               description: `Your ${initialDuration} minute meditation session is complete.`
@@ -185,19 +214,47 @@ const CategoryMeditationScreen: React.FC = () => {
           }
           return prev - 1;
         });
+
+        // Update elapsed time
+        setElapsedTime(prev => prev + 1);
       }, 1000);
 
       // Start breathing guide
       setShowBreathingGuide(true);
       runBreathCycle();
+
+      // Play audio
+      if (mainAudioRef.current) {
+        mainAudioRef.current.volume = 0.7;
+        mainAudioRef.current.play().catch(error => {
+          console.error('Error playing main audio:', error);
+        });
+      }
+
+      if (ambientAudioRef.current) {
+        ambientAudioRef.current.volume = 0.3;
+        ambientAudioRef.current.play().catch(error => {
+          console.error('Error playing ambient audio:', error);
+        });
+      }
     } else {
       // Pause the timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+
       // Pause breathing guide
       if (breathTimerRef.current) {
         clearInterval(breathTimerRef.current);
+      }
+
+      // Pause audio
+      if (mainAudioRef.current) {
+        mainAudioRef.current.pause();
+      }
+
+      if (ambientAudioRef.current) {
+        ambientAudioRef.current.pause();
       }
     }
 
@@ -208,6 +265,14 @@ const CategoryMeditationScreen: React.FC = () => {
       }
       if (breathTimerRef.current) {
         clearInterval(breathTimerRef.current);
+      }
+
+      // Pause all audio
+      if (mainAudioRef.current) {
+        mainAudioRef.current.pause();
+      }
+      if (ambientAudioRef.current) {
+        ambientAudioRef.current.pause();
       }
     };
   }, [isPlaying, initialDuration, toast]);
@@ -220,20 +285,20 @@ const CategoryMeditationScreen: React.FC = () => {
 
     // Start with inhale
     setBreathPhase('inhale');
-    
+
     // Inhale for 4 seconds
     breathTimerRef.current = setTimeout(() => {
       // Hold for 4 seconds
       setBreathPhase('hold');
-      
+
       breathTimerRef.current = setTimeout(() => {
         // Exhale for 6 seconds
         setBreathPhase('exhale');
-        
+
         breathTimerRef.current = setTimeout(() => {
           // Rest for 2 seconds
           setBreathPhase('rest');
-          
+
           breathTimerRef.current = setTimeout(() => {
             // Repeat the cycle
             if (isPlaying) {
@@ -262,27 +327,65 @@ const CategoryMeditationScreen: React.FC = () => {
   };
 
   const togglePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch(error => {
-          console.error('Error playing audio:', error);
+    // If meditation is complete, reset it
+    if (showCompletionScreen) {
+      setShowCompletionScreen(false);
+      setRemainingTime(initialDuration * 60);
+      setElapsedTime(0);
+    }
+
+    if (isPlaying) {
+      // Pause all audio
+      if (mainAudioRef.current) {
+        mainAudioRef.current.pause();
+      }
+      if (ambientAudioRef.current) {
+        ambientAudioRef.current.pause();
+      }
+    } else {
+      // Play all audio
+      if (mainAudioRef.current) {
+        mainAudioRef.current.play().catch(error => {
+          console.error('Error playing main audio:', error);
           toast({
             title: "Audio Error",
             description: "There was an error playing the audio. Please try again."
           });
         });
       }
+
+      if (ambientAudioRef.current) {
+        ambientAudioRef.current.play().catch(error => {
+          console.error('Error playing ambient audio:', error);
+        });
+      }
     }
+
     setIsPlaying(!isPlaying);
   };
 
   const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
+    if (mainAudioRef.current) {
+      mainAudioRef.current.muted = !isMuted;
+    }
+    if (ambientAudioRef.current) {
+      ambientAudioRef.current.muted = !isMuted;
     }
     setIsMuted(!isMuted);
+  };
+
+  // Change ambient sound type
+  const cycleAmbientSound = () => {
+    const soundTypes: Array<'nature' | 'rain' | 'waves' | 'white-noise'> = ['nature', 'rain', 'waves', 'white-noise'];
+    const currentIndex = soundTypes.indexOf(ambientSoundType);
+    const nextIndex = (currentIndex + 1) % soundTypes.length;
+    setAmbientSoundType(soundTypes[nextIndex]);
+
+    toast({
+      title: "Ambient Sound Changed",
+      description: `Now playing: ${soundTypes[nextIndex].replace('-', ' ')} sounds`,
+      duration: 2000,
+    });
   };
 
   // Format time from seconds to MM:SS
@@ -325,70 +428,169 @@ const CategoryMeditationScreen: React.FC = () => {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen bg-gradient-to-br ${visuals.background} text-white`}>
+    <div className={`flex flex-col min-h-screen bg-gradient-to-br ${visuals.background} text-white relative overflow-hidden`}>
+      {/* Ambient Background */}
+      <AmbientBackground category={category} isActive={isPlaying} />
+
       {/* Header */}
-      <header className="flex items-center justify-between p-4">
-        <button className="text-white p-2 rounded-full bg-white/20" onClick={handleBack}>
+      <header className="flex items-center justify-between p-4 z-10">
+        <button
+          className="text-white p-2 rounded-full bg-white/20 backdrop-blur-sm"
+          onClick={handleBack}
+        >
           <ArrowLeft size={24} />
         </button>
-        <h1 className="text-xl font-semibold">{title}</h1>
-        <button className="text-white p-2 rounded-full bg-white/20" onClick={toggleMute}>
-          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-        </button>
+        <h1 className="text-xl font-semibold text-white drop-shadow-md">{title}</h1>
+        <div className="flex space-x-2">
+          <button
+            className="text-white p-2 rounded-full bg-white/20 backdrop-blur-sm"
+            onClick={cycleAmbientSound}
+          >
+            {ambientSoundType === 'nature' && <Sun size={24} />}
+            {ambientSoundType === 'rain' && <Cloud size={24} />}
+            {ambientSoundType === 'waves' && <Wave size={24} />}
+            {ambientSoundType === 'white-noise' && <Moon size={24} />}
+          </button>
+          <button
+            className="text-white p-2 rounded-full bg-white/20 backdrop-blur-sm"
+            onClick={toggleMute}
+          >
+            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+          </button>
+        </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
-        {/* Timer Display */}
-        <div className="text-4xl font-bold mb-8">{formatTime(remainingTime)}</div>
+      <AnimatePresence>
+        {showCompletionScreen ? (
+          /* Meditation Completion Screen */
+          <motion.div
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-md p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md w-full text-center"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="w-20 h-20 rounded-full bg-green-500/30 backdrop-blur-sm flex items-center justify-center mx-auto mb-6">
+                <Heart size={40} className="text-white" />
+              </div>
 
-        {/* Category Icon with Animation */}
-        <div className={`relative mb-8 ${visuals.animation}`}>
-          {visuals.icon}
-          
-          {/* Breathing Circle Overlay (only shown when playing) */}
-          {showBreathingGuide && isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className={`absolute w-full h-full rounded-full border-4 border-white/30 transition-transform duration-1000 ${getBreathingScale()}`}></div>
-              <div className="text-white text-lg font-medium">{getBreathingInstruction()}</div>
+              <h2 className="text-2xl font-bold mb-2">Meditation Complete</h2>
+              <p className="text-white/80 mb-6">
+                You've completed your {initialDuration} minute {category} meditation.
+                How do you feel?
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-white/10 rounded-xl p-3">
+                  <div className="text-2xl font-bold">{meditationStats.totalSessions}</div>
+                  <div className="text-sm text-white/70">Total Sessions</div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-3">
+                  <div className="text-2xl font-bold">{meditationStats.totalMinutes}</div>
+                  <div className="text-sm text-white/70">Total Minutes</div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleBack}
+                  className="flex-1 py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                >
+                  Done
+                </button>
+                <button
+                  onClick={togglePlayPause}
+                  className="flex-1 py-3 px-4 rounded-xl bg-white/20 hover:bg-white/30 transition-colors"
+                >
+                  Meditate Again
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : (
+          /* Main Meditation Screen */
+          <div className="flex-1 flex flex-col items-center justify-center p-6 z-10">
+            {/* Timer Display */}
+            <div className="text-4xl font-bold mb-6 drop-shadow-lg">{formatTime(remainingTime)}</div>
+
+            {/* Breathing Animation */}
+            <div className="relative mb-8">
+              {isPlaying ? (
+                <BreathingAnimation
+                  isActive={isPlaying}
+                  phase={breathPhase}
+                  color={visuals.secondaryColor.replace('bg-', 'bg-')}
+                />
+              ) : (
+                <div className={`${visuals.animation}`}>
+                  {visuals.icon}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {/* Play/Pause Button */}
-        <button
-          onClick={togglePlayPause}
-          className={`w-20 h-20 rounded-full ${visuals.secondaryColor} flex items-center justify-center shadow-lg hover:opacity-90 transition-all active:scale-95 mb-8`}
-        >
-          {isPlaying ? (
-            <Pause size={40} fill="white" />
-          ) : (
-            <Play size={40} fill="white" className="ml-2" />
-          )}
-        </button>
+            {/* Play/Pause Button */}
+            <motion.button
+              onClick={togglePlayPause}
+              className={`w-20 h-20 rounded-full ${visuals.secondaryColor} flex items-center justify-center shadow-lg hover:opacity-90 transition-all active:scale-95 mb-8`}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              {isPlaying ? (
+                <Pause size={40} fill="white" />
+              ) : (
+                <Play size={40} fill="white" className="ml-2" />
+              )}
+            </motion.button>
 
-        {/* Meditation Instructions */}
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 max-w-md text-center">
-          <h2 className="text-xl font-semibold mb-2">Meditation Guide</h2>
-          <p className="mb-4">
-            {category === 'Quick Reset' && "Focus on your breath. Let go of tension with each exhale."}
-            {category === 'Mindful Parenting' && "Breathe in patience, exhale reactivity. Connect with your inner calm."}
-            {category === 'Deep Sleep Recovery' && "Release the day with each breath. Let your body grow heavy and relaxed."}
-            {category === 'Start Your Day Calm' && "Breathe in new possibilities. Set your intention for the day ahead."}
-            {category === 'Parent–Child Bonding' && "Breathe together, creating a shared moment of peace and connection."}
-            {category === 'Emotional First Aid' && "Acknowledge your feelings without judgment. Breathe through any discomfort."}
-            {category === 'Affirmations & Mantras' && "With each breath, affirm your strength, peace, and resilience."}
-          </p>
-          <div className="flex items-center justify-center text-sm">
-            <Clock size={16} className="mr-2" />
-            <span>{duration} session</span>
+            {/* Meditation Instructions */}
+            <motion.div
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 max-w-md text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-xl font-semibold mb-2">Meditation Guide</h2>
+              <p className="mb-4">
+                {category === 'Quick Reset' && "Focus on your breath. Let go of tension with each exhale."}
+                {category === 'Mindful Parenting' && "Breathe in patience, exhale reactivity. Connect with your inner calm."}
+                {category === 'Deep Sleep Recovery' && "Release the day with each breath. Let your body grow heavy and relaxed."}
+                {category === 'Start Your Day Calm' && "Breathe in new possibilities. Set your intention for the day ahead."}
+                {category === 'Parent–Child Bonding' && "Breathe together, creating a shared moment of peace and connection."}
+                {category === 'Emotional First Aid' && "Acknowledge your feelings without judgment. Breathe through any discomfort."}
+                {category === 'Affirmations & Mantras' && "With each breath, affirm your strength, peace, and resilience."}
+              </p>
+              <div className="flex items-center justify-center text-sm">
+                <Clock size={16} className="mr-2" />
+                <span>{duration} session</span>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
 
-      {/* Audio Element (hidden) */}
-      <audio ref={audioRef} loop>
+      {/* Guided Meditation Prompts */}
+      <GuidedMeditationPrompts
+        isActive={isPlaying && !showCompletionScreen}
+        category={category}
+        elapsedTime={elapsedTime}
+      />
+
+      {/* Audio Elements (hidden) */}
+      <audio ref={mainAudioRef} loop>
         <source src="/meditation-sound.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <audio ref={ambientAudioRef} loop>
+        <source
+          src={`/ambient-${ambientSoundType}.mp3`}
+          type="audio/mpeg"
+        />
         Your browser does not support the audio element.
       </audio>
 
