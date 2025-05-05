@@ -35,28 +35,23 @@ const StoryDetail = () => {
 
   // Toggle play/pause
   const togglePlayPause = () => {
-    if (isPlaying) {
-      clearInterval(intervalRef.current);
-    } else {
-      // Simulate playback progress
-      intervalRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(intervalRef.current);
-            setIsPlaying(false);
-            return 100;
-          }
+    // Navigate to StoryMeditation component with story details
+    navigate('/story-meditation', {
+      state: {
+        title: storyDetails.title,
+        description: storyDetails.description,
+        image: storyDetails.image,
+        duration: totalTime,
+        icon: storyDetails.icon
+      }
+    });
 
-          // Update current time based on progress
-          const totalSeconds = convertTimeToSeconds(totalTime);
-          const currentSeconds = Math.floor(totalSeconds * (prev + 0.5) / 100);
-          setCurrentTime(formatTime(currentSeconds));
-
-          return prev + 0.5;
-        });
-      }, 500);
-    }
-    setIsPlaying(!isPlaying);
+    // Show toast notification
+    toast({
+      title: "Starting Meditation",
+      description: `${storyDetails.title} is starting...`,
+      duration: 3000,
+    });
   };
 
   // Convert time string (mm:ss) to seconds

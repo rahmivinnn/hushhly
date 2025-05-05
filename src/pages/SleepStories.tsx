@@ -232,20 +232,49 @@ const SleepStories: React.FC = () => {
       return;
     }
 
-    // Navigate to story detail page
-    navigate('/story-detail', {
+    // Navigate to story meditation page
+    navigate('/story-meditation', {
       state: {
         title: story.title,
         description: story.description,
         duration: story.duration,
-        image: story.image
+        image: story.image,
+        icon: getStoryIcon(story.title)
       }
     });
 
     toast({
-      title: "Opening Story",
-      description: `${story.title} is loading...`
+      title: "Starting Story",
+      description: `${story.title} is starting...`,
+      duration: 3000
     });
+  };
+
+  // Get emoji icon based on story title
+  const getStoryIcon = (title: string): string => {
+    const lowerTitle = title.toLowerCase();
+
+    if (lowerTitle.includes('forest') || lowerTitle.includes('tree')) {
+      return '🌲';
+    } else if (lowerTitle.includes('night') || lowerTitle.includes('star') || lowerTitle.includes('dream')) {
+      return '✨';
+    } else if (lowerTitle.includes('ocean') || lowerTitle.includes('sea') || lowerTitle.includes('water')) {
+      return '🌊';
+    } else if (lowerTitle.includes('mountain')) {
+      return '🏔️';
+    } else if (lowerTitle.includes('flower') || lowerTitle.includes('garden')) {
+      return '🌸';
+    } else if (lowerTitle.includes('rain')) {
+      return '🌧️';
+    } else if (lowerTitle.includes('sun') || lowerTitle.includes('morning')) {
+      return '☀️';
+    } else if (lowerTitle.includes('moon')) {
+      return '🌙';
+    } else if (lowerTitle.includes('child') || lowerTitle.includes('kid')) {
+      return '👶';
+    } else {
+      return '🧘';
+    }
   };
 
   const handleSubscribe = () => {

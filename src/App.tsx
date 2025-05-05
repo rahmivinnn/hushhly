@@ -37,6 +37,7 @@ const AIMeditation = lazy(() => import("./pages/AIMeditation"));
 const AIMeditationChat = lazy(() => import("./pages/AIMeditationChat"));
 const Stories = lazy(() => import("./pages/Stories"));
 const StoryDetail = lazy(() => import("./pages/StoryDetail"));
+const StoryMeditation = lazy(() => import("./pages/StoryMeditation"));
 const MeditationDashboardPage = lazy(() => import("./pages/MeditationDashboardPage"));
 
 const queryClient = new QueryClient();
@@ -172,6 +173,7 @@ const App = () => {
                 <Route path="/sleep-stories" element={<SleepStories />} />
                 <Route path="/stories" element={<Stories />} />
                 <Route path="/story-detail" element={<StoryDetail />} />
+                <Route path="/story-meditation" element={<StoryMeditation />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/community" element={<Community />} />
