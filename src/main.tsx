@@ -1,10 +1,13 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
 import { Toaster } from 'sonner';
+
+// Ensure the app works in both development and production environments
+const isProduction = import.meta.env.PROD;
 
 // Make sure we have a valid DOM element
 const rootElement = document.getElementById("root");
@@ -16,9 +19,9 @@ const root = createRoot(rootElement);
 // Render with React.StrictMode
 root.render(
   <React.StrictMode>
-    <HashRouter>
+    <BrowserRouter>
       <App />
       <Toaster position="top-center" />
-    </HashRouter>
+    </BrowserRouter>
   </React.StrictMode>
 );
