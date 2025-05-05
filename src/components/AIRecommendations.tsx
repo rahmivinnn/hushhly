@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sparkles, Brain, ArrowRight, Play, Calendar, Clock, MessageSquare } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Sparkles, Brain, ArrowRight, Play, Calendar, Clock, MessageSquare, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { aiRecommendationService, AIRecommendation, AIInsight, AIPersonalizedPlan } from '@/services/aiRecommendationService';
 import { motion, AnimatePresence } from 'framer-motion';
-import AIChat from './AIChat';
+import MeditationChat from './MeditationChat';
 import InteractiveTips from './InteractiveTips';
 import ScheduleModal from './ScheduleModal';
 
@@ -16,10 +16,12 @@ interface AIRecommendationsProps {
 
 const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
   const userId = user?.id || 'guest';
 
+  // State for full page view
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [activePlan, setActivePlan] = useState<AIPersonalizedPlan | null>(null);
@@ -30,26 +32,45 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [recommendationToSchedule, setRecommendationToSchedule] = useState<AIRecommendation | null>(null);
 
+  // State for overlay view (from AIRecommendation)
+  const [isOverlayMode, setIsOverlayMode] = useState(!!onClose);
+
+  // Get gradient and meditation type from location state or use defaults
+  const { meditationType, gradient } = location.state || {
+    meditationType: 'Meditation',
+    duration: '10 Min',
+    gradient: 'from-cyan-500 to-blue-600'
+  };
+
   useEffect(() => {
     // Simulate AI processing time
     setIsLoading(true);
 
     setTimeout(() => {
-      // Get personalized recommendations
-      const personalizedRecommendations = aiRecommendationService.getPersonalizedRecommendations(userId, 3);
-      setRecommendations(personalizedRecommendations);
+      if (isOverlayMode) {
+        // For overlay mode, just get a single recommendation and show tips immediately
+        const personalizedRecommendations = aiRecommendationService.getPersonalizedRecommendations(userId, 1);
+        if (personalizedRecommendations.length > 0) {
+          setCurrentRecommendation(personalizedRecommendations[0]);
+          setShowTips(true);
+        }
+      } else {
+        // For full page view, get all recommendations, insights, and plan
+        const personalizedRecommendations = aiRecommendationService.getPersonalizedRecommendations(userId, 3);
+        setRecommendations(personalizedRecommendations);
 
-      // Get insights
-      const personalizedInsights = aiRecommendationService.getPersonalizedInsights(userId, 2);
-      setInsights(personalizedInsights);
+        // Get insights
+        const personalizedInsights = aiRecommendationService.getPersonalizedInsights(userId, 2);
+        setInsights(personalizedInsights);
 
-      // Get active plan
-      const plan = aiRecommendationService.getActivePersonalizedPlan(userId);
-      setActivePlan(plan);
+        // Get active plan
+        const plan = aiRecommendationService.getActivePersonalizedPlan(userId);
+        setActivePlan(plan);
+      }
 
       setIsLoading(false);
     }, 1500);
-  }, [userId]);
+  }, [userId, isOverlayMode]);
 
   const handleStartMeditation = (recommendation: AIRecommendation) => {
     toast({
@@ -116,6 +137,57 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
     });
   };
 
+  // Render overlay mode (previously AIRecommendation component)
+  if (isOverlayMode) {
+    return (
+      <div className={`fixed inset-0 z-50 bg-gradient-to-br ${gradient} overflow-hidden`}>
+        {/* Header */}
+        <motion.div
+          className="flex items-center justify-between px-4 py-3"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <button
+            onClick={onClose}
+            className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <motion.h1
+            className="text-white text-lg font-semibold"
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {meditationType}
+          </motion.h1>
+          <button
+            onClick={() => setShowChat(true)}
+            className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+          >
+            <MessageSquare size={24} />
+          </button>
+        </motion.div>
+
+        {/* Main Content - Interactive Tips */}
+        {showTips && currentRecommendation && (
+          <InteractiveTips
+            onClose={onClose}
+            category={currentRecommendation.title}
+            gradient={gradient}
+          />
+        )}
+
+        {/* Meditation Chat overlay */}
+        {showChat && (
+          <MeditationChat onClose={() => setShowChat(false)} isOpen={true} />
+        )}
+      </div>
+    );
+  }
+
+  // Render full page mode (original AIRecommendations component)
   return (
     <div className="bg-white min-h-screen pb-20">
       {/* Header */}
@@ -318,8 +390,8 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({ onClose }) => {
         </div>
       )}
 
-      {/* AI Chat */}
-      <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
+      {/* Meditation Chat */}
+      <MeditationChat isOpen={showChat} onClose={() => setShowChat(false)} />
 
       {/* Interactive Tips */}
       {showTips && currentRecommendation && (

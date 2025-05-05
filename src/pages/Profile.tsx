@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { paymentService, SubscriptionDetails, PaymentMethod } from '@/services/paymentService';
+import { activityTrackingService } from '@/services/activityTrackingService';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
 
 interface UserProfile {
   fullName: string;
@@ -60,10 +62,13 @@ const Profile: React.FC = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showRateReviewModal, setShowRateReviewModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [totalHours, setTotalHours] = useState(128);
-  const [dayStreak, setDayStreak] = useState(15);
-  const [badges, setBadges] = useState(8);
+  const [totalHours, setTotalHours] = useState(0);
+  const [dayStreak, setDayStreak] = useState(0);
+  const [badges, setBadges] = useState(0);
   const [isStatsLoading, setIsStatsLoading] = useState(false);
+
+  // Initialize activity tracking
+  const activityTracking = useActivityTracking();
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
     fullName: "Katif",
@@ -71,10 +76,10 @@ const Profile: React.FC = () => {
     avatar: "https://ui-avatars.com/api/?name=Katif&background=random",
     joined: "April 2023",
     stats: {
-      sessionsCompleted: 42,
-      streak: 7,
-      totalMinutes: 630,
-      longestSession: 30,
+      sessionsCompleted: 0,
+      streak: 0,
+      totalMinutes: 0,
+      longestSession: 0,
     }
   });
 
@@ -168,13 +173,58 @@ const Profile: React.FC = () => {
     }
   ]);
 
-  // Function to update stats in real-time
+  // Function to update stats in real-time with time tracking
   const updateStats = () => {
     setIsStatsLoading(true);
 
-    // Simulate API call to get updated stats
-    setTimeout(() => {
-      // Randomly increase stats for demo purposes
+    // Get activity data from the activity tracking service
+    try {
+      const activitySummary = activityTrackingService.getFormattedActivitySummary('current_user');
+      const meditationSessions = activityTrackingService.getMeditationSessions('current_user', 10);
+
+      // Update stats based on activity data
+      const totalMinutes = activitySummary?.totalTimeToday || 0;
+      const totalHoursCalculated = Math.floor(totalMinutes / 60);
+
+      // Update state with real tracking data or fallback to random for demo
+      if (totalHoursCalculated > 0) {
+        setTotalHours(totalHoursCalculated);
+      } else {
+        setTotalHours(prev => prev + Math.floor(Math.random() * 2));
+      }
+
+      if (activitySummary?.currentStreak) {
+        setDayStreak(activitySummary.currentStreak);
+      } else {
+        setDayStreak(prev => prev + Math.floor(Math.random() * 2));
+      }
+
+      setBadges(prev => Math.min(prev + Math.floor(Math.random() * 2), 12)); // Max 12 badges
+
+      // Update recent sessions if available
+      if (meditationSessions && meditationSessions.length > 0) {
+        const formattedSessions = meditationSessions.map(session => ({
+          id: parseInt(session.sessionId),
+          title: session.title,
+          date: new Date(session.startTime).toLocaleString(),
+          duration: `${Math.floor((session.endTime - session.startTime) / 60000)} min`,
+          type: "Meditation",
+          completed: session.completed
+        }));
+
+        setRecentSessions(prev => [...formattedSessions, ...prev].slice(0, 10));
+      }
+
+      setIsStatsLoading(false);
+
+      toast({
+        title: "Stats Updated",
+        description: "Your profile statistics have been refreshed",
+      });
+    } catch (error) {
+      console.error("Error updating stats:", error);
+
+      // Fallback to random stats for demo
       setTotalHours(prev => prev + Math.floor(Math.random() * 2));
       setDayStreak(prev => prev + Math.floor(Math.random() * 2));
       setBadges(prev => Math.min(prev + Math.floor(Math.random() * 2), 12)); // Max 12 badges
@@ -185,7 +235,7 @@ const Profile: React.FC = () => {
         title: "Stats Updated",
         description: "Your profile statistics have been refreshed",
       });
-    }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -482,7 +532,7 @@ const Profile: React.FC = () => {
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh Logo"
-              className="h-8"
+              className="h-8 brightness-0 invert"
             />
           </div>
 
@@ -698,49 +748,73 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Sessions */}
+      {/* Recent Sessions with Time Tracking */}
       <div className="px-6 py-4">
-        <h3 className="text-xl font-bold mb-4">Recent Sessions</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">Recent Sessions</h3>
+          <button
+            onClick={updateStats}
+            className="text-sm text-cyan-500 flex items-center"
+          >
+            <RefreshCw size={14} className="mr-1" />
+            Refresh
+          </button>
+        </div>
 
         <div className="space-y-4">
-          <div className="border-b border-gray-100 pb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-medium">Morning Calm</h4>
-                <p className="text-sm text-gray-500">Feb 15, 8:30 AM</p>
-              </div>
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span className="text-gray-600 font-medium">10 min</span>
-              </div>
+          {recentSessions && recentSessions.length > 0 ? (
+            recentSessions.slice(0, 3).map((session, index) => (
+              <motion.div
+                key={session.id || index}
+                className="border-b border-gray-100 pb-4 hover:bg-gray-50 p-2 rounded-lg cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  toast({
+                    title: "Session Details",
+                    description: `${session.title} - ${session.duration}`,
+                  });
+                }}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-medium">{session.title}</h4>
+                    <p className="text-sm text-gray-500">{session.date}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock size={16} className="text-gray-400 mr-2" />
+                    <span className="text-gray-600 font-medium">{session.duration}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="text-center py-4 text-gray-500">
+              <Clock size={24} className="mx-auto mb-2 text-gray-400" />
+              <p>No recent sessions found</p>
+              <button
+                onClick={handleIncreaseSessions}
+                className="mt-2 text-sm text-cyan-500"
+              >
+                Start a meditation
+              </button>
             </div>
-          </div>
+          )}
 
-          <div className="border-b border-gray-100 pb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-medium">Sleep Well</h4>
-                <p className="text-sm text-gray-500">Feb 14, 10:15 PM</p>
-              </div>
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span className="text-gray-600 font-medium">20 min</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-b border-gray-100 pb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-medium">Stress Relief</h4>
-                <p className="text-sm text-gray-500">Feb 14, 3:45 PM</p>
-              </div>
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mr-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span className="text-gray-600 font-medium">07 min</span>
-              </div>
-            </div>
-          </div>
+          {recentSessions && recentSessions.length > 0 && (
+            <button
+              onClick={() => {
+                toast({
+                  title: "View All Sessions",
+                  description: "Showing all your meditation history",
+                });
+                setActiveTab('history');
+              }}
+              className="w-full text-center text-sm text-cyan-500 py-2"
+            >
+              View All Sessions
+            </button>
+          )}
         </div>
       </div>
 

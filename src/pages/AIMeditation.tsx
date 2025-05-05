@@ -4,7 +4,7 @@ import { ArrowLeft, Sparkles, Brain, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BottomNavigation from '@/components/BottomNavigation';
 import AIRecommendations from '@/components/AIRecommendations';
-import AIChat from '@/components/AIChat';
+import MeditationChat from '@/components/MeditationChat';
 import { motion } from 'framer-motion';
 
 const AIMeditation: React.FC = () => {
@@ -48,8 +48,8 @@ const AIMeditation: React.FC = () => {
         <AIRecommendations />
       </div>
 
-      {/* AI Chat */}
-      <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
+      {/* Meditation Chat */}
+      <MeditationChat isOpen={showChat} onClose={() => setShowChat(false)} />
 
       {/* Bottom Navigation */}
       <BottomNavigation />

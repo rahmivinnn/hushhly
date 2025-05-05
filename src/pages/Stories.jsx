@@ -1,88 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ArrowLeft, Bell, Moon } from 'lucide-react';
+import { Search, ArrowLeft, Bell, Moon, Lock } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
+import { sleepStories, getStoriesByCategory } from '@/data/sleepStories';
 
 const Stories = () => {
   const navigate = useNavigate();
-
-  // Sample story data
-  const stories = [
-    {
-      id: 1,
-      title: 'The Whispering Forest',
-      description: 'A walk through a magical, quiet woodland.',
-      duration: '15 min',
-      image: '/lovable-uploads/whispering-forest.svg',
-      category: 'featured'
-    },
-    {
-      id: 2,
-      title: 'Starlit Dreams',
-      description: 'Journey through the stars in a peaceful night.',
-      duration: '15 min',
-      image: '/lovable-uploads/starlit-dreams.svg',
-      category: 'featured'
-    },
-    {
-      id: 3,
-      title: 'Ocean Whispers',
-      description: 'Relax to the gentle sounds of ocean waves.',
-      duration: '15 min',
-      image: '/lovable-uploads/ocean-whispers.svg',
-      category: 'short'
-    },
-    {
-      id: 4,
-      title: 'Mountain Serenity',
-      description: 'Find peace in the majestic mountains.',
-      duration: '15 min',
-      image: '/lovable-uploads/mountain-serenity.svg',
-      category: 'short'
-    },
-    {
-      id: 5,
-      title: 'Desert Journey',
-      description: 'A calming trek through peaceful desert landscapes.',
-      duration: '30 min',
-      image: '/lovable-uploads/desert-journey.svg',
-      category: 'long'
-    },
-    {
-      id: 6,
-      title: 'Rainforest Adventure',
-      description: 'Explore the sounds and sensations of a rainforest.',
-      duration: '30 min',
-      image: '/lovable-uploads/rainforest-adventure.svg',
-      category: 'long'
-    },
-    {
-      id: 7,
-      title: 'The Friendly Dragon',
-      description: 'A heartwarming tale for parents and children.',
-      duration: '20 min',
-      image: '/lovable-uploads/friendly-dragon.svg',
-      category: 'family'
-    },
-    {
-      id: 8,
-      title: 'Magical Garden',
-      description: 'Discover the wonders of a magical garden together.',
-      duration: '20 min',
-      image: '/lovable-uploads/magical-garden.svg',
-      category: 'family'
-    }
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Filter stories by category
-  const featuredStories = stories.filter(story => story.category === 'featured');
-  const shortStories = stories.filter(story => story.category === 'short');
-  const longStories = stories.filter(story => story.category === 'long');
-  const familyStories = stories.filter(story => story.category === 'family');
+  const featuredStories = getStoriesByCategory('featured');
+  const shortStories = getStoriesByCategory('short');
+  const longStories = getStoriesByCategory('long');
+  const familyStories = getStoriesByCategory('family');
 
   // Handle story click
   const handleStoryClick = (story) => {
-    navigate('/story-detail', { state: { story } });
+    if (story.isPremium) {
+      // Navigate to subscription page for premium stories
+      navigate('/subscription');
+    } else {
+      // Navigate to story detail page for free stories
+      navigate('/story-detail', { state: { story } });
+    }
   };
 
   // Handle back button
@@ -107,7 +47,7 @@ const Stories = () => {
               <img
                 src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
                 alt="Shh Logo"
-                className="h-8 brightness-0 invert"
+                className="h-8" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
               />
             </div>
 
@@ -137,6 +77,8 @@ const Stories = () => {
             type="text"
             placeholder="Search Stories"
             className="w-full py-2 pl-10 pr-4 bg-gray-100 rounded-full text-sm focus:outline-none"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
@@ -146,12 +88,8 @@ const Stories = () => {
           onClick={() => handleStoryClick(featuredStories[0])}
         >
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white">
-              <img
-                src={featuredStories[0].image}
-                alt={featuredStories[0].title}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-white bg-blue-600 flex items-center justify-center">
+              <span className="text-6xl text-white">{featuredStories[0].icon}</span>
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white">
@@ -164,7 +102,12 @@ const Stories = () => {
         <section className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Featured Stories</h2>
-            <button className="text-blue-500 text-sm">View All</button>
+            <button
+              className="text-blue-500 text-sm"
+              onClick={() => navigate('/story-list')}
+            >
+              View All
+            </button>
           </div>
           <div className="space-y-3">
             {featuredStories.map(story => (
@@ -173,15 +116,16 @@ const Stories = () => {
                 className="flex items-center bg-white p-3 rounded-lg shadow-sm"
                 onClick={() => handleStoryClick(story)}
               >
-                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-blue-500">
-                  <img
-                    src={story.image}
-                    alt={story.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-blue-500 flex items-center justify-center text-white">
+                  <span className="text-xl">{story.icon}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">{story.title}</h3>
+                  <div className="flex items-center">
+                    <h3 className="font-medium">{story.title}</h3>
+                    {story.isPremium && (
+                      <Lock size={14} className="ml-2 text-amber-500" />
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">{story.duration}</p>
                 </div>
                 <button className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
@@ -196,7 +140,12 @@ const Stories = () => {
         <section className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Short Stories for Quick Sleep</h2>
-            <button className="text-blue-500 text-sm">View All</button>
+            <button
+              className="text-blue-500 text-sm"
+              onClick={() => navigate('/story-list')}
+            >
+              View All
+            </button>
           </div>
           <div className="space-y-3">
             {shortStories.map(story => (
@@ -205,15 +154,16 @@ const Stories = () => {
                 className="flex items-center bg-white p-3 rounded-lg shadow-sm"
                 onClick={() => handleStoryClick(story)}
               >
-                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-purple-500">
-                  <img
-                    src={story.image}
-                    alt={story.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-purple-500 flex items-center justify-center text-white">
+                  <span className="text-xl">{story.icon}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">{story.title}</h3>
+                  <div className="flex items-center">
+                    <h3 className="font-medium">{story.title}</h3>
+                    {story.isPremium && (
+                      <Lock size={14} className="ml-2 text-amber-500" />
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">{story.duration}</p>
                 </div>
                 <button className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
@@ -228,7 +178,12 @@ const Stories = () => {
         <section className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Long Relaxing Tales</h2>
-            <button className="text-blue-500 text-sm">View All</button>
+            <button
+              className="text-blue-500 text-sm"
+              onClick={() => navigate('/story-list', { state: { category: 'featured' } })}
+            >
+              View All
+            </button>
           </div>
           <div className="space-y-3">
             {longStories.map(story => (
@@ -237,15 +192,16 @@ const Stories = () => {
                 className="flex items-center bg-white p-3 rounded-lg shadow-sm"
                 onClick={() => handleStoryClick(story)}
               >
-                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-amber-500">
-                  <img
-                    src={story.image}
-                    alt={story.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-amber-500 flex items-center justify-center text-white">
+                  <span className="text-xl">{story.icon}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">{story.title}</h3>
+                  <div className="flex items-center">
+                    <h3 className="font-medium">{story.title}</h3>
+                    {story.isPremium && (
+                      <Lock size={14} className="ml-2 text-amber-500" />
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">{story.duration}</p>
                 </div>
                 <button className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
@@ -260,7 +216,12 @@ const Stories = () => {
         <section className="mb-20">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Parent & Child Bonding Stories</h2>
-            <button className="text-blue-500 text-sm">View All</button>
+            <button
+              className="text-blue-500 text-sm"
+              onClick={() => navigate('/story-list', { state: { category: 'short' } })}
+            >
+              View All
+            </button>
           </div>
           <div className="space-y-3">
             {familyStories.map(story => (
@@ -269,15 +230,16 @@ const Stories = () => {
                 className="flex items-center bg-white p-3 rounded-lg shadow-sm"
                 onClick={() => handleStoryClick(story)}
               >
-                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-pink-500">
-                  <img
-                    src={story.image}
-                    alt={story.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-12 h-12 rounded-lg overflow-hidden mr-3 bg-pink-500 flex items-center justify-center text-white">
+                  <span className="text-xl">{story.icon}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">{story.title}</h3>
+                  <div className="flex items-center">
+                    <h3 className="font-medium">{story.title}</h3>
+                    {story.isPremium && (
+                      <Lock size={14} className="ml-2 text-amber-500" />
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">{story.duration}</p>
                 </div>
                 <button className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">

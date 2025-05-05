@@ -45,11 +45,11 @@ const Index = () => {
   const waveformRef = useRef<NodeJS.Timeout | null>(null);
   const [waveformData, setWaveformData] = useState<number[]>([]);
   const { toast } = useToast();
-  
+
   // Get username from local storage
   const storedUser = localStorage.getItem('user');
   const userName = storedUser ? JSON.parse(storedUser).fullName || JSON.parse(storedUser).name || "Guest" : "Guest";
-  
+
   // Current meditation info
   const currentTrack = meditationTracks[currentTrackIndex];
 
@@ -71,27 +71,27 @@ const Index = () => {
   // Initialize waveform data
   useEffect(() => {
     // Generate random initial waveform data
-    const initialWaveform = Array.from({ length: 50 }, () => 
+    const initialWaveform = Array.from({ length: 50 }, () =>
       Math.max(20, Math.min(90, 30 + Math.random() * 60))
     );
     setWaveformData(initialWaveform);
-    
+
     // Start waveform animation
     startWaveformAnimation();
-    
+
     return () => {
       if (waveformRef.current) {
         clearInterval(waveformRef.current);
       }
     };
   }, []);
-  
+
   // Animate waveform
   const startWaveformAnimation = () => {
     if (waveformRef.current) {
       clearInterval(waveformRef.current);
     }
-    
+
     waveformRef.current = setInterval(() => {
       setWaveformData(prevData => {
         const newData = [...prevData];
@@ -121,7 +121,7 @@ const Index = () => {
       description: "Your meditation session is beginning now."
     });
   };
-  
+
   const handleNext = () => {
     setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % meditationTracks.length);
     if (isPlaying) {
@@ -131,9 +131,9 @@ const Index = () => {
       });
     }
   };
-  
+
   const handlePrevious = () => {
-    setCurrentTrackIndex((prevIndex) => 
+    setCurrentTrackIndex((prevIndex) =>
       prevIndex === 0 ? meditationTracks.length - 1 : prevIndex - 1
     );
     if (isPlaying) {
@@ -144,20 +144,20 @@ const Index = () => {
       });
     }
   };
-  
+
   const handleShuffle = () => {
     let newIndex;
     // Make sure we don't get the same track again
     do {
       newIndex = Math.floor(Math.random() * meditationTracks.length);
     } while (newIndex === currentTrackIndex && meditationTracks.length > 1);
-    
+
     setCurrentTrackIndex(newIndex);
     toast({
       title: "Random Track Selected",
       description: `Now playing: ${meditationTracks[newIndex].title}`
     });
-    
+
     // Start playing the new track
     setIsPlaying(true);
   };
@@ -183,35 +183,35 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Top Section with blue gradient background */}
-      <div 
+      <div
         className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-b-[30%] pb-48 pt-0 relative overflow-visible"
         style={{ height: '60%' }}
       >
         {/* Header with menu, bell and trophy icons */}
         <div className="px-4 pt-4 pb-2 flex justify-between items-center">
-          <button 
+          <button
             onClick={toggleSideMenu}
             className="p-2 text-white"
           >
             <Menu size={24} />
           </button>
-          
+
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-              alt="Shh Logo" 
-              className="h-8" 
+            <img
+              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+              alt="Shh Logo"
+              className="h-8" style={{ filter: 'invert(30%) sepia(36%) saturate(1137%) hue-rotate(210deg) brightness(94%) contrast(85%)' }}
             />
           </div>
-          
+
           <div className="flex items-center space-x-4">
-            <button 
+            <button
               onClick={handleNotificationClick}
               className="text-white"
             >
               <Bell size={20} />
             </button>
-            <button 
+            <button
               onClick={handleTrophyClick}
               className="text-yellow-400"
             >
@@ -219,30 +219,30 @@ const Index = () => {
             </button>
           </div>
         </div>
-        
+
         {/* Main Content - increased vertical spacing */}
         <div className="mt-8 flex flex-col items-center justify-center px-4">
           <h1 className="text-white text-xl font-semibold mb-1">{currentTrack.title}</h1>
           <p className="text-white text-sm mb-6">{currentTrack.description}</p>
-          
+
           {/* Circular Image - adjusted to be fully visible */}
           <div className="relative mb-10">
             <div className="w-48 h-48 rounded-full bg-white p-2 shadow-lg">
               <div className="w-full h-full rounded-full overflow-hidden">
-                <img 
+                <img
                   key={currentTrack.id} // Force re-render on image change
-                  src={currentTrack.image} 
-                  alt="Meditation Visualization" 
-                  className="w-full h-full object-cover transition-opacity duration-500" 
+                  src={currentTrack.image}
+                  alt="Meditation Visualization"
+                  className="w-full h-full object-cover transition-opacity duration-500"
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       {/* Bottom Section with white background - aligned to frequency visualization */}
-      <div className="flex-1 bg-white rounded-t-[40px] pt-16 px-6 z-10 overflow-y-auto pb-24">        
+      <div className="flex-1 bg-white rounded-t-[40px] pt-16 px-6 z-10 overflow-y-auto pb-24">
         {/* Waveform Visualization - adjusted position */}
         <div className="w-full mt-6">
           <div className="h-16 w-full">
@@ -251,14 +251,14 @@ const Index = () => {
                 // Calculate if this bar is in the "active" section (first 40%)
                 const isActive = i < waveformData.length * 0.4;
                 return (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="h-full flex items-center"
                     style={{ width: `${100 / waveformData.length}%` }}
                   >
-                    <div 
+                    <div
                       className={`w-full ${isActive ? 'bg-blue-400' : 'bg-gray-200'}`}
-                      style={{ 
+                      style={{
                         height: `${height}%`,
                         borderRadius: '2px',
                         transition: 'height 0.3s ease'
@@ -270,26 +270,26 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Player Controls */}
         <div className="mt-8 flex justify-between items-center px-4">
-          <button 
+          <button
             onClick={handleShuffle}
             className="text-gray-400 hover:text-gray-600 p-2 active:scale-95 transition-transform group"
             aria-label="Shuffle"
           >
             <Shuffle size={20} className="group-hover:text-blue-500 transition-colors" />
           </button>
-          
-          <button 
+
+          <button
             onClick={handlePrevious}
             className="text-gray-400 hover:text-gray-600 p-2 active:scale-95 transition-transform"
             aria-label="Previous"
           >
             <SkipBack size={24} />
           </button>
-          
-          <button 
+
+          <button
             onClick={handlePlayPause}
             className="bg-blue-400 hover:bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-md active:scale-95 transition-transform"
             aria-label={isPlaying ? "Pause" : "Play"}
@@ -300,26 +300,26 @@ const Index = () => {
               <Play size={20} fill="white" className="ml-1" />
             )}
           </button>
-          
-          <button 
+
+          <button
             onClick={handleNext}
             className="text-gray-400 hover:text-gray-600 p-2 active:scale-95 transition-transform"
             aria-label="Next"
           >
             <SkipForward size={24} />
           </button>
-          
-          <button 
+
+          <button
             className="text-gray-400 hover:text-gray-600 p-2 active:scale-95 transition-transform"
             aria-label="Repeat"
           >
             <Repeat size={20} />
           </button>
         </div>
-        
+
         {/* Start Meditation Button */}
         <div className="mt-10 px-4 text-center">
-          <button 
+          <button
             onClick={handleStartMeditation}
             className="bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 px-6 w-full font-medium shadow-md active:scale-98 transition-transform"
           >
@@ -327,14 +327,14 @@ const Index = () => {
           </button>
         </div>
       </div>
-      
+
       {/* Side Menu */}
-      <SideMenu 
-        isOpen={isSideMenuOpen} 
-        onClose={() => setIsSideMenuOpen(false)} 
+      <SideMenu
+        isOpen={isSideMenuOpen}
+        onClose={() => setIsSideMenuOpen(false)}
         userName={userName}
       />
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

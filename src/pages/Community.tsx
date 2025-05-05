@@ -38,7 +38,7 @@ interface Post {
 
 // Sample user names for creating demo data
 const userNames = [
-  "Sarah Johnson", "Mike Peterson", "Emma Williams", "David Chen", 
+  "Sarah Johnson", "Mike Peterson", "Emma Williams", "David Chen",
   "Lisa Rodriguez", "Kevin Patel", "Jessica Kim", "Robert Wilson",
   "Olivia Garcia", "Thomas Brown", "Sophia Nguyen", "Daniel Jackson"
 ];
@@ -78,14 +78,14 @@ const Community: React.FC = () => {
   const [replyText, setReplyText] = useState('');
   const [activePostId, setActivePostId] = useState<number | null>(null);
   const [communityMembers, setCommunityMembers] = useState<{id: number, name: string, avatar: string, isActive: boolean}[]>([]);
-  
+
   // Generate random timestamps within the last week
   const getRandomDate = (): Date => {
     const now = new Date();
     const randomMinutes = Math.floor(Math.random() * 10080); // Minutes in a week
     return new Date(now.getTime() - randomMinutes * 60000);
   };
-  
+
   // Format timestamps in a human-readable way
   const getTimestamp = (date: Date): string => {
     const now = new Date();
@@ -93,7 +93,7 @@ const Community: React.FC = () => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-    
+
     if (diffMins < 1) {
       return 'Just now';
     } else if (diffMins < 60) {
@@ -104,13 +104,13 @@ const Community: React.FC = () => {
       return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     } else {
       // For older posts, show actual date
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
       });
     }
   };
-  
+
   // Generate sample comments for posts
   const generateComments = (postId: number, count: number): Comment[] => {
     const comments: Comment[] = [];
@@ -118,7 +118,7 @@ const Community: React.FC = () => {
       const randomUser = Math.floor(Math.random() * userNames.length);
       const userId = randomUser + 1;
       const commentDate = getRandomDate();
-      
+
       comments.push({
         id: postId * 100 + i,
         userId,
@@ -144,7 +144,7 @@ const Community: React.FC = () => {
     }
     return comments;
   };
-  
+
   // Initialize posts
   useEffect(() => {
     // Simulate loading delay
@@ -173,7 +173,7 @@ const Community: React.FC = () => {
       setIsLoading(false);
     }, 500);
   }, []);
-  
+
   // Generate community members
   useEffect(() => {
     const members = userNames.map((name, index) => ({
@@ -184,41 +184,41 @@ const Community: React.FC = () => {
     }));
     setCommunityMembers(members);
   }, []);
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-  
+
   const handleLike = (id: number) => {
     setAllPosts(prevPosts =>
       prevPosts.map(post =>
         post.id === id
-          ? { 
-              ...post, 
-              isLiked: !post.isLiked, 
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1 
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1
             }
           : post
       )
     );
-    
+
     toast({
       title: "Post Liked",
       description: "Your appreciation has been recorded.",
     });
   };
-  
+
   const handleLikeComment = (postId: number, commentId: number) => {
     setAllPosts(prevPosts =>
       prevPosts.map(post =>
         post.id === postId
-          ? { 
-              ...post, 
-              commentsList: post.commentsList.map(comment => 
+          ? {
+              ...post,
+              commentsList: post.commentsList.map(comment =>
                 comment.id === commentId
                   ? {
                       ...comment,
@@ -232,7 +232,7 @@ const Community: React.FC = () => {
       )
     );
   };
-  
+
   const handleComment = (id: number) => {
     setAllPosts(prevPosts =>
       prevPosts.map(post =>
@@ -241,23 +241,23 @@ const Community: React.FC = () => {
           : post
       )
     );
-    
+
     setActivePostId(id);
   };
-  
+
   const handleShare = (id: number) => {
     toast({
       title: "Share Post",
       description: "Sharing options would appear here.",
     });
-    
+
     setAllPosts(prevPosts =>
       prevPosts.map(post =>
         post.id === id ? { ...post, shares: post.shares + 1 } : post
       )
     );
   };
-  
+
   const handleFollow = (userId: number) => {
     setFollowedUsers(prev => {
       if (prev.includes(userId)) {
@@ -292,10 +292,10 @@ const Community: React.FC = () => {
       });
       return;
     }
-    
+
     // Show success state
     setGroupCreationSuccess(true);
-    
+
     // After showing success message, reset and close modal
     setTimeout(() => {
       setGroupCreationSuccess(false);
@@ -303,10 +303,10 @@ const Community: React.FC = () => {
       setGroupName('');
       setGroupDescription('');
       setGroupPrivacy('public');
-      
+
       // Update the active tab to show groups
       setActiveTab('groups');
-      
+
       toast({
         title: "Group Created",
         description: `Your group "${groupName}" has been created successfully.`,
@@ -331,10 +331,10 @@ const Community: React.FC = () => {
     });
     setShowShareModal(false);
   };
-  
+
   const handleSubmitReply = () => {
     if (!replyText.trim() || !activePostId) return;
-    
+
     const newComment: Comment = {
       id: Math.floor(Math.random() * 10000) + 1000,
       userId: 0, // Current user
@@ -346,12 +346,12 @@ const Community: React.FC = () => {
       isLiked: false,
       createdAt: new Date()
     };
-    
+
     setAllPosts(prevPosts =>
       prevPosts.map(post =>
         post.id === activePostId
-          ? { 
-              ...post, 
+          ? {
+              ...post,
               commentsList: [newComment, ...post.commentsList],
               comments: post.comments + 1,
               showComments: true
@@ -359,15 +359,15 @@ const Community: React.FC = () => {
           : post
       )
     );
-    
+
     setReplyText('');
-    
+
     toast({
       title: "Reply Posted",
       description: "Your reply has been added to the conversation.",
     });
   };
-  
+
   // Filter posts based on active tab and search term
   const getFilteredPosts = () => {
     // First apply search filter
@@ -375,43 +375,41 @@ const Community: React.FC = () => {
       post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.user.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    
+
     // Then apply tab-specific filters
     switch (activeTab) {
       case 'individuals':
         // Sort by timestamp (newest first)
         return filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      
+
       case 'groups':
         // For the demo, just return a subset of posts as if they were from groups
         return filtered.filter(post => post.userId % 3 === 0)
           .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      
+
       default:
         return filtered;
     }
   };
-  
+
   const filteredPosts = getFilteredPosts();
-  
+
   const isFollowing = (userId: number) => followedUsers.includes(userId);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F7F9FB] pb-16">
       {/* Header with navigation */}
       <div className="bg-white py-3 px-4 flex items-center justify-between border-b border-gray-200">
-        <button onClick={toggleMenu} className="text-gray-600">
-          <Menu size={20} />
-        </button>
-        
-        <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-            alt="Shh" 
-            className="h-8"
+        <div className="w-5"></div>
+
+        <div className="flex items-center justify-center flex-1">
+          <img
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+            alt="Shh"
+            className="h-8" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
           />
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <button className="text-gray-600" onClick={() => navigate('/notifications')}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
@@ -421,7 +419,7 @@ const Community: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       <SideMenu isOpen={isMenuOpen} onClose={toggleMenu} userName="User Name" />
 
       {/* Community header */}
@@ -431,14 +429,14 @@ const Community: React.FC = () => {
           <span className="ml-2 text-amber-500">🔒</span>
         </div>
         <div className="flex items-center space-x-2">
-          <button 
+          <button
             onClick={handleCreateGroup}
             className="text-blue-500 bg-blue-50 px-4 py-1 rounded-full text-sm font-medium flex items-center"
           >
             <Users size={14} className="mr-1" />
             Create Group
           </button>
-          <button 
+          <button
             onClick={handleInvite}
             className="text-blue-500 bg-blue-50 px-4 py-1 rounded-full text-sm font-medium flex items-center"
           >
@@ -447,7 +445,7 @@ const Community: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       {/* People in Community Section */}
       <div className="px-4 py-3 bg-white mb-2 shadow-sm">
         <div className="flex justify-between items-center mb-3">
@@ -458,9 +456,9 @@ const Community: React.FC = () => {
           {communityMembers.map(member => (
             <div key={member.id} className="flex flex-col items-center min-w-[60px]">
               <div className="relative">
-                <img 
-                  src={member.avatar} 
-                  alt={member.name} 
+                <img
+                  src={member.avatar}
+                  alt={member.name}
                   className="w-12 h-12 rounded-full border-2 border-white"
                 />
                 {member.isActive && (
@@ -483,22 +481,22 @@ const Community: React.FC = () => {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="flex items-center justify-between mb-6 bg-gray-50 p-3 rounded-lg">
                 <div className="text-sm text-gray-600 truncate flex-1">https://hushhly.com/invite/community?ref=user123</div>
-                <button 
+                <button
                   onClick={handleCopyLink}
                   className="ml-3 text-blue-500 hover:text-blue-600"
                 >
                   <Copy size={18} />
                 </button>
               </div>
-              
+
               <p className="text-sm text-gray-600 mb-4">Share via</p>
-              
+
               <div className="grid grid-cols-4 gap-4">
-                <button 
+                <button
                   onClick={() => handleShareSocial('WhatsApp')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -507,8 +505,8 @@ const Community: React.FC = () => {
                   </div>
                   <span className="text-xs">WhatsApp</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Telegram')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -517,8 +515,8 @@ const Community: React.FC = () => {
                   </div>
                   <span className="text-xs">Telegram</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Twitter')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -527,8 +525,8 @@ const Community: React.FC = () => {
                   </div>
                   <span className="text-xs">Twitter</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => handleShareSocial('Email')}
                   className="flex flex-col items-center justify-center"
                 >
@@ -557,7 +555,7 @@ const Community: React.FC = () => {
                 <X size={20} />
               </button>
             </div>
-            
+
             {groupCreationSuccess ? (
               <div className="p-6 text-center">
                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -571,14 +569,14 @@ const Community: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Group Name*</label>
-                    <Input 
+                    <Input
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
                       className="rounded-lg"
                       placeholder="Enter a name for your group"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
@@ -588,13 +586,13 @@ const Community: React.FC = () => {
                       placeholder="What is this group about?"
                     ></textarea>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Privacy</label>
                     <div className="flex space-x-4">
                       <div className="flex items-center">
                         <input
-                          type="radio" 
+                          type="radio"
                           id="public"
                           name="privacy"
                           value="public"
@@ -606,7 +604,7 @@ const Community: React.FC = () => {
                       </div>
                       <div className="flex items-center">
                         <input
-                          type="radio" 
+                          type="radio"
                           id="private"
                           name="privacy"
                           value="private"
@@ -618,7 +616,7 @@ const Community: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={handleGroupSubmit}
                     className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 font-medium mt-2"
@@ -649,29 +647,29 @@ const Community: React.FC = () => {
       {/* Tabs */}
       <div className="px-4 pt-2">
         <div className="flex space-x-2 mb-3">
-          <button 
-            onClick={() => setActiveTab('individuals')} 
+          <button
+            onClick={() => setActiveTab('individuals')}
             className={`px-4 py-1.5 rounded-full text-sm font-medium ${
-              activeTab === 'individuals' 
-                ? 'bg-blue-500 text-white' 
+              activeTab === 'individuals'
+                ? 'bg-blue-500 text-white'
                 : 'bg-blue-100 text-blue-600'
             }`}
           >
             Individuals
           </button>
-          
-          <button 
-            onClick={() => setActiveTab('groups')} 
+
+          <button
+            onClick={() => setActiveTab('groups')}
             className={`px-4 py-1.5 rounded-full text-sm font-medium ${
-              activeTab === 'groups' 
-                ? 'bg-blue-500 text-white' 
+              activeTab === 'groups'
+                ? 'bg-blue-500 text-white'
                 : 'bg-blue-100 text-blue-600'
             }`}
           >
             Groups
           </button>
         </div>
-        
+
         <div className="mt-2">
           {isLoading ? (
             <div className="text-center py-8">
@@ -683,16 +681,16 @@ const Community: React.FC = () => {
               <div key={post.id} className="bg-white rounded-lg p-4 mb-3 shadow-sm">
                 {/* Post header with user info */}
                 <div className="flex items-start mb-2">
-                  <img 
-                    src={post.avatar || `https://ui-avatars.com/api/?name=${post.user.replace(' ', '+')}&background=random`} 
-                    alt={post.user} 
+                  <img
+                    src={post.avatar || `https://ui-avatars.com/api/?name=${post.user.replace(' ', '+')}&background=random`}
+                    alt={post.user}
                     className="w-10 h-10 rounded-full mr-2"
                   />
                   <div className="flex-1">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-800">{post.user}</p>
                       {!isFollowing(post.userId) && (
-                        <button 
+                        <button
                           onClick={() => handleFollow(post.userId)}
                           className="ml-2 text-blue-500 text-xs font-medium"
                         >
@@ -703,29 +701,29 @@ const Community: React.FC = () => {
                     <p className="text-xs text-gray-500">{post.timestamp}</p>
                   </div>
                 </div>
-                
+
                 {/* Post content */}
                 <p className="text-gray-700 text-sm mb-2">{post.content}</p>
-                
+
                 {/* Interaction buttons */}
                 <div className="flex items-center mt-2 pt-1">
-                  <button 
-                    onClick={() => handleLike(post.id)} 
+                  <button
+                    onClick={() => handleLike(post.id)}
                     className="flex items-center mr-3 text-xs text-gray-500"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={post.isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     <span>{post.likes}</span>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => handleComment(post.id)}
                     className="flex items-center mr-3 text-xs text-gray-500"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                     <span>{post.comments} Replies</span>
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => handleShare(post.id)}
                     className="flex items-center text-xs text-gray-500 ml-auto"
                   >
@@ -733,7 +731,7 @@ const Community: React.FC = () => {
                     <span>Share</span>
                   </button>
                 </div>
-                
+
                 {/* Comments section */}
                 {post.showComments && (
                   <div className="mt-3 pt-2 border-t border-gray-100">
@@ -748,7 +746,7 @@ const Community: React.FC = () => {
                         placeholder="Write a reply..."
                         className="flex-1 bg-gray-100 rounded-full text-sm px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      <button 
+                      <button
                         onClick={handleSubmitReply}
                         disabled={!replyText.trim()}
                         className={`ml-2 ${!replyText.trim() ? 'text-gray-400' : 'text-blue-500'}`}
@@ -756,12 +754,12 @@ const Community: React.FC = () => {
                         <Send size={16} />
                       </button>
                     </div>
-                    
+
                     {post.commentsList.map(comment => (
                       <div key={comment.id} className="flex mb-2">
-                        <img 
-                          src={comment.userAvatar} 
-                          alt={comment.userName} 
+                        <img
+                          src={comment.userAvatar}
+                          alt={comment.userName}
                           className="w-8 h-8 rounded-full mr-2 mt-1"
                         />
                         <div className="flex-1">
@@ -770,7 +768,7 @@ const Community: React.FC = () => {
                             <p className="text-xs text-gray-800">{comment.content}</p>
                           </div>
                           <div className="flex items-center mt-1 text-xs text-gray-500">
-                            <button 
+                            <button
                               onClick={() => handleLikeComment(post.id, comment.id)}
                               className="mr-3 flex items-center"
                             >
@@ -789,8 +787,8 @@ const Community: React.FC = () => {
           : (
             <div className="text-center py-8">
               <p className="text-gray-500">
-                {activeTab === 'groups' 
-                  ? "No group posts found." 
+                {activeTab === 'groups'
+                  ? "No group posts found."
                   : "No posts found matching your search."}
               </p>
             </div>

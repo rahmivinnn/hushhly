@@ -159,15 +159,8 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
 
   const handleSelectMood = (mood: 'overwhelmed' | 'calm' | 'exhausted' | 'anxious' | 'tired') => {
     setSelectedMood(mood);
-    setShowConfetti(true);
 
-    // Trigger confetti effect
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-
+    // More elegant animation without confetti
     // Wait a moment before closing the dialog
     setTimeout(() => {
       onSelectMood(mood);
@@ -178,7 +171,7 @@ const MoodSelectionDialog: React.FC<MoodSelectionDialogProps> = ({
         setSelectedMood(null);
         setShowConfetti(false);
       }, 500);
-    }, 1000);
+    }, 800);
   };
 
   const handleMouseEnter = (id: string) => {

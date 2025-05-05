@@ -4,7 +4,7 @@ import { X, ArrowLeft, Clock, Calendar, Play, ArrowRight, Check, Bell } from 'lu
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import reminderService from '@/services/reminderService';
+import * as reminderService from '@/services/reminderService';
 
 interface Meditation {
   id: string;
@@ -30,6 +30,8 @@ interface CategoryDetailProps {
     description: string;
     subtext: string;
     color: string;
+    promptTitle?: string;
+    promptText?: string;
   };
 }
 
@@ -271,6 +273,28 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     }
   };
 
+  // Get the appropriate color for each category
+  const getCategoryColor = (categoryTitle: string): string => {
+    switch (categoryTitle) {
+      case 'Quick Reset':
+        return 'bg-blue-500';
+      case 'Mindful Parenting':
+        return 'bg-pink-500';
+      case 'Deep Sleep Recovery':
+        return 'bg-indigo-600';
+      case 'Start Your Day Calm':
+        return 'bg-amber-500';
+      case 'Parent–Child Bonding':
+        return 'bg-green-500';
+      case 'Emotional First Aid':
+        return 'bg-red-500';
+      case 'Affirmations & Mantras':
+        return 'bg-purple-500';
+      default:
+        return 'bg-cyan-500';
+    }
+  };
+
   // Generate tips based on category
   const getTips = (): Tip[] => {
     switch (category.title) {
@@ -396,6 +420,48 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
   const meditations = getMeditations();
   const tips = getTips();
 
+  const handleStartCategory = () => {
+    // Get the first meditation for this category
+    const firstMeditation = meditations[0];
+
+    toast({
+      title: `Starting ${category.promptTitle || category.title}`,
+      description: `Beginning your meditation session now.`,
+    });
+
+    setTimeout(() => {
+      navigate('/category-meditation-screen', {
+        state: {
+          title: category.promptTitle || category.title,
+          category: category.title,
+          duration: firstMeditation.duration
+        }
+      });
+    }, 1000);
+  };
+
+  const handleScheduleCategory = () => {
+    // Get the first meditation for this category
+    const firstMeditation = meditations[0];
+    setSelectedMeditation(firstMeditation);
+    setShowScheduleModal(true);
+
+    // Set a default time based on the category
+    if (category.title === 'Deep Sleep Recovery') {
+      setScheduledTime('21:00'); // 9:00 PM
+    } else if (category.title === 'Start Your Day Calm') {
+      setScheduledTime('07:00'); // 7:00 AM
+      setScheduledDate('Tomorrow');
+    } else {
+      // Set default time to current time + 1 hour
+      const now = new Date();
+      now.setHours(now.getHours() + 1);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      setScheduledTime(`${hours}:${minutes}`);
+    }
+  };
+
   const handleStartMeditation = (meditation: Meditation) => {
     toast({
       title: `Starting ${meditation.title}`,
@@ -403,7 +469,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
     });
 
     setTimeout(() => {
-      navigate('/category-meditation', {
+      navigate('/category-meditation-screen', {
         state: {
           title: meditation.title,
           category: category.title,
@@ -473,9 +539,30 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
         selectedMeditation.duration
       );
 
+      // Custom toast messages based on category
+      let toastTitle = "Meditation Scheduled";
+      let toastDescription = `${selectedMeditation.title} scheduled for ${formattedTime}. You'll receive a reminder.`;
+
+      if (category.title === 'Deep Sleep Recovery') {
+        toastTitle = "Sleep Aid Scheduled";
+        toastDescription = `Your sleep meditation has been scheduled for ${formattedTime}. Sweet dreams!`;
+      } else if (category.title === 'Start Your Day Calm') {
+        toastTitle = "Morning Meditation Scheduled";
+        toastDescription = `Your morning mindset reset has been scheduled for ${formattedTime} tomorrow.`;
+      } else if (category.title === 'Parent–Child Bonding') {
+        toastTitle = "Family Session Scheduled";
+        toastDescription = `Your family meditation has been scheduled for ${formattedTime}. Time to connect!`;
+      } else if (category.title === 'Emotional First Aid') {
+        toastTitle = "Emotional Check-In Scheduled";
+        toastDescription = `Your emotional rescue session has been scheduled for ${formattedTime}.`;
+      } else if (category.title === 'Affirmations & Mantras') {
+        toastTitle = "Daily Affirmations Scheduled";
+        toastDescription = `Your affirmation practice has been scheduled for ${formattedTime}.`;
+      }
+
       toast({
-        title: "Meditation Scheduled with Reminder",
-        description: `${selectedMeditation.title} scheduled for ${formattedTime}. You'll receive a reminder.`,
+        title: toastTitle,
+        description: toastDescription,
       });
     } else {
       toast({
@@ -500,12 +587,50 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
           <h1 className="text-xl font-semibold">{category.title}</h1>
           <div className="w-10"></div> {/* For balance */}
         </div>
-        <p className="mt-2 text-sm text-white/90">{category.description}</p>
-        <p className="mt-1 text-sm italic">"{category.subtext}"</p>
+
+        {/* Prompt Title and Text */}
+        <h2 className="mt-3 text-lg font-medium">{category.promptTitle || category.title}</h2>
+        <p className="mt-2 text-sm text-white/90">{category.promptText || category.description}</p>
+
+        {/* Action Buttons */}
+        <div className="flex space-x-3 mt-4">
+          <Button
+            onClick={() => handleScheduleCategory()}
+            className="category-schedule-button flex-1 bg-white/20 hover:bg-white/30 text-white border border-white/40 rounded-full py-2 text-sm flex items-center justify-center"
+          >
+            <Calendar size={16} className="mr-2" />
+            {category.title === 'Deep Sleep Recovery' ? 'Schedule Sleep Aid' :
+             category.title === 'Start Your Day Calm' ? 'Schedule for Tomorrow' :
+             category.title === 'Parent–Child Bonding' ? 'Schedule Family Session' :
+             category.title === 'Emotional First Aid' ? 'Schedule Check-In' :
+             category.title === 'Affirmations & Mantras' ? 'Schedule Daily Reminder' :
+             'Schedule Session'}
+          </Button>
+          <Button
+            onClick={() => handleStartCategory()}
+            className="flex-1 bg-white hover:bg-white/90 text-blue-600 rounded-full py-2 text-sm flex items-center justify-center"
+          >
+            <Play size={16} className="mr-2" fill="currentColor" />
+            {category.title === 'Deep Sleep Recovery' ? 'Start Sleep Meditation' :
+             category.title === 'Start Your Day Calm' ? 'Start Morning Meditation' :
+             category.title === 'Parent–Child Bonding' ? 'Start Together' :
+             category.title === 'Emotional First Aid' ? 'Start Emotional Recovery' :
+             category.title === 'Affirmations & Mantras' ? 'Start Affirmation Session' :
+             'Start Meditation'}
+          </Button>
+        </div>
+
+        <Button
+          onClick={onClose}
+          className="mt-3 w-full bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-full py-2 text-sm"
+        >
+          <ArrowLeft size={16} className="mr-2" />
+          Back to Categories
+        </Button>
       </header>
 
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="flex border-b mt-4">
         <button
           className={`flex-1 py-3 text-center font-medium ${
             activeTab === 'meditations'
@@ -546,7 +671,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
                   className="bg-gray-50 rounded-xl p-4 shadow-sm"
                 >
                   <div className="flex">
-                    <div className="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                    <div className={`w-16 h-16 rounded-lg ${getCategoryColor(category.title)} flex items-center justify-center mr-3 text-white`}>
                       <span className="text-3xl">{getCategoryIcon(category.title)}</span>
                     </div>
                     <div className="flex-1">
@@ -609,7 +734,14 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
             className="bg-white rounded-xl w-full max-w-md shadow-lg"
           >
             <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-semibold">Schedule Meditation</h2>
+              <h2 className="text-lg font-semibold">
+                {category.title === 'Deep Sleep Recovery' ? 'Schedule Sleep Aid' :
+                 category.title === 'Start Your Day Calm' ? 'Schedule Morning Meditation' :
+                 category.title === 'Parent–Child Bonding' ? 'Schedule Family Session' :
+                 category.title === 'Emotional First Aid' ? 'Schedule Emotional Check-In' :
+                 category.title === 'Affirmations & Mantras' ? 'Schedule Daily Affirmations' :
+                 'Schedule Meditation'}
+              </h2>
               <button
                 onClick={() => setShowScheduleModal(false)}
                 className="text-gray-400 hover:text-gray-500"
@@ -621,12 +753,8 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
             <div className="p-4">
               {selectedMeditation && (
                 <div className="flex items-center mb-4 bg-gray-50 p-3 rounded-lg">
-                  <div className="w-12 h-12 rounded-lg overflow-hidden mr-3">
-                    <img
-                      src={selectedMeditation.image}
-                      alt={selectedMeditation.title}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className={`w-12 h-12 rounded-lg mr-3 flex items-center justify-center ${getCategoryColor(category.title)}`}>
+                    <span className="text-2xl text-white">{getCategoryIcon(category.title)}</span>
                   </div>
                   <div>
                     <h3 className="font-medium">{selectedMeditation.title}</h3>
@@ -663,7 +791,12 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ isOpen, onClose, catego
                   onClick={handleSaveSchedule}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-2"
                 >
-                  Schedule Meditation
+                  {category.title === 'Deep Sleep Recovery' ? 'Schedule Sleep Aid' :
+                   category.title === 'Start Your Day Calm' ? 'Schedule Morning Meditation' :
+                   category.title === 'Parent–Child Bonding' ? 'Schedule Family Session' :
+                   category.title === 'Emotional First Aid' ? 'Schedule Emotional Check-In' :
+                   category.title === 'Affirmations & Mantras' ? 'Schedule Daily Affirmations' :
+                   'Schedule Meditation'}
                 </Button>
               </div>
             </div>

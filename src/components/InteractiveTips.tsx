@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from '@/hooks/useAuth';
-import AIChat from './AIChat';
+import MeditationChat from './MeditationChat';
 
 interface InteractiveTipsProps {
   onClose: () => void;
@@ -1309,8 +1309,8 @@ const InteractiveTips: React.FC<InteractiveTipsProps> = ({
         </div>
       )}
 
-      {/* AI Chat overlay */}
-      <AIChat isOpen={showChat} onClose={() => setShowChat(false)} />
+      {/* Meditation Chat overlay */}
+      <MeditationChat isOpen={showChat} onClose={() => setShowChat(false)} />
     </div>
   );
 };

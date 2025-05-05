@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, Clock, X, Check, Calendar, Bell, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { reminderService } from '@/services/reminderService';
+import * as reminderService from '@/services/reminderService';
 
 interface ScheduleModalProps {
   isOpen: boolean;
@@ -34,27 +34,27 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
-    
+
     // Start from the current hour if today is selected
     const isToday = selectedDate.toDateString() === new Date().toDateString();
     const startHour = isToday ? currentHour : 6; // Start from 6 AM if not today
-    
+
     for (let hour = startHour; hour < 24; hour++) {
       const isPM = hour >= 12;
       const hour12 = hour % 12 || 12;
-      
+
       // For the current hour, only show future time slots
       const startMinute = (isToday && hour === currentHour) ? Math.ceil(currentMinute / 15) * 15 : 0;
-      
+
       for (let minute = startMinute; minute < 60; minute += 15) {
         if (isToday && hour === currentHour && minute <= currentMinute) continue;
-        
+
         const formattedMinute = minute.toString().padStart(2, '0');
         const timeString = `${hour12}:${formattedMinute} ${isPM ? 'PM' : 'AM'}`;
         slots.push(timeString);
       }
     }
-    
+
     return slots;
   };
 
@@ -69,9 +69,9 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
       const minute = Math.ceil(now.getMinutes() / 15) * 15;
       const formattedMinute = (minute % 60).toString().padStart(2, '0');
       const period = now.getHours() >= 12 ? 'PM' : 'AM';
-      
+
       setSelectedTime(`${hour}:${formattedMinute} ${period}`);
-      
+
       // Check notification permission
       if ('Notification' in window) {
         setHasNotificationPermission(Notification.permission === 'granted');
@@ -82,7 +82,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   // Handle date selection
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(new Date(e.target.value));
-    
+
     // Reset time slots when date changes
     setSelectedTime('');
   };
@@ -97,7 +97,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
       setHasNotificationPermission(permission === 'granted');
-      
+
       if (permission === 'granted') {
         toast({
           title: "Notifications Enabled",
@@ -115,38 +115,38 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   // Add to Google Calendar
   const addToGoogleCalendar = () => {
     if (!selectedDate || !selectedTime) return;
-    
+
     // Parse the selected time
     const [timeStr, period] = selectedTime.split(' ');
     const [hourStr, minuteStr] = timeStr.split(':');
     let hour = parseInt(hourStr);
     const minute = parseInt(minuteStr);
-    
+
     // Convert to 24-hour format
     if (period === 'PM' && hour !== 12) hour += 12;
     if (period === 'AM' && hour === 12) hour = 0;
-    
+
     // Create start and end dates
     const startDate = new Date(selectedDate);
     startDate.setHours(hour, minute, 0, 0);
-    
+
     // Parse duration (e.g., "15 Min" -> 15)
     const durationMinutes = parseInt(meditationDuration.split(' ')[0]);
-    
+
     const endDate = new Date(startDate);
     endDate.setMinutes(endDate.getMinutes() + durationMinutes);
-    
+
     // Format dates for Google Calendar URL
     const formatDate = (date: Date) => {
       return date.toISOString().replace(/-|:|\.\d+/g, '');
     };
-    
+
     const startDateStr = formatDate(startDate);
     const endDateStr = formatDate(endDate);
-    
+
     // Create Google Calendar URL
     const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Hushhly: ${meditationTitle}`)}&details=${encodeURIComponent(`${meditationDuration} meditation session`)}&dates=${startDateStr}/${endDateStr}&ctz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}`;
-    
+
     // Open Google Calendar in a new tab
     window.open(url, '_blank');
   };
@@ -160,44 +160,44 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Parse the selected time
       const [timeStr, period] = selectedTime.split(' ');
       const [hourStr, minuteStr] = timeStr.split(':');
       let hour = parseInt(hourStr);
       const minute = parseInt(minuteStr);
-      
+
       // Convert to 24-hour format
       if (period === 'PM' && hour !== 12) hour += 12;
       if (period === 'AM' && hour === 12) hour = 0;
-      
+
       // Create a date object for the scheduled time
       const scheduledDate = new Date(selectedDate);
       scheduledDate.setHours(hour, minute, 0, 0);
-      
+
       // Format date and time for display
       const formattedDate = scheduledDate.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
       });
-      
+
       const formattedTime = scheduledDate.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
       });
-      
+
       // Generate a unique ID for this meditation session
       const sessionId = `meditation-${Date.now()}`;
-      
+
       // Save to local storage
       const savedSessions = localStorage.getItem('scheduled_meditations') || '[]';
       const sessions = JSON.parse(savedSessions);
-      
+
       sessions.push({
         id: sessionId,
         title: meditationTitle,
@@ -207,9 +207,9 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
         timestamp: scheduledDate.getTime(),
         completed: false,
       });
-      
+
       localStorage.setItem('scheduled_meditations', JSON.stringify(sessions));
-      
+
       // Schedule reminder if enabled
       if (remindMe && hasNotificationPermission) {
         reminderService.scheduleReminder(
@@ -220,21 +220,21 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           meditationDuration
         );
       }
-      
+
       // Add to Google Calendar if enabled
       if (addToCalendar) {
         addToGoogleCalendar();
       }
-      
+
       // Call the onScheduled callback
       onScheduled(scheduledDate, formattedTime);
-      
+
       // Show success toast
       toast({
         title: "Meditation Scheduled",
         description: `${meditationTitle} scheduled for ${formattedDate} at ${formattedTime}.`,
       });
-      
+
       // Close the modal
       onClose();
     } catch (error) {
@@ -276,13 +276,13 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
               <X size={20} className="text-gray-500" />
             </button>
           </div>
-          
+
           {/* Meditation Info */}
           <div className="bg-blue-50 rounded-xl p-4 mb-6">
             <h3 className="font-semibold text-blue-700">{meditationTitle}</h3>
             <p className="text-sm text-blue-600">{meditationDuration} session</p>
           </div>
-          
+
           {/* Date Selection */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -301,7 +301,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
               />
             </div>
           </div>
-          
+
           {/* Time Selection */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -323,7 +323,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
               ))}
             </div>
           </div>
-          
+
           {/* Options */}
           <div className="space-y-4 mb-6">
             {/* Reminder Option */}
@@ -350,7 +350,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 />
               </button>
             </div>
-            
+
             {/* Google Calendar Option */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -371,7 +371,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
               </button>
             </div>
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex space-x-3">
             <Button

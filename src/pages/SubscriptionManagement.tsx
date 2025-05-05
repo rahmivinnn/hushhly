@@ -22,7 +22,7 @@ const SubscriptionManagement: React.FC = () => {
         const user = JSON.parse(userData);
         const subDetails = paymentService.getSubscriptionDetails(user.email);
         setSubscriptionDetails(subDetails);
-        
+
         // If no subscription, redirect to subscription page
         if (!subDetails) {
           toast({
@@ -58,16 +58,16 @@ const SubscriptionManagement: React.FC = () => {
       if (!userData) {
         throw new Error('User not found');
       }
-      
+
       const user = JSON.parse(userData);
       const canceled = await paymentService.cancelSubscription(user.email);
-      
+
       if (canceled) {
         // Update subscription details
         const subDetails = paymentService.getSubscriptionDetails(user.email);
         setSubscriptionDetails(subDetails);
         setShowCancelModal(false);
-        
+
         toast({
           title: "Subscription Canceled",
           description: "Your subscription has been canceled. You'll still have access until the end of your billing period."
@@ -94,32 +94,32 @@ const SubscriptionManagement: React.FC = () => {
       if (!userData) {
         throw new Error('User not found');
       }
-      
+
       const user = JSON.parse(userData);
-      
+
       // Process payment for annual plan
       const paymentResult = await paymentService.processPayment(
         'annual',
         { method: 'credit_card' }
       );
-      
+
       if (paymentResult.success && paymentResult.subscriptionDetails) {
         // Verify payment
         const isVerified = await paymentService.verifyPayment(paymentResult.paymentId || '');
-        
+
         if (isVerified) {
           // Save subscription to user profile
           const saved = paymentService.saveSubscription(
             user.email,
             paymentResult.subscriptionDetails
           );
-          
+
           if (saved) {
             // Update subscription details
             const subDetails = paymentService.getSubscriptionDetails(user.email);
             setSubscriptionDetails(subDetails);
             setShowUpgradeModal(false);
-            
+
             toast({
               title: "Subscription Upgraded",
               description: "Your subscription has been upgraded to the annual plan."
@@ -147,10 +147,10 @@ const SubscriptionManagement: React.FC = () => {
 
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -170,24 +170,24 @@ const SubscriptionManagement: React.FC = () => {
         <button onClick={() => navigate('/profile')} className="text-gray-600">
           <ArrowLeft size={20} />
         </button>
-        
+
         <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-            alt="Shh" 
-            className="h-6"
+          <img
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+            alt="Shh"
+            className="h-6" style={{ filter: 'invert(30%) sepia(36%) saturate(1137%) hue-rotate(210deg) brightness(94%) contrast(85%)' }}
           />
         </div>
-        
+
         <div className="w-5"></div> {/* Empty div for spacing */}
       </div>
-      
+
       {/* Title */}
       <div className="px-6 py-4">
         <h1 className="text-2xl font-bold">Subscription Management</h1>
         <p className="text-gray-600">Manage your premium subscription</p>
       </div>
-      
+
       {/* Subscription Details */}
       {subscriptionDetails && (
         <div className="px-6">
@@ -199,20 +199,20 @@ const SubscriptionManagement: React.FC = () => {
                   {subscriptionDetails.plan === 'annual' ? 'Annual' : 'Monthly'} Plan
                 </h3>
                 <p className="opacity-90">
-                  {subscriptionDetails.plan === 'annual' 
-                    ? '$59.99 per year' 
+                  {subscriptionDetails.plan === 'annual'
+                    ? '$59.99 per year'
                     : '$7.99 per month'}
                 </p>
               </div>
               <div className={`px-3 py-1 rounded-full text-sm ${
-                subscriptionDetails.status === 'active' 
-                  ? 'bg-green-500/20 text-white' 
+                subscriptionDetails.status === 'active'
+                  ? 'bg-green-500/20 text-white'
                   : 'bg-yellow-500/20 text-white'
               }`}>
                 {subscriptionDetails.status === 'active' ? 'Active' : 'Canceled'}
               </div>
             </div>
-            
+
             {subscriptionDetails.status === 'canceled' && (
               <div className="bg-white/20 p-3 rounded-lg mb-4 flex items-start">
                 <AlertCircle size={18} className="mr-2 mt-0.5 flex-shrink-0" />
@@ -221,7 +221,7 @@ const SubscriptionManagement: React.FC = () => {
                 </p>
               </div>
             )}
-            
+
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-sm">
                 <span>Status:</span>
@@ -244,11 +244,11 @@ const SubscriptionManagement: React.FC = () => {
                 </span>
               </div>
             </div>
-            
+
             {subscriptionDetails.status === 'active' && (
               <div className="flex space-x-2">
                 {subscriptionDetails.plan === 'monthly' && (
-                  <Button 
+                  <Button
                     onClick={() => setShowUpgradeModal(true)}
                     className="flex-1 bg-white text-blue-600 hover:bg-blue-50"
                   >
@@ -256,7 +256,7 @@ const SubscriptionManagement: React.FC = () => {
                     Upgrade to Annual
                   </Button>
                 )}
-                <Button 
+                <Button
                   onClick={() => setShowCancelModal(true)}
                   className="flex-1 bg-white/20 text-white hover:bg-white/30"
                   variant="outline"
@@ -266,14 +266,14 @@ const SubscriptionManagement: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           {/* Payment Method */}
           <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
             <h3 className="text-lg font-bold mb-3 flex items-center">
               <CreditCard size={18} className="mr-2" />
               Payment Method
             </h3>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-10 h-6 bg-gray-800 rounded mr-3"></div>
@@ -287,14 +287,14 @@ const SubscriptionManagement: React.FC = () => {
               </Button>
             </div>
           </div>
-          
+
           {/* Billing History */}
           <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
             <h3 className="text-lg font-bold mb-3 flex items-center">
               <Calendar size={18} className="mr-2" />
               Billing History
             </h3>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <div>
@@ -317,7 +317,7 @@ const SubscriptionManagement: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Cancel Subscription Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -327,7 +327,7 @@ const SubscriptionManagement: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Are you sure you want to cancel your subscription? You'll still have access to premium features until the end of your current billing period.
               </p>
-              
+
               <div className="flex space-x-3">
                 <Button
                   onClick={() => setShowCancelModal(false)}
@@ -356,7 +356,7 @@ const SubscriptionManagement: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Upgrade Subscription Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -366,7 +366,7 @@ const SubscriptionManagement: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Upgrade to our annual plan and save 37% compared to the monthly plan.
               </p>
-              
+
               <div className="bg-blue-50 p-4 rounded-lg mb-4">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-medium">Monthly Plan</span>
@@ -385,7 +385,7 @@ const SubscriptionManagement: React.FC = () => {
                   <span className="font-bold text-green-600">$35.89</span>
                 </div>
               </div>
-              
+
               <div className="flex space-x-3">
                 <Button
                   onClick={() => setShowUpgradeModal(false)}

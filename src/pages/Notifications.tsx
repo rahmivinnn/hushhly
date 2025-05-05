@@ -28,7 +28,7 @@ const Notifications: React.FC = () => {
   const { toast } = useToast();
   const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<{title: string, duration: string}>({title: "", duration: ""});
-  
+
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
@@ -121,36 +121,36 @@ const Notifications: React.FC = () => {
       icon: <Star className="text-white" size={20} />
     }
   ]);
-  
+
   const handleBack = () => {
     navigate(-1);
   };
-  
+
   const handlePlay = (title: string, duration: string) => {
     setCurrentVideo({title, duration});
     setShowVideoPopup(true);
   };
-  
+
   const handleMarkAllRead = () => {
     setNotifications(notifications.map(notification => ({
       ...notification,
       isRead: true
     })));
-    
+
     toast({
       title: "All Notifications Read",
       description: "Marked all notifications as read",
     });
   };
-  
+
   const handleAction = (notification: Notification) => {
     // Mark as read
-    setNotifications(notifications.map(n => 
+    setNotifications(notifications.map(n =>
       n.id === notification.id ? {...n, isRead: true} : n
     ));
-    
+
     if (!notification.action) return;
-    
+
     switch (notification.action.type) {
       case 'play':
         if (notification.action.data) {
@@ -171,12 +171,12 @@ const Notifications: React.FC = () => {
         break;
     }
   };
-  
+
   // Group notifications by category
   const todayNotifications = notifications.filter(n => n.category === 'today');
   const yesterdayNotifications = notifications.filter(n => n.category === 'yesterday');
   const lastWeekNotifications = notifications.filter(n => n.category === 'last_week');
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white pb-16">
       {/* Header */}
@@ -184,20 +184,20 @@ const Notifications: React.FC = () => {
         <button onClick={handleBack} className="text-gray-600">
           <ArrowLeft size={20} />
         </button>
-        
+
         <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png" 
-            alt="Shh" 
-            className="h-8"
+          <img
+            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
+            alt="Shh"
+            className="h-8" style={{ filter: 'invert(30%) sepia(36%) saturate(1137%) hue-rotate(210deg) brightness(94%) contrast(85%)' }}
           />
         </div>
-        
+
         <button className="text-amber-500">
           <Trophy size={20} />
         </button>
       </div>
-      
+
       {/* Title */}
       <div className="flex items-center justify-between px-6 py-4">
         <h1 className="text-2xl font-bold">Notifications</h1>
@@ -205,7 +205,7 @@ const Notifications: React.FC = () => {
           Clear All
         </button>
       </div>
-      
+
       {/* Notifications List */}
       <div className="flex-1 px-4">
         {notifications.length === 0 ? (
@@ -224,15 +224,15 @@ const Notifications: React.FC = () => {
                 <h2 className="text-lg font-semibold mb-3">Today</h2>
                 <div className="space-y-4">
                   {todayNotifications.map(notification => (
-                    <div 
-                      key={notification.id} 
+                    <div
+                      key={notification.id}
                       className="flex items-start"
                       onClick={() => handleAction(notification)}
                     >
                       <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
                         {notification.icon}
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900">{notification.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
@@ -250,22 +250,22 @@ const Notifications: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Yesterday's Notifications */}
             {yesterdayNotifications.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-lg font-semibold mb-3">Yesterday</h2>
                 <div className="space-y-4">
                   {yesterdayNotifications.map(notification => (
-                    <div 
-                      key={notification.id} 
+                    <div
+                      key={notification.id}
                       className="flex items-start"
                       onClick={() => handleAction(notification)}
                     >
                       <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
                         {notification.icon}
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900">{notification.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
@@ -283,22 +283,22 @@ const Notifications: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Last Week's Notifications */}
             {lastWeekNotifications.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-lg font-semibold mb-3">Last week</h2>
                 <div className="space-y-4">
                   {lastWeekNotifications.map(notification => (
-                    <div 
-                      key={notification.id} 
+                    <div
+                      key={notification.id}
                       className="flex items-start"
                       onClick={() => handleAction(notification)}
                     >
                       <div className={`${notification.iconBg} w-14 h-14 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
                         {notification.icon}
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900">{notification.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
@@ -319,7 +319,7 @@ const Notifications: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Video Popup */}
       {showVideoPopup && (
         <VideoPopup
@@ -328,7 +328,7 @@ const Notifications: React.FC = () => {
           onClose={() => setShowVideoPopup(false)}
         />
       )}
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, Moon, ArrowRight, Calendar, Play, Clock, Sparkles, Brain } from 'lucide-react';
+import { Bell, Search, Moon, ArrowRight, Calendar, Play, Clock, Sparkles, Brain, MessageSquare } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import VideoPopup from '@/components/VideoPopup';
@@ -9,9 +9,11 @@ import MoodIcon from '@/components/MoodIcon';
 import SideMenu from '@/components/SideMenu';
 import MoodFeedbackDialog from '@/components/MoodFeedbackDialog';
 import MoodSelectionDialog from '@/components/MoodSelectionDialog';
-import AIRecommendation from '@/components/AIRecommendation';
+import AIRecommendations from '@/components/AIRecommendations';
 import FeaturesPopup from '@/components/FeaturesPopup';
 import CategoryDetail from '@/components/CategoryDetail';
+import MeditationChat from '@/components/MeditationChat';
+import WorkingMeditationChat from '@/components/WorkingMeditationChat';
 import { motion } from 'framer-motion';
 
 interface MoodOption {
@@ -35,6 +37,8 @@ interface CategoryCard {
   description: string;
   subtext: string;
   color: string;
+  promptTitle?: string;
+  promptText?: string;
 }
 
 const Home: React.FC = () => {
@@ -51,6 +55,7 @@ const Home: React.FC = () => {
   const [showAIRecommendation, setShowAIRecommendation] = useState<boolean>(false);
   const [showFeaturesPopup, setShowFeaturesPopup] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryCard | null>(null);
+  const [showMeditationChat, setShowMeditationChat] = useState<boolean>(false);
 
   useEffect(() => {
     // Try to get user data from localStorage
@@ -155,49 +160,63 @@ const Home: React.FC = () => {
       title: "Quick Reset",
       description: "For overwhelmed moments, school runs, or toddler tantrums.",
       subtext: "Breathe and reset in under 5 minutes.",
-      color: "bg-gradient-to-r from-blue-400 to-blue-500"
+      color: "bg-gradient-to-r from-blue-400 to-blue-500",
+      promptTitle: "Instant Calm – 5-Minute Mental Reset",
+      promptText: "Feeling overwhelmed? Let's take 5 minutes to breathe, refocus, and find your center again. This session is perfect for chaotic mornings, school runs, or toddler tantrums. Inhale peace, exhale pressure."
     },
     {
-      icon: "💞",
+      icon: "👨‍👩‍👧",
       title: "Mindful Parenting",
       description: "For patience, emotional regulation, and presence with kids.",
       subtext: "Show up grounded, even on the messy days.",
-      color: "bg-gradient-to-r from-pink-400 to-pink-500"
+      color: "bg-gradient-to-r from-pink-400 to-pink-500",
+      promptTitle: "Mindful Moments with Your Child",
+      promptText: "Rebuild your emotional strength while staying present with your children. Practice deep breathing, compassionate listening, and patience. Every mindful parent creates ripples of love."
     },
     {
       icon: "🌙",
       title: "Deep Sleep Recovery",
       description: "For bedtime wind-down, racing thoughts, or night wakings.",
       subtext: "Let go of the day and drift into deep rest.",
-      color: "bg-gradient-to-r from-indigo-400 to-indigo-600"
+      color: "bg-gradient-to-r from-indigo-400 to-indigo-600",
+      promptTitle: "Let Go Into Deep Sleep",
+      promptText: "For sleepless minds, racing thoughts, and 3AM worries—this meditation is your lullaby. Let each breath lead you closer to restful dreams. Ideal for end-of-day recovery."
     },
     {
-      icon: "☀️",
+      icon: "🌞",
       title: "Start Your Day Calm",
       description: "Morning affirmations, grounding meditations, or intention-setting.",
       subtext: "Begin with clarity, not chaos.",
-      color: "bg-gradient-to-r from-amber-400 to-amber-500"
+      color: "bg-gradient-to-r from-amber-400 to-amber-500",
+      promptTitle: "Morning Mindset Reset",
+      promptText: "Start your day with clarity, confidence, and calm. This session includes affirmations, grounding, and intention-setting to align your morning with purpose."
     },
     {
-      icon: "🧸",
+      icon: "👩‍👧‍👦",
       title: "Parent–Child Bonding",
       description: "Shared meditations, breathing games, or bedtime stories.",
       subtext: "Connect through calm.",
-      color: "bg-gradient-to-r from-green-400 to-green-500"
+      color: "bg-gradient-to-r from-green-400 to-green-500",
+      promptTitle: "Shared Stillness with Your Child",
+      promptText: "Join your child in calming breathing games, bedtime affirmations, or guided mindfulness. Strengthen your bond through stillness and love."
     },
     {
-      icon: "🛠",
+      icon: "❤️",
       title: "Emotional First Aid",
       description: "For anxiety, mom guilt, frustration, or when you're touched out.",
       subtext: "Press pause and recalibrate.",
-      color: "bg-gradient-to-r from-red-400 to-red-500"
+      color: "bg-gradient-to-r from-red-400 to-red-500",
+      promptTitle: "Emotional Rescue & Release",
+      promptText: "For stress, guilt, fear, or frustration—this is your safe space. Press pause, acknowledge your emotions, and let go through guided healing."
     },
     {
-      icon: "🌺",
+      icon: "🔮",
       title: "Affirmations & Mantras",
       description: "For mental clarity, confidence, or emotional support.",
       subtext: "Reframe your thoughts, reclaim your calm.",
-      color: "bg-gradient-to-r from-purple-400 to-purple-500"
+      color: "bg-gradient-to-r from-purple-400 to-purple-500",
+      promptTitle: "Empowering Affirmations for the Soul",
+      promptText: "Rewire your thoughts. Reclaim your worth. This session blends modern mantras and ancient affirmations to reinforce confidence, peace, and clarity."
     }
   ];
 
@@ -298,6 +317,10 @@ const Home: React.FC = () => {
     setShowAIRecommendation(true);
   };
 
+  const handleMeditationChatClick = () => {
+    setShowMeditationChat(true);
+  };
+
   const handleQuickSessionClick = (duration: string, title: string) => {
     toast({
       title: `${title}`,
@@ -305,7 +328,7 @@ const Home: React.FC = () => {
     });
 
     setTimeout(() => {
-      navigate('/category-meditation', {
+      navigate('/category-meditation-screen', {
         state: {
           title: title,
           category: 'Quick Reset',
@@ -316,56 +339,20 @@ const Home: React.FC = () => {
   };
 
   const handleScheduleSession = (category: string) => {
-    // Create a default meditation for this category
-    const meditation = {
-      id: `${category.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
-      title: `${category} Meditation`,
-      description: `A meditation session for ${category}`,
-      duration: '15 Min',
-      image: '/lovable-uploads/83b8c257-0ff1-41ee-a3df-f31bfbccb6a3.png'
-    };
+    // Find the category object
+    const categoryObj = categoryCards.find(c => c.title === category) || categoryCards[0];
 
-    // Get current time and add 30 minutes
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 30);
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const hour12 = hours % 12 || 12;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const formattedTime = `${hour12}:${formattedMinutes} ${period}`;
+    // Show schedule modal instead of navigating to work page
+    setSelectedCategory(categoryObj);
 
-    // Create a session object
-    const session = {
-      id: `ws-custom-${Date.now()}`,
-      title: meditation.title,
-      description: meditation.description,
-      duration: meditation.duration,
-      time: formattedTime,
-      date: 'Today',
-      image: meditation.image,
-      completed: false
-    };
-
-    // Get existing calendar events
-    const savedEvents = localStorage.getItem('workCalendarEvents');
-    const calendarEvents = savedEvents ? JSON.parse(savedEvents) : [];
-
-    // Add new session
-    const newCalendarEvents = [...calendarEvents, session];
-
-    // Save to localStorage
-    localStorage.setItem('workCalendarEvents', JSON.stringify(newCalendarEvents));
-
-    toast({
-      title: `${category} Scheduled`,
-      description: `Your ${category} meditation has been scheduled for ${formattedTime}`,
-    });
-
-    // Navigate to work page to show the scheduled session
+    // Use setTimeout to ensure the category detail is rendered first
     setTimeout(() => {
-      navigate('/work');
-    }, 1000);
+      // This will trigger the handleScheduleCategory function in CategoryDetail
+      const scheduleButton = document.querySelector('.category-schedule-button') as HTMLButtonElement;
+      if (scheduleButton) {
+        scheduleButton.click();
+      }
+    }, 100);
   };
 
   const handleStartNow = (category: string) => {
@@ -375,7 +362,7 @@ const Home: React.FC = () => {
     });
 
     setTimeout(() => {
-      navigate('/category-meditation', {
+      navigate('/category-meditation-screen', {
         state: {
           title: `${category} Meditation`,
           category: category,
@@ -390,20 +377,13 @@ const Home: React.FC = () => {
       {/* Header */}
       <header className="px-4 pt-4 pb-2">
         <div className="flex justify-between items-center">
-          <button
-            className="p-2 text-gray-800"
-            onClick={toggleSideMenu}
-          >
-            <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-gray-800 mb-1.5"></div>
-            <div className="w-6 h-0.5 bg-gray-800"></div>
-          </button>
+          <div className="w-6"></div>
 
-          <div className="flex items-center">
+          <div className="flex items-center justify-center flex-1">
             <img
               src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
               alt="Shh Logo"
-              className="h-8 filter brightness-0 saturate-100 invert-[.25] sepia-[.6] saturate-[8] hue-rotate-[270deg]"
+              className="h-8" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
             />
           </div>
 
@@ -427,7 +407,6 @@ const Home: React.FC = () => {
       {/* Welcome Section */}
       <section className="px-4 pt-1 pb-3">
         <h1 className="text-xl font-semibold text-gray-900">Welcome back, {userName}!</h1>
-        <p className="text-gray-600 text-sm">How are you feeling today?</p>
 
         <div className="flex justify-between mt-3">
           {moodOptions.map((mood, index) => (
@@ -444,26 +423,26 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Recommended Section */}
+      {/* AI Meditation Section */}
       <section className="px-4 mb-3">
         <motion.div
-          onClick={() => navigate('/ai-meditation')}
-          className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          onClick={handleMeditationChatClick}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
           <div>
             <h2 className="font-medium text-sm flex items-center">
               <Sparkles size={14} className="mr-1" />
-              AI-powered meditation guide
+              AI Meditation
             </h2>
             <div className="flex items-center mt-1">
-              <p className="text-xs">Personalized recommendations</p>
+              <p className="text-xs">Chat with our AI meditation assistant</p>
               <ArrowRight size={14} className="ml-1" />
             </div>
           </div>
           <div className="bg-white/20 p-2 rounded-full">
-            <Brain size={24} className="text-white" />
+            <MessageSquare size={24} className="text-white" />
           </div>
         </motion.div>
       </section>
@@ -586,11 +565,6 @@ const Home: React.FC = () => {
         selectedMood={selectedMood}
       />
 
-      {/* AI Recommendation */}
-      {showAIRecommendation && (
-        <AIRecommendation onClose={() => setShowAIRecommendation(false)} />
-      )}
-
       {/* Video Popup */}
       {showVideoPopup && (
         <VideoPopup
@@ -621,6 +595,12 @@ const Home: React.FC = () => {
           category={selectedCategory}
         />
       )}
+
+      {/* AI Meditation Chat */}
+      <WorkingMeditationChat
+        isOpen={showMeditationChat}
+        onClose={() => setShowMeditationChat(false)}
+      />
 
       {/* Bottom Navigation */}
       <BottomNavigation />

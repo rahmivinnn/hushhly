@@ -12,6 +12,8 @@ interface StoryItem {
   duration: string;
   listeners: string;
   image: string;
+  locked?: boolean;
+  category?: string;
 }
 
 const SleepStories: React.FC = () => {
@@ -26,6 +28,8 @@ const SleepStories: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>("21:00");
   const [scheduledStory, setScheduledStory] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState<boolean>(false);
+  const [selectedLockedStory, setSelectedLockedStory] = useState<StoryItem | null>(null);
 
   const storyImages = {
     "whispering": "/lovable-uploads/f3796138-3de0-44f8-9fab-6a71b48c7632.png",
@@ -35,37 +39,120 @@ const SleepStories: React.FC = () => {
     "forest": "/lovable-uploads/79057e46-19a8-4c32-9d96-f637c4ac722c.png"
   };
 
-  const originalStories: StoryItem[] = [
-    {
-      id: "1",
-      title: "The Whispering Forest",
-      description: "A walk through a magical, quiet woodland.",
-      duration: "15 Min",
-      listeners: "59899",
-      image: storyImages.whispering
-    },
-    {
-      id: "2",
-      title: "Starlit Dreams",
-      duration: "15 Min",
-      listeners: "39084",
-      image: storyImages.starlit
-    },
-    {
-      id: "3",
-      title: "Painting Forest",
-      duration: "15 Min",
-      listeners: "59899",
-      image: storyImages.painting
-    },
-    {
-      id: "4",
-      title: "The Gentle Night",
-      duration: "15 Min",
-      listeners: "39099",
-      image: storyImages.gentle
-    }
-  ];
+  // Generate 100+ sleep stories with various categories and locked/unlocked status
+  const generateStories = (): StoryItem[] => {
+    const categories = ["nature", "fantasy", "meditation", "children", "adventure", "relaxation", "space", "ocean"];
+    const natureStories = [
+      "The Whispering Forest", "Mountain Serenity", "Gentle Rainfall", "Autumn Leaves", "Spring Meadow",
+      "Flowing River", "Peaceful Garden", "Misty Morning", "Sunset Beach", "Desert Oasis",
+      "Tropical Paradise", "Bamboo Grove", "Enchanted Waterfall", "Quiet Lake", "Ancient Redwoods"
+    ];
+    const fantasyStories = [
+      "Starlit Dreams", "Fairy Kingdom", "Dragon's Lullaby", "Wizard's Tower", "Enchanted Castle",
+      "Magical Journey", "Unicorn Meadow", "Mermaid Lagoon", "Elven Forest", "Crystal Caves",
+      "Moonlight Magic", "Mythical Creatures", "Forgotten Realm", "Wizard's Apprentice", "Enchanted Mirror"
+    ];
+    const meditationStories = [
+      "Painting Forest", "Inner Peace", "Mindful Moments", "Breath of Calm", "Tranquil Mind",
+      "Healing Light", "Body Scan Journey", "Gratitude Path", "Stress Release", "Peaceful Awareness",
+      "Loving Kindness", "Chakra Alignment", "Energy Cleanse", "Mindful Mountain", "Compassion Flow"
+    ];
+    const childrenStories = [
+      "The Gentle Night", "Sleepy Teddy Bear", "Little Star's Journey", "Friendly Dragon", "Magic Treehouse",
+      "Bedtime for Bunny", "Sleepy Puppy", "Goodnight Moon", "Dreamy Clouds", "Magical Pillow",
+      "Sleepy Kitten", "Bedtime Train", "Floating Bubbles", "Counting Sheep", "Dreamy Carousel"
+    ];
+    const adventureStories = [
+      "Pirate's Treasure", "Space Explorer", "Jungle Expedition", "Arctic Adventure", "Desert Caravan",
+      "Underwater Discovery", "Mountain Climber", "Time Traveler", "Safari Journey", "Island Explorer",
+      "Lost City", "Balloon Voyage", "Submarine Voyage", "Rainforest Trek", "Cave Explorer"
+    ];
+    const relaxationStories = [
+      "Gentle Waves", "Floating Clouds", "Warm Sunshine", "Cozy Cabin", "Peaceful Hammock",
+      "Soft Snowfall", "Quiet Library", "Candlelight", "Gentle Breeze", "Warm Bath",
+      "Crackling Fireplace", "Rainy Day", "Quiet Bookshop", "Lazy Sunday", "Sunset Watching"
+    ];
+    const spaceStories = [
+      "Cosmic Journey", "Stargazing", "Milky Way Dreams", "Planetary Voyage", "Meteor Shower",
+      "Northern Lights", "Lunar Landscape", "Constellation Stories", "Solar System Tour", "Astronaut's View",
+      "Cosmic Lullaby", "Galaxy Explorer", "Nebula Dreams", "Space Station", "Comet Chaser"
+    ];
+    const oceanStories = [
+      "Ocean Depths", "Coral Reef", "Whale Songs", "Seaside Retreat", "Tidal Pools",
+      "Sailing Adventure", "Dolphin Play", "Ocean Waves", "Underwater Cave", "Island Breeze",
+      "Lighthouse Stories", "Seashell Whispers", "Mermaid Tales", "Calm Harbor", "Ocean Sunset"
+    ];
+
+    const allStoryTitles = {
+      nature: natureStories,
+      fantasy: fantasyStories,
+      meditation: meditationStories,
+      children: childrenStories,
+      adventure: adventureStories,
+      relaxation: relaxationStories,
+      space: spaceStories,
+      ocean: oceanStories
+    };
+
+    const stories: StoryItem[] = [];
+    let id = 1;
+
+    // Generate stories for each category
+    categories.forEach(category => {
+      const titles = allStoryTitles[category as keyof typeof allStoryTitles];
+      titles.forEach(title => {
+        // Generate random duration between 5-30 minutes
+        const duration = `${Math.floor(Math.random() * 26) + 5} Min`;
+        // Generate random number of listeners
+        const listeners = (Math.floor(Math.random() * 90000) + 10000).toString();
+        // Determine if story should be locked (approximately 60% unlocked, 40% locked)
+        const locked = Math.random() > 0.6;
+
+        // Select image based on category
+        let image;
+        switch(category) {
+          case "nature":
+            image = storyImages.whispering;
+            break;
+          case "fantasy":
+            image = storyImages.starlit;
+            break;
+          case "meditation":
+            image = storyImages.painting;
+            break;
+          default:
+            image = storyImages.gentle;
+        }
+
+        // Create story object
+        stories.push({
+          id: id.toString(),
+          title,
+          description: `A ${category} story to help you relax and fall asleep.`,
+          duration,
+          listeners,
+          image,
+          locked,
+          category
+        });
+
+        id++;
+      });
+    });
+
+    // Ensure the original 4 stories are unlocked and at the beginning
+    const originalTitles = ["The Whispering Forest", "Starlit Dreams", "Painting Forest", "The Gentle Night"];
+    originalTitles.forEach(title => {
+      const story = stories.find(s => s.title === title);
+      if (story) {
+        story.locked = false;
+      }
+    });
+
+    return stories;
+  };
+
+  const originalStories: StoryItem[] = generateStories();
 
   const [featuredStories, setFeaturedStories] = useState<StoryItem[]>([...originalStories]);
   const [shortStories, setShortStories] = useState<StoryItem[]>([...originalStories]);
@@ -137,19 +224,37 @@ const SleepStories: React.FC = () => {
     localStorage.setItem('likedStories', JSON.stringify(newLikedStories));
   };
 
-  const handlePlayNow = (title: string, duration: string) => {
-    // Navigate to meditation page with the corresponding track
-    const meditationIndex = storyToMeditationMap[title] || 0;
+  const handlePlayNow = (story: StoryItem) => {
+    // Check if story is locked
+    if (story.locked) {
+      setSelectedLockedStory(story);
+      setShowSubscriptionModal(true);
+      return;
+    }
 
-    // Store the selected meditation index in localStorage
-    localStorage.setItem('selectedMeditationIndex', meditationIndex.toString());
-
-    // Navigate to meditation page
-    navigate('/meditation');
+    // Navigate to story detail page
+    navigate('/story-detail', {
+      state: {
+        title: story.title,
+        description: story.description,
+        duration: story.duration,
+        image: story.image
+      }
+    });
 
     toast({
-      title: "Starting Meditation",
-      description: `${title} meditation is starting now.`
+      title: "Opening Story",
+      description: `${story.title} is loading...`
+    });
+  };
+
+  const handleSubscribe = () => {
+    // Navigate to subscription page
+    navigate('/subscription');
+
+    toast({
+      title: "Subscription Required",
+      description: "Please subscribe to unlock premium stories."
     });
   };
 
@@ -241,7 +346,7 @@ const SleepStories: React.FC = () => {
     setSelectedTime(e.target.value);
   };
 
-  const handleScheduleStory = (title: string) => {
+  const handleScheduleStory = (storyId: string) => {
     if (!selectedDate) {
       toast({
         title: "Please select a date",
@@ -250,11 +355,28 @@ const SleepStories: React.FC = () => {
       return;
     }
 
+    const story = originalStories.find(s => s.id === storyId);
+    if (!story) {
+      toast({
+        title: "Story Not Found",
+        description: "The selected story could not be found."
+      });
+      return;
+    }
+
+    // Check if story is locked
+    if (story.locked) {
+      setSelectedLockedStory(story);
+      setShowSubscriptionModal(true);
+      setShowCalendar(false);
+      return;
+    }
+
     const scheduledDateTime = new Date(selectedDate);
     const [hours, minutes] = selectedTime.split(':').map(Number);
     scheduledDateTime.setHours(hours, minutes);
 
-    setScheduledStory(title);
+    setScheduledStory(story.title);
     setShowCalendar(false);
 
     // Format date for display
@@ -268,7 +390,7 @@ const SleepStories: React.FC = () => {
 
     toast({
       title: "Story Scheduled",
-      description: `"${title}" has been scheduled for ${formattedDate}`,
+      description: `"${story.title}" has been scheduled for ${formattedDate}`,
     });
 
     // Show notification after a short delay to simulate system notification
@@ -282,7 +404,7 @@ const SleepStories: React.FC = () => {
           </div>
           <div class="ml-3">
             <h3 class="text-sm font-medium text-gray-900">Story scheduled!</h3>
-            <p class="mt-1 text-sm text-gray-500">"${title}" will start at ${formattedDate}</p>
+            <p class="mt-1 text-sm text-gray-500">"${story.title}" will start at ${formattedDate}</p>
           </div>
         </div>
       `;
@@ -305,32 +427,63 @@ const SleepStories: React.FC = () => {
         <>
           <img src={story.image} alt={story.title} className="absolute inset-0 w-full h-full object-cover rounded-xl" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70 rounded-xl"></div>
+          {story.locked && (
+            <div className="absolute top-3 right-3 bg-black/50 p-2 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+          )}
           <div className="mt-auto p-4 z-10 text-white">
             <h3 className="text-xl font-semibold">{story.title}</h3>
             <p className="text-sm opacity-90">{story.description}</p>
 
             <button
-              onClick={() => handlePlayNow(story.title, story.duration)}
+              onClick={() => handlePlayNow(story)}
               className="mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 text-sm flex items-center"
             >
-              Play Now <Play size={16} className="ml-2" fill="white" />
+              {story.locked ? 'Unlock' : 'Play Now'}
+              {story.locked ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              ) : (
+                <Play size={16} className="ml-2" fill="white" />
+              )}
             </button>
           </div>
         </>
       ) : (
         <>
-          <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
+          <div className="w-16 h-16 rounded-lg overflow-hidden mr-3 relative">
             <img src={story.image} alt={story.title} className="w-full h-full object-cover" />
+            {story.locked && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            )}
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-medium text-gray-900 truncate">{story.title}</h3>
             <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
           </div>
           <button
-            onClick={() => handlePlayNow(story.title, story.duration)}
-            className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
+            onClick={() => handlePlayNow(story)}
+            className={`w-10 h-10 ${story.locked ? 'bg-gray-400' : 'bg-blue-500'} rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform`}
           >
-            <Play size={18} fill="white" />
+            {story.locked ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            ) : (
+              <Play size={18} fill="white" />
+            )}
           </button>
         </>
       )}
@@ -348,7 +501,7 @@ const SleepStories: React.FC = () => {
           <img
             src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
             alt="Shh Logo"
-            className="h-6 mb-1"
+            className="h-6 mb-1" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
           />
           <h1 className="text-lg font-semibold">Stories</h1>
         </div>
@@ -463,7 +616,10 @@ const SleepStories: React.FC = () => {
                 <h2 className="text-xl font-semibold">The Whispering Forest</h2>
                 <p className="text-sm mb-3">A walk through a magical, quiet woodland.</p>
                 <button
-                  onClick={() => handlePlayNow("The Whispering Forest", "15 Min")}
+                  onClick={() => {
+                    const story = originalStories.find(s => s.title === "The Whispering Forest");
+                    if (story) handlePlayNow(story);
+                  }}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 text-sm flex items-center"
                 >
                   Play Now <Play size={16} className="ml-2" fill="white" />
@@ -496,7 +652,7 @@ const SleepStories: React.FC = () => {
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
               <button
-                onClick={() => handlePlayNow(story.title, story.duration)}
+                onClick={() => handlePlayNow(story)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
                 <Play size={18} fill="white" />
@@ -527,7 +683,7 @@ const SleepStories: React.FC = () => {
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
               <button
-                onClick={() => handlePlayNow(story.title, story.duration)}
+                onClick={() => handlePlayNow(story)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
                 <Play size={18} fill="white" />
@@ -558,7 +714,7 @@ const SleepStories: React.FC = () => {
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
               <button
-                onClick={() => handlePlayNow(story.title, story.duration)}
+                onClick={() => handlePlayNow(story)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
                 <Play size={18} fill="white" />
@@ -589,7 +745,7 @@ const SleepStories: React.FC = () => {
                 <p className="text-xs text-gray-500">{story.duration} • {story.listeners} Listening</p>
               </div>
               <button
-                onClick={() => handlePlayNow(story.title, story.duration)}
+                onClick={() => handlePlayNow(story)}
                 className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white ml-2 transform hover:scale-105 transition-transform"
               >
                 <Play size={18} fill="white" />
@@ -613,6 +769,81 @@ const SleepStories: React.FC = () => {
           videoId={currentVideo.videoId}
           onClose={() => setShowVideoPopup(false)}
         />
+      )}
+
+      {/* Subscription Modal */}
+      {showSubscriptionModal && selectedLockedStory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md shadow-lg">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-lg font-semibold">Premium Content</h2>
+              <button
+                onClick={() => setShowSubscriptionModal(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-center mb-6">
+                <div className="w-16 h-16 rounded-lg overflow-hidden mr-4 relative">
+                  <img src={selectedLockedStory.image} alt={selectedLockedStory.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-medium text-lg">{selectedLockedStory.title}</h3>
+                  <p className="text-sm text-gray-500">{selectedLockedStory.duration} • Premium Content</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                <h4 className="font-medium mb-2 text-blue-800">Unlock Premium Stories</h4>
+                <p className="text-sm text-blue-700 mb-2">
+                  Subscribe to Hushhly Premium to access all locked content including:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    100+ Premium Sleep Stories
+                  </li>
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Exclusive Meditation Content
+                  </li>
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Ad-free Experience
+                  </li>
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-500"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Offline Listening
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={handleSubscribe}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 font-medium"
+                >
+                  Subscribe Now - $7.99/month
+                </button>
+                <button
+                  onClick={() => setShowSubscriptionModal(false)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full py-3"
+                >
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Calendar Modal */}
@@ -660,22 +891,38 @@ const SleepStories: React.FC = () => {
                     <div
                       key={story.id}
                       className="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-                      onClick={() => handleScheduleStory(story.title)}
+                      onClick={() => handleScheduleStory(story.id)}
                     >
-                      <div className="w-10 h-10 rounded-lg overflow-hidden mr-3">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden mr-3 relative">
                         <img src={story.image} alt={story.title} className="w-full h-full object-cover" />
+                        {story.locked && (
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                          </div>
+                        )}
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <h3 className="text-sm font-medium">{story.title}</h3>
-                        <p className="text-xs text-gray-500">{story.duration}</p>
+                        <p className="text-xs text-gray-500">{story.duration} {story.locked && '• Premium'}</p>
                       </div>
+                      {story.locked && (
+                        <div className="text-gray-400 ml-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                          </svg>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
               <button
-                onClick={() => handleScheduleStory(originalStories[0].title)}
+                onClick={() => handleScheduleStory(originalStories[0].id)}
                 disabled={!selectedDate}
                 className={`w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 text-sm ${!selectedDate ? 'opacity-50 cursor-not-allowed' : ''}`}
               >

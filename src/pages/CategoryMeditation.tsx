@@ -5,6 +5,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { Button } from '@/components/ui/button';
 import { audioService } from '@/services/audioService';
 import { useToast } from "@/hooks/use-toast";
+import '@/styles/animations.css';
 
 // Define category-specific tracks
 const getCategoryTracks = (category: string) => {
@@ -417,42 +418,66 @@ const CategoryMeditation: React.FC<CategoryMeditationProps> = (props) => {
       {/* Main Content */}
       <div className="flex flex-col items-center px-6 pt-4 pb-12">
         <h1 className="text-3xl font-semibold mb-2">{title}</h1>
-        <p className="text-lg mb-8">Tap the start button when ready</p>
+        <p className="text-lg mb-4">Tap the start button when ready</p>
 
-        {/* Start Button */}
+        {/* Breathing Animation Circle */}
         <div className="relative mb-6">
-          <div className="w-64 h-64 rounded-full bg-white/20 flex items-center justify-center">
-            <div className="w-56 h-56 rounded-full bg-white/20 flex items-center justify-center">
+          <div className={`w-64 h-64 rounded-full bg-white/20 flex items-center justify-center ${isPlaying ? 'animate-pulse-slow' : ''}`}>
+            <div className={`w-56 h-56 rounded-full bg-white/30 flex items-center justify-center ${isPlaying ? 'animate-pulse-medium' : ''}`}>
               <button
                 onClick={togglePlayPause}
-                className={`w-48 h-48 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-lg transition-all hover:shadow-xl active:scale-95`}
+                className={`w-48 h-48 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-lg transition-all hover:shadow-xl active:scale-95 relative overflow-hidden`}
               >
-                <span className="text-4xl font-bold">{isPlaying ? 'Pause' : 'Start'}</span>
+                {isPlaying && (
+                  <div className="absolute inset-0 bg-white/10 animate-ripple"></div>
+                )}
+                <div className="relative z-10 flex flex-col items-center">
+                  {isPlaying ? (
+                    <>
+                      <Pause size={40} className="mb-2" />
+                      <span className="text-2xl font-bold">Pause</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play size={40} className="mb-2 ml-2" />
+                      <span className="text-2xl font-bold">Begin</span>
+                    </>
+                  )}
+                </div>
               </button>
             </div>
           </div>
         </div>
 
         {/* Timer Display */}
-        <div className="flex items-center justify-center mb-6">
-          <Clock size={20} className="mr-2" />
-          <span className="text-lg">{sessionLength} Min</span>
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="text-3xl font-bold mb-2">{formatTime(remainingTime)}</div>
+          <div className="flex items-center">
+            <Clock size={16} className="mr-2" />
+            <span className="text-sm">{sessionLength} minute session</span>
+          </div>
         </div>
 
         {/* Background Music Section */}
         <div className="w-full">
-          <h2 className="text-2xl font-semibold mb-4">Background Music</h2>
+          <h2 className="text-2xl font-semibold mb-4">Meditation Soundtrack</h2>
 
           {/* Music Selection */}
-          <div className="bg-white/10 rounded-xl p-3 mb-6">
-            <div className="flex items-center mb-2">
-              <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center mr-3 flex-shrink-0`}>
-                <span className="text-4xl">{selectedTrack.icon}</span>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6 shadow-lg">
+            <div className="flex items-center mb-4">
+              <div className={`w-20 h-20 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center mr-4 flex-shrink-0 shadow-md ${isPlaying ? 'animate-pulse-medium' : ''}`}>
+                <span className="text-5xl">{selectedTrack.icon}</span>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-medium">
+                <h3 className="text-xl font-medium mb-1">
                   {selectedTrack.title}
                 </h3>
+                <div className="h-1 bg-white/20 rounded-full mb-2 overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full"
+                    style={{ width: `${(1 - (remainingTime / (sessionLength * 60))) * 100}%` }}
+                  ></div>
+                </div>
                 <p className="text-sm text-white/80 flex items-center">
                   <Clock size={12} className="mr-1" />
                   {selectedTrack.duration} • {selectedTrack.listeners}
@@ -461,50 +486,53 @@ const CategoryMeditation: React.FC<CategoryMeditationProps> = (props) => {
             </div>
 
             {/* Playback Controls */}
-            <div className="flex justify-between items-center mt-4 mb-4">
+            <div className="flex justify-between items-center mt-6 mb-6">
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/10 rounded-full transition-colors active:scale-95"
                 onClick={handleShuffle}
               >
                 <Shuffle size={20} />
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/10 rounded-full transition-colors active:scale-95"
                 onClick={handleSkipBack}
               >
                 <SkipBack size={20} />
               </button>
               <button
                 onClick={togglePlayPause}
-                className={`w-12 h-12 bg-gradient-to-br ${gradientClass} rounded-full flex items-center justify-center shadow-md hover:opacity-90 transition-colors active:scale-95`}
+                className={`w-16 h-16 bg-gradient-to-br ${gradientClass} rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all active:scale-95 relative overflow-hidden`}
               >
+                {isPlaying && (
+                  <div className="absolute inset-0 bg-white/10 animate-ripple"></div>
+                )}
                 {isPlaying ?
-                  <Pause size={24} fill="white" /> :
-                  <Play size={24} fill="white" className="ml-1" />
+                  <Pause size={28} /> :
+                  <Play size={28} className="ml-1" />
                 }
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                className="p-3 hover:bg-white/10 rounded-full transition-colors active:scale-95"
                 onClick={handleSkipForward}
               >
                 <SkipForward size={20} />
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors active:scale-95"
-                onClick={handleShuffle}
+                className="p-3 hover:bg-white/10 rounded-full transition-colors active:scale-95"
+                onClick={adjustSessionLength}
               >
                 <RefreshCw size={20} />
               </button>
             </div>
 
             {/* Session Length Adjustment */}
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center mt-4">
               <button
                 onClick={adjustSessionLength}
-                className={`bg-gradient-to-br ${gradientClass} hover:opacity-90 text-white border border-white/20 rounded-full px-4 py-2 text-sm flex items-center justify-center transition-colors active:scale-95`}
+                className={`bg-white/20 hover:bg-white/30 text-white border border-white/20 rounded-full px-6 py-3 text-sm flex items-center justify-center transition-colors active:scale-95 shadow-md`}
               >
-                <Clock size={14} className="mr-2" />
-                Adjust Session Length
+                <Clock size={16} className="mr-2" />
+                Change Session Length: {sessionLength} Min
               </button>
             </div>
           </div>
