@@ -12,10 +12,26 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        md: "2rem",
+      },
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
+    },
+    screens: {
+      'xs': '360px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
     },
     extend: {
       colors: {
@@ -146,5 +162,48 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.safe-top': {
+          paddingTop: 'env(safe-area-inset-top)'
+        },
+        '.safe-bottom': {
+          paddingBottom: 'env(safe-area-inset-bottom)'
+        },
+        '.safe-left': {
+          paddingLeft: 'env(safe-area-inset-left)'
+        },
+        '.safe-right': {
+          paddingRight: 'env(safe-area-inset-right)'
+        },
+        '.touch-callout-none': {
+          '-webkit-touch-callout': 'none',
+        },
+        '.tap-highlight-transparent': {
+          '-webkit-tap-highlight-color': 'transparent',
+        },
+        '.overscroll-none': {
+          'overscroll-behavior': 'none',
+        },
+        '.overscroll-contain': {
+          'overscroll-behavior': 'contain',
+        },
+        '.text-size-adjust-none': {
+          '-webkit-text-size-adjust': 'none',
+          'text-size-adjust': 'none',
+        },
+        '.text-size-adjust-auto': {
+          '-webkit-text-size-adjust': 'auto',
+          'text-size-adjust': 'auto',
+        },
+        '.text-size-adjust-100': {
+          '-webkit-text-size-adjust': '100%',
+          'text-size-adjust': '100%',
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 } satisfies Config;

@@ -7,6 +7,7 @@ import React, { useEffect, Suspense, lazy } from 'react';
 import * as reminderService from "./services/reminderService";
 import { AuthProvider } from "./hooks/useAuth.tsx";
 import ScheduledReminder from "./components/ScheduledReminder";
+import ResponsiveViewport from "./components/ResponsiveViewport";
 
 // Lazy load components to improve performance
 const Index = lazy(() => import("./pages/Index"));
@@ -149,6 +150,7 @@ const App = () => {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <ResponsiveViewport />
           <TooltipProvider>
             <Suspense fallback={<LoadingFallback />}>
               <Routes>

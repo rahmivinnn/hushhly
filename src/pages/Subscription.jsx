@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, Star, Crown } from 'lucide-react';
+import { ArrowLeft, Check, Star, Crown, CreditCard } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
+import ResponsiveDialog from '@/components/ResponsiveDialog';
 
 const Subscription = () => {
   const navigate = useNavigate();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState('');
+  const [paymentStep, setPaymentStep] = useState(1);
 
   // Handle back button
   const handleBack = () => {
@@ -13,9 +17,23 @@ const Subscription = () => {
 
   // Handle subscription purchase
   const handleSubscribe = (plan) => {
-    // In a real app, this would handle payment processing
-    alert(`Thank you for choosing the ${plan} plan! This would normally redirect to payment processing.`);
-    navigate('/stories');
+    setSelectedPlan(plan);
+    setPaymentStep(1);
+    setIsPaymentOpen(true);
+  };
+
+  // Handle payment submission
+  const handlePaymentSubmit = (e) => {
+    e.preventDefault();
+    if (paymentStep === 1) {
+      setPaymentStep(2);
+    } else {
+      // In a real app, this would process the payment
+      setIsPaymentOpen(false);
+      setTimeout(() => {
+        navigate('/stories');
+      }, 500);
+    }
   };
 
   return (
@@ -125,6 +143,139 @@ const Subscription = () => {
 
       {/* Bottom Navigation */}
       <BottomNavigation />
+
+      {/* Payment Dialog */}
+      <ResponsiveDialog
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        title={paymentStep === 1 ? "Payment Details" : "Confirm Payment"}
+        type="payment"
+      >
+        <div className="payment-form">
+          {paymentStep === 1 ? (
+            <form onSubmit={handlePaymentSubmit} className="space-y-4">
+              <div className="mb-6 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-100 mb-2">
+                  <CreditCard className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold">
+                  {selectedPlan === 'Monthly' ? '$9.99/month' : '$79.99/year'}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {selectedPlan} Subscription
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Card Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Expiry Date
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    CVC
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="123"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name on Card
+                </label>
+                <input
+                  type="text"
+                  placeholder="John Doe"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-purple-600 text-white rounded-md font-medium hover:bg-purple-700 transition-colors"
+              >
+                Continue
+              </button>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="mb-6 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-2">
+                  <Check className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold">Confirm Your Purchase</h3>
+                <p className="text-sm text-gray-500">
+                  {selectedPlan} Subscription
+                </p>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Plan</span>
+                  <span className="font-medium">{selectedPlan}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Amount</span>
+                  <span className="font-medium">
+                    {selectedPlan === 'Monthly' ? '$9.99' : '$79.99'}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-gray-200">
+                  <span className="text-gray-800 font-medium">Total</span>
+                  <span className="font-bold">
+                    {selectedPlan === 'Monthly' ? '$9.99' : '$79.99'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-500">
+                By confirming, you agree to our Terms of Service and Privacy Policy.
+                Your subscription will automatically renew unless canceled.
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setPaymentStep(1)}
+                  className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handlePaymentSubmit}
+                  className="flex-1 py-3 bg-purple-600 text-white rounded-md font-medium hover:bg-purple-700 transition-colors"
+                >
+                  Confirm Payment
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </ResponsiveDialog>
     </div>
   );
 };
