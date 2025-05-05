@@ -75,7 +75,6 @@ const Community: React.FC = () => {
   const [groupDescription, setGroupDescription] = useState('');
   const [groupPrivacy, setGroupPrivacy] = useState('public');
   const [allPosts, setAllPosts] = useState<Post[]>([]);
-  const [replyText, setReplyText] = useState('');
   const [activePostId, setActivePostId] = useState<number | null>(null);
   const [communityMembers, setCommunityMembers] = useState<{id: number, name: string, avatar: string, isActive: boolean}[]>([]);
 
@@ -242,7 +241,18 @@ const Community: React.FC = () => {
       )
     );
 
-    setActivePostId(id);
+    // Just toggle comments visibility without setting active post for replies
+    if (activePostId === id) {
+      setActivePostId(null);
+    } else {
+      setActivePostId(id);
+    }
+
+    // Show toast when viewing comments
+    toast({
+      title: "Comments",
+      description: "Viewing post comments. Reply feature has been disabled.",
+    });
   };
 
   const handleShare = (id: number) => {
@@ -332,41 +342,7 @@ const Community: React.FC = () => {
     setShowShareModal(false);
   };
 
-  const handleSubmitReply = () => {
-    if (!replyText.trim() || !activePostId) return;
 
-    const newComment: Comment = {
-      id: Math.floor(Math.random() * 10000) + 1000,
-      userId: 0, // Current user
-      userName: "You",
-      userAvatar: "https://ui-avatars.com/api/?name=You&background=random",
-      content: replyText,
-      timestamp: "Just now",
-      likes: 0,
-      isLiked: false,
-      createdAt: new Date()
-    };
-
-    setAllPosts(prevPosts =>
-      prevPosts.map(post =>
-        post.id === activePostId
-          ? {
-              ...post,
-              commentsList: [newComment, ...post.commentsList],
-              comments: post.comments + 1,
-              showComments: true
-            }
-          : post
-      )
-    );
-
-    setReplyText('');
-
-    toast({
-      title: "Reply Posted",
-      description: "Your reply has been added to the conversation.",
-    });
-  };
 
   // Filter posts based on active tab and search term
   const getFilteredPosts = () => {
@@ -720,7 +696,7 @@ const Community: React.FC = () => {
                     className="flex items-center mr-3 text-xs text-gray-500"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                    <span>{post.comments} Replies</span>
+                    <span>{post.comments} Comments</span>
                   </button>
 
                   <button
@@ -732,54 +708,45 @@ const Community: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Comments section */}
+                {/* Comments section - Read Only */}
                 {post.showComments && (
                   <div className="mt-3 pt-2 border-t border-gray-100">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                        <User size={16} className="text-blue-500" />
-                      </div>
-                      <input
-                        type="text"
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        placeholder="Write a reply..."
-                        className="flex-1 bg-gray-100 rounded-full text-sm px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <button
-                        onClick={handleSubmitReply}
-                        disabled={!replyText.trim()}
-                        className={`ml-2 ${!replyText.trim() ? 'text-gray-400' : 'text-blue-500'}`}
-                      >
-                        <Send size={16} />
-                      </button>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium text-gray-700">Comments ({post.commentsList.length})</h4>
+                      <div className="text-xs text-gray-500 italic">Reply feature disabled</div>
                     </div>
 
-                    {post.commentsList.map(comment => (
-                      <div key={comment.id} className="flex mb-2">
-                        <img
-                          src={comment.userAvatar}
-                          alt={comment.userName}
-                          className="w-8 h-8 rounded-full mr-2 mt-1"
-                        />
-                        <div className="flex-1">
-                          <div className="bg-gray-100 rounded-lg p-2">
-                            <p className="text-xs font-medium">{comment.userName}</p>
-                            <p className="text-xs text-gray-800">{comment.content}</p>
-                          </div>
-                          <div className="flex items-center mt-1 text-xs text-gray-500">
-                            <button
-                              onClick={() => handleLikeComment(post.id, comment.id)}
-                              className="mr-3 flex items-center"
-                            >
-                              <Heart size={12} className={comment.isLiked ? "text-red-500 fill-current mr-1" : "text-gray-500 mr-1"} />
-                              <span>{comment.likes}</span>
-                            </button>
-                            <span>{comment.timestamp}</span>
+                    {post.commentsList.length > 0 ? (
+                      post.commentsList.map(comment => (
+                        <div key={comment.id} className="flex mb-2">
+                          <img
+                            src={comment.userAvatar}
+                            alt={comment.userName}
+                            className="w-8 h-8 rounded-full mr-2 mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="bg-gray-100 rounded-lg p-2">
+                              <p className="text-xs font-medium">{comment.userName}</p>
+                              <p className="text-xs text-gray-800">{comment.content}</p>
+                            </div>
+                            <div className="flex items-center mt-1 text-xs text-gray-500">
+                              <button
+                                onClick={() => handleLikeComment(post.id, comment.id)}
+                                className="mr-3 flex items-center"
+                              >
+                                <Heart size={12} className={comment.isLiked ? "text-red-500 fill-current mr-1" : "text-gray-500 mr-1"} />
+                                <span>{comment.likes}</span>
+                              </button>
+                              <span>{comment.timestamp}</span>
+                            </div>
                           </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500 text-sm">
+                        No comments yet
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
@@ -796,19 +763,7 @@ const Community: React.FC = () => {
         </div>
       </div>
 
-      {/* Reply input at bottom */}
-      <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-3">
-        <div className="flex items-center">
-          <Input
-            type="text"
-            placeholder="Write a Reply..."
-            className="rounded-full border-gray-200 bg-white text-sm flex-grow"
-          />
-          <button className="ml-2 text-blue-500">
-            <Send size={20} />
-          </button>
-        </div>
-      </div>
+
 
       <BottomNavigation />
     </div>
