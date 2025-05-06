@@ -5,18 +5,16 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
   server: {
-    port: 8080,
+    port: 3000,
     strictPort: false,
-    open: true,
     cors: true,
     hmr: {
       overlay: true,
     },
   },
   preview: {
-    port: 8080,
+    port: 3000,
   },
   build: {
     outDir: 'dist',

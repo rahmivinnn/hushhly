@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Bell, Play, Pause, Clock, Volume2, VolumeX, Moon, Sun, Heart, Cloud, Wave } from 'lucide-react';
+import { ArrowLeft, Bell, Play, Pause, Clock, Volume2, VolumeX, Moon, Sun, Heart, Cloud, Waves } from 'lucide-react';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -448,7 +448,7 @@ const CategoryMeditationScreen: React.FC = () => {
           >
             {ambientSoundType === 'nature' && <Sun size={24} />}
             {ambientSoundType === 'rain' && <Cloud size={24} />}
-            {ambientSoundType === 'waves' && <Wave size={24} />}
+            {ambientSoundType === 'waves' && <Waves size={24} />}
             {ambientSoundType === 'white-noise' && <Moon size={24} />}
           </button>
           <button
