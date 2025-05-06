@@ -3,24 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>interactive-music-scape</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Hushhly Mobile App</title>
+    <meta name="description" content="Hushhly - Find Your Calm, Anytime, Anywhere" />
+    <meta name="author" content="Hushhly" />
 
-    <meta property="og:title" content="Lovable Generated Project" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="Hushhly Mobile App" />
+    <meta property="og:description" content="Hushhly - Find Your Calm, Anytime, Anywhere" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    <script type="module" crossorigin src="/hushhly/assets/index-Dy9hR5Ly.js"></script>
-    <link rel="stylesheet" crossorigin href="/hushhly/assets/index-B1YoH5eL.css">
+
+    <!-- Debugging script to detect issues -->
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('Global error caught:', e.error || e.message);
+        const errorDiv = document.createElement('div');
+        errorDiv.style.backgroundColor = '#ffdddd';
+        errorDiv.style.color = '#ff0000';
+        errorDiv.style.padding = '10px';
+        errorDiv.style.margin = '10px';
+        errorDiv.style.borderRadius = '5px';
+        errorDiv.innerHTML = `<h3>Error Detected</h3><p>${e.message}</p><p>File: ${e.filename}</p><p>Line: ${e.lineno}, Column: ${e.colno}</p>`;
+        document.body.appendChild(errorDiv);
+      });
+
+      window.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+        if (!document.getElementById('root')) {
+          console.error('Root element not found after DOM load');
+        }
+      });
+    </script>
+    <script type="module" crossorigin src="/hushhly/assets/index-BnT946GU.js"></script>
+    <link rel="stylesheet" crossorigin href="/hushhly/assets/index-DteLfAZ1.css">
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading indicator that will be replaced by React -->
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; background-color: #f9fafb;">
+        <div style="text-align: center;">
+          <div style="font-family: Arial, sans-serif; font-size: 20px; color: #6b7280; margin-bottom: 20px;">
+            Loading Hushhly...
+          </div>
+          <div style="width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid #8b5cf6; border-radius: 50%; margin: 0 auto; animation: spin 1s linear infinite;"></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #root {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   </body>
