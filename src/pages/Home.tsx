@@ -14,6 +14,7 @@ import FeaturesPopup from '@/components/FeaturesPopup';
 import CategoryDetail from '@/components/CategoryDetail';
 import MeditationChat from '@/components/MeditationChat';
 import WorkingMeditationChat from '@/components/WorkingMeditationChat';
+import HeaderWithLogo from '@/components/HeaderWithLogo';
 import { motion } from 'framer-motion';
 
 interface MoodOption {
@@ -374,19 +375,12 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-y-auto pb-24">
-      {/* Header */}
-      <header className="px-4 pt-4 pb-2">
-        <div className="flex justify-between items-center">
-          <div className="w-6"></div>
-
-          <div className="flex items-center justify-center flex-1">
-            <img
-              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
-              alt="Shh Logo"
-              className="h-8" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
-            />
-          </div>
-
+      {/* Header with properly centered logo */}
+      <HeaderWithLogo
+        logoColor="blue"
+        bgColor="bg-transparent"
+        textColor="text-gray-800"
+        rightElement={
           <div className="flex items-center space-x-4">
             <button
               className={`text-gray-800 ${showNotification ? 'animate-bounce' : ''}`}
@@ -401,8 +395,8 @@ const Home: React.FC = () => {
               <Moon size={20} fill="currentColor" />
             </button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Welcome Section */}
       <section className="px-4 pt-1 pb-3">

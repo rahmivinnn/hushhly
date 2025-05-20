@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from '@/components/BottomNavigation';
 import BreathingAnimation from '@/components/BreathingAnimation';
 import { Button } from '@/components/ui/button';
+import HeaderWithLogo from '@/components/HeaderWithLogo';
 
 const MeditationScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -15,17 +16,17 @@ const MeditationScreen: React.FC = () => {
   const [remainingTime, setRemainingTime] = useState(300); // 5 minutes in seconds
   const [isMuted, setIsMuted] = useState(false);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
-  
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   // Format time as MM:SS
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-  
+
   // Toggle play/pause
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -46,7 +47,7 @@ const MeditationScreen: React.FC = () => {
       }
     }
   };
-  
+
   // Toggle mute
   const toggleMute = () => {
     if (audioRef.current) {
@@ -54,29 +55,29 @@ const MeditationScreen: React.FC = () => {
       setIsMuted(!isMuted);
     }
   };
-  
+
   // Handle breathing phases
   useEffect(() => {
     if (!isPlaying) return;
-    
+
     let breathTimer: NodeJS.Timeout;
-    
+
     const runBreathCycle = () => {
       // Inhale for 4 seconds
       setBreathPhase('inhale');
-      
+
       breathTimer = setTimeout(() => {
         // Hold for 4 seconds
         setBreathPhase('hold');
-        
+
         breathTimer = setTimeout(() => {
           // Exhale for 6 seconds
           setBreathPhase('exhale');
-          
+
           breathTimer = setTimeout(() => {
             // Rest for 2 seconds
             setBreathPhase('rest');
-            
+
             breathTimer = setTimeout(() => {
               // Repeat the cycle
               runBreathCycle();
@@ -85,14 +86,14 @@ const MeditationScreen: React.FC = () => {
         }, 4000);
       }, 4000);
     };
-    
+
     runBreathCycle();
-    
+
     return () => {
       if (breathTimer) clearTimeout(breathTimer);
     };
   }, [isPlaying]);
-  
+
   // Initialize timer when session starts
   useEffect(() => {
     if (isPlaying) {
@@ -106,10 +107,10 @@ const MeditationScreen: React.FC = () => {
             if (audioRef.current) {
               audioRef.current.pause();
             }
-            
+
             // Show completion screen
             setShowCompletionScreen(true);
-            
+
             toast({
               title: "Meditation Complete",
               description: "Your meditation session is complete."
@@ -125,7 +126,7 @@ const MeditationScreen: React.FC = () => {
         clearInterval(timerRef.current);
       }
     }
-    
+
     // Cleanup on unmount
     return () => {
       if (timerRef.current) {
@@ -133,7 +134,7 @@ const MeditationScreen: React.FC = () => {
       }
     };
   }, [isPlaying, toast]);
-  
+
   // Reset session
   const resetSession = () => {
     setRemainingTime(300); // Reset to 5 minutes
@@ -144,38 +145,27 @@ const MeditationScreen: React.FC = () => {
       audioRef.current.currentTime = 0;
     }
   };
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header with blue accent */}
       <div className="bg-blue-500 py-4 px-4 text-white">
-        {/* Top navigation */}
-        <div className="flex items-center justify-between mb-2">
-          <button 
-            onClick={() => navigate(-1)}
-            className="text-white"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          
-          <div className="flex items-center justify-center flex-1">
-            <img
-              src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
-              alt="Shh Logo"
-              className="h-8 brightness-0 invert"
-            />
-          </div>
-          
-          <div className="w-5"></div> {/* Empty div for balance */}
-        </div>
-        
+        {/* Top navigation with properly centered logo */}
+        <HeaderWithLogo
+          showBackButton={true}
+          logoColor="white"
+          bgColor="bg-transparent"
+          textColor="text-white"
+        />
+      </div>
+
         {/* Timer display */}
         <div className="text-center">
           <h2 className="text-2xl font-bold">{formatTime(remainingTime)}</h2>
           <p className="text-sm text-white/80">Mindful Breathing</p>
         </div>
       </div>
-      
+
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <AnimatePresence mode="wait">
@@ -193,7 +183,7 @@ const MeditationScreen: React.FC = () => {
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Great Job!</h2>
                 <p className="text-gray-600">You've completed your meditation session.</p>
               </div>
-              
+
               <Button
                 onClick={resetSession}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
@@ -216,7 +206,7 @@ const MeditationScreen: React.FC = () => {
                   color="bg-blue-500"
                 />
               </div>
-              
+
               {/* Controls */}
               <div className="flex items-center justify-center space-x-8 mb-8">
                 <button
@@ -225,7 +215,7 @@ const MeditationScreen: React.FC = () => {
                 >
                   {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                 </button>
-                
+
                 <motion.button
                   onClick={togglePlayPause}
                   className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
@@ -237,10 +227,10 @@ const MeditationScreen: React.FC = () => {
                     <Play size={32} className="text-white ml-1" />
                   )}
                 </motion.button>
-                
+
                 <div className="w-12"></div> {/* Placeholder for balance */}
               </div>
-              
+
               {/* Meditation Guide */}
               <div className="bg-blue-50 rounded-xl p-4 w-full max-w-md">
                 <h3 className="font-medium text-blue-800 mb-2 text-center">Meditation Guide</h3>
@@ -255,14 +245,14 @@ const MeditationScreen: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Audio Element (hidden) */}
       <audio ref={audioRef} loop>
         <source src="/lovable-uploads/meditation-sound.mp3" type="audio/mpeg" />
         <source src="/meditation-sound.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

@@ -7,6 +7,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Heart, Share, MessageSquare, Bookmark, Search, CalendarIcon, Clock, User, MapPin, Menu, Send, Copy, X, MessageCircle, Share2, ChevronUp, ChevronDown, UserPlus, Users } from 'lucide-react';
 import SideMenu from '@/components/SideMenu';
 import BottomNavigation from '@/components/BottomNavigation';
+import HeaderWithLogo from '@/components/HeaderWithLogo';
+import PostCard, { PostType } from '@/components/PostCard';
+import UserProfileCard, { UserProfileData } from '@/components/UserProfileCard';
 
 interface Comment {
   id: number;
@@ -77,6 +80,9 @@ const Community: React.FC = () => {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [activePostId, setActivePostId] = useState<number | null>(null);
   const [communityMembers, setCommunityMembers] = useState<{id: number, name: string, avatar: string, isActive: boolean}[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserProfileData | null>(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [newComment, setNewComment] = useState('');
 
   // Generate random timestamps within the last week
   const getRandomDate = (): Date => {
@@ -372,29 +378,117 @@ const Community: React.FC = () => {
 
   const isFollowing = (userId: number) => followedUsers.includes(userId);
 
+  const handleViewProfile = (userId: number) => {
+    // Find the user in community members
+    const member = communityMembers.find(m => m.id === userId);
+
+    if (member) {
+      // Create a more detailed profile for the selected user
+      const userProfile: UserProfileData = {
+        id: member.id,
+        name: member.name,
+        avatar: member.avatar,
+        isActive: member.isActive,
+        bio: `Hi, I'm ${member.name.split(' ')[0]}! I'm passionate about meditation and mindfulness.`,
+        location: ['New York', 'London', 'Tokyo', 'Berlin', 'Sydney'][Math.floor(Math.random() * 5)],
+        joinDate: ['January 2023', 'March 2023', 'May 2023', 'July 2023', 'September 2023'][Math.floor(Math.random() * 5)],
+        postsCount: Math.floor(Math.random() * 50) + 1,
+        followersCount: Math.floor(Math.random() * 200) + 10,
+        followingCount: Math.floor(Math.random() * 100) + 5,
+        isFollowing: followedUsers.includes(userId),
+        interests: [
+          'Meditation', 'Mindfulness', 'Sleep', 'Anxiety Relief',
+          'Stress Management', 'Focus', 'Productivity', 'Work-Life Balance'
+        ].sort(() => 0.5 - Math.random()).slice(0, 4)
+      };
+
+      setSelectedUser(userProfile);
+      setShowUserProfile(true);
+    }
+  };
+
+  const handleAddComment = (postId: number, comment: string) => {
+    if (!comment.trim()) return;
+
+    const now = new Date();
+
+    setAllPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments + 1,
+              commentsList: [
+                {
+                  id: post.commentsList.length > 0
+                    ? Math.max(...post.commentsList.map(c => c.id)) + 1
+                    : postId * 100,
+                  userId: 0, // Current user
+                  userName: "You",
+                  userAvatar: "https://ui-avatars.com/api/?name=You&background=random",
+                  content: comment,
+                  timestamp: "Just now",
+                  likes: 0,
+                  isLiked: false,
+                  createdAt: now
+                },
+                ...post.commentsList
+              ]
+            }
+          : post
+      )
+    );
+  };
+
+  const handleReplyToComment = (postId: number, commentId: number, reply: string) => {
+    if (!reply.trim()) return;
+
+    const now = new Date();
+
+    setAllPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments + 1,
+              commentsList: [
+                {
+                  id: post.commentsList.length > 0
+                    ? Math.max(...post.commentsList.map(c => c.id)) + 1
+                    : postId * 100,
+                  userId: 0, // Current user
+                  userName: "You",
+                  userAvatar: "https://ui-avatars.com/api/?name=You&background=random",
+                  content: reply,
+                  timestamp: "Just now",
+                  likes: 0,
+                  isLiked: false,
+                  createdAt: now
+                },
+                ...post.commentsList
+              ]
+            }
+          : post
+      )
+    );
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F7F9FB] pb-16">
-      {/* Header with navigation */}
-      <div className="bg-white py-3 px-4 flex items-center justify-between border-b border-gray-200">
-        <div className="w-5"></div>
-
-        <div className="flex items-center justify-center flex-1">
-          <img
-            src="/lovable-uploads/600dca76-c989-40af-876f-bd95270e81fc.png"
-            alt="Shh"
-            className="h-8" style={{ filter: 'invert(45%) sepia(60%) saturate(2210%) hue-rotate(205deg) brightness(101%) contrast(101%)' }}
-          />
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <button className="text-gray-600" onClick={() => navigate('/notifications')}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-          </button>
-          <button className="text-amber-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </button>
-        </div>
-      </div>
+      {/* Header with centered logo */}
+      <HeaderWithLogo
+        title="Community"
+        logoColor="blue"
+        bgColor="bg-white"
+        textColor="text-gray-800"
+        rightElement={
+          <div className="flex items-center space-x-2">
+            <button className="text-gray-600 p-1" onClick={() => navigate('/notifications')}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+            </button>
+          </div>
+        }
+      />
 
       <SideMenu isOpen={isMenuOpen} onClose={toggleMenu} userName="User Name" />
 
@@ -426,16 +520,30 @@ const Community: React.FC = () => {
       <div className="px-4 py-3 bg-white mb-2 shadow-sm">
         <div className="flex justify-between items-center mb-3">
           <h2 className="font-semibold text-gray-800">People in Community</h2>
-          <button className="text-blue-500 text-sm">See All</button>
+          <button
+            className="text-blue-500 text-sm"
+            onClick={() => {
+              toast({
+                title: "Community Members",
+                description: "View all members feature coming soon",
+              });
+            }}
+          >
+            See All
+          </button>
         </div>
         <div className="flex overflow-x-auto space-x-4 pb-2 no-scrollbar">
           {communityMembers.map(member => (
-            <div key={member.id} className="flex flex-col items-center min-w-[60px]">
+            <div
+              key={member.id}
+              className="flex flex-col items-center min-w-[60px] cursor-pointer"
+              onClick={() => handleViewProfile(member.id)}
+            >
               <div className="relative">
                 <img
                   src={member.avatar}
                   alt={member.name}
-                  className="w-12 h-12 rounded-full border-2 border-white"
+                  className="w-12 h-12 rounded-full border-2 border-white hover:border-blue-300 transition-colors"
                 />
                 {member.isActive && (
                   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
@@ -652,106 +760,29 @@ const Community: React.FC = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
               <p className="mt-2 text-gray-500">Loading posts...</p>
             </div>
-          ) : filteredPosts.length > 0 ?
+          ) : filteredPosts.length > 0 ? (
             filteredPosts.map(post => (
-              <div key={post.id} className="bg-white rounded-lg p-4 mb-3 shadow-sm">
-                {/* Post header with user info */}
-                <div className="flex items-start mb-2">
-                  <img
-                    src={post.avatar || `https://ui-avatars.com/api/?name=${post.user.replace(' ', '+')}&background=random`}
-                    alt={post.user}
-                    className="w-10 h-10 rounded-full mr-2"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-800">{post.user}</p>
-                      {!isFollowing(post.userId) && (
-                        <button
-                          onClick={() => handleFollow(post.userId)}
-                          className="ml-2 text-blue-500 text-xs font-medium"
-                        >
-                          Follow
-                        </button>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500">{post.timestamp}</p>
-                  </div>
-                </div>
-
-                {/* Post content */}
-                <p className="text-gray-700 text-sm mb-2">{post.content}</p>
-
-                {/* Interaction buttons */}
-                <div className="flex items-center mt-2 pt-1">
-                  <button
-                    onClick={() => handleLike(post.id)}
-                    className="flex items-center mr-3 text-xs text-gray-500"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={post.isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    <span>{post.likes}</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleComment(post.id)}
-                    className="flex items-center mr-3 text-xs text-gray-500"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                    <span>{post.comments} Comments</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleShare(post.id)}
-                    className="flex items-center text-xs text-gray-500 ml-auto"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-blue-500"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-                    <span>Share</span>
-                  </button>
-                </div>
-
-                {/* Comments section - Read Only */}
-                {post.showComments && (
-                  <div className="mt-3 pt-2 border-t border-gray-100">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-medium text-gray-700">Comments ({post.commentsList.length})</h4>
-                      <div className="text-xs text-gray-500 italic">Reply feature disabled</div>
-                    </div>
-
-                    {post.commentsList.length > 0 ? (
-                      post.commentsList.map(comment => (
-                        <div key={comment.id} className="flex mb-2">
-                          <img
-                            src={comment.userAvatar}
-                            alt={comment.userName}
-                            className="w-8 h-8 rounded-full mr-2 mt-1"
-                          />
-                          <div className="flex-1">
-                            <div className="bg-gray-100 rounded-lg p-2">
-                              <p className="text-xs font-medium">{comment.userName}</p>
-                              <p className="text-xs text-gray-800">{comment.content}</p>
-                            </div>
-                            <div className="flex items-center mt-1 text-xs text-gray-500">
-                              <button
-                                onClick={() => handleLikeComment(post.id, comment.id)}
-                                className="mr-3 flex items-center"
-                              >
-                                <Heart size={12} className={comment.isLiked ? "text-red-500 fill-current mr-1" : "text-gray-500 mr-1"} />
-                                <span>{comment.likes}</span>
-                              </button>
-                              <span>{comment.timestamp}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-4 text-gray-500 text-sm">
-                        No comments yet
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <PostCard
+                key={post.id}
+                post={post as PostType}
+                isFollowing={isFollowing}
+                onLike={handleLike}
+                onComment={handleComment}
+                onShare={handleShare}
+                onFollow={handleFollow}
+                onViewProfile={handleViewProfile}
+                onAddComment={handleAddComment}
+                onLikeComment={handleLikeComment}
+                onReplyToComment={handleReplyToComment}
+                onSave={(id) => {
+                  toast({
+                    title: "Post Saved",
+                    description: "This post has been saved to your collection",
+                  });
+                }}
+              />
             ))
-          : (
+          ) : (
             <div className="text-center py-8">
               <p className="text-gray-500">
                 {activeTab === 'groups'
@@ -764,6 +795,29 @@ const Community: React.FC = () => {
       </div>
 
 
+
+      {/* User Profile Modal */}
+      {selectedUser && (
+        <UserProfileCard
+          user={selectedUser}
+          isOpen={showUserProfile}
+          onClose={() => setShowUserProfile(false)}
+          onFollow={(userId) => {
+            handleFollow(userId);
+            setSelectedUser(prev => prev ? {...prev, isFollowing: true} : null);
+          }}
+          onUnfollow={(userId) => {
+            handleFollow(userId);
+            setSelectedUser(prev => prev ? {...prev, isFollowing: false} : null);
+          }}
+          onMessage={(userId) => {
+            toast({
+              title: "Message",
+              description: `Starting conversation with ${selectedUser.name}`,
+            });
+          }}
+        />
+      )}
 
       <BottomNavigation />
     </div>
