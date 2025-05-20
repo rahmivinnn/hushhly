@@ -48,22 +48,22 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-400 via-purple-300 to-pink-300 p-4">
+    <div className="min-h-screen bg-white p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/30 p-2 rounded-full"
+          className="bg-blue-500 p-2 rounded-full"
         >
           <ArrowLeft size={24} className="text-white" />
         </button>
 
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white">{currentTime}</h1>
-          <p className="text-white/80">{currentDay}</p>
+          <h1 className="text-2xl font-bold text-blue-600">{currentTime}</h1>
+          <p className="text-blue-500">{currentDay}</p>
         </div>
 
-        <button className="bg-white/30 p-2 rounded-full">
+        <button className="bg-blue-500 p-2 rounded-full">
           <Sparkles size={24} className="text-white" />
         </button>
       </div>
@@ -76,7 +76,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
             placeholder="Search meditation sessions"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/70 backdrop-blur-sm border-none rounded-full py-6 pl-12 pr-4 text-gray-700 placeholder-gray-500"
+            className="w-full bg-gray-100 border-none rounded-full py-6 pl-12 pr-4 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-300"
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
         </div>
@@ -95,7 +95,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-gradient-to-br from-blue-400 to-blue-300 rounded-xl p-4 flex flex-col items-center justify-center">
+          <div className="bg-blue-500 rounded-xl p-4 flex flex-col items-center justify-center">
             <div className="bg-white/30 p-2 rounded-full mb-2">
               <Clock className="text-white" size={24} />
             </div>
@@ -103,7 +103,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
             <span className="text-white/80 text-sm">min</span>
           </div>
 
-          <div className="bg-gradient-to-br from-pink-400 to-pink-300 rounded-xl p-4 flex flex-col items-center justify-center">
+          <div className="bg-blue-500 rounded-xl p-4 flex flex-col items-center justify-center">
             <div className="bg-white/30 p-2 rounded-full mb-2">
               <Briefcase className="text-white" size={24} />
             </div>
@@ -111,7 +111,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
             <span className="text-white/80 text-sm">Sessions</span>
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-400 to-yellow-300 rounded-xl p-4 flex flex-col items-center justify-center">
+          <div className="bg-blue-500 rounded-xl p-4 flex flex-col items-center justify-center">
             <div className="bg-white/30 p-2 rounded-full mb-2">
               <Trophy className="text-white" size={24} />
             </div>
@@ -124,7 +124,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
       {/* Recent Activity */}
       <div className="mb-8">
         <h2 className="text-lg font-semibold text-gray-800 mb-2">Recent Activity</h2>
-        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 flex items-center justify-center">
+        <div className="bg-gray-100 rounded-xl p-6 flex items-center justify-center">
           <p className="text-gray-600">No meditation activity yet.</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
                 key={item.id}
                 whileTap={{ scale: 0.98 }}
                 onClick={onStartMeditation}
-                className="bg-white/30 backdrop-blur-sm rounded-xl p-4 mb-3 flex items-center cursor-pointer"
+                className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-3 flex items-center cursor-pointer hover:bg-blue-100 transition-colors"
               >
                 <div className="mr-3">
                   {item.icon}
@@ -155,7 +155,7 @@ const MeditationDashboard: React.FC<MeditationDashboardProps> = ({ onStartMedita
             ))}
           </div>
         ) : (
-          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 flex items-center justify-center">
+          <div className="bg-gray-100 rounded-xl p-6 flex items-center justify-center">
             <p className="text-gray-600">No scheduled sessions for today.</p>
           </div>
         )}

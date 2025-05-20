@@ -451,7 +451,7 @@ const Home: React.FC = () => {
       <section className="px-4 mb-3">
         <motion.div
           onClick={() => navigate('/meditation-screen')}
-          className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          className="bg-blue-500 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
