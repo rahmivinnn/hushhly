@@ -1,4 +1,7 @@
-// Sleep stories data with 200 stories
+// Import additional stories
+import { getAllAdditionalStories } from './additionalStories';
+
+// Sleep stories data with 300 stories
 export const sleepStories = [
   // Featured Stories
   {
@@ -81,7 +84,7 @@ export const sleepStories = [
     isPremium: false,
     icon: "🌷"
   },
-  
+
   // Short Stories (5-15 minutes)
   {
     id: 9,
@@ -243,7 +246,7 @@ export const sleepStories = [
     isPremium: false,
     icon: "📖"
   },
-  
+
   // Long Stories (20-30 minutes)
   {
     id: 25,
@@ -385,7 +388,7 @@ export const sleepStories = [
     isPremium: true,
     icon: "🌸"
   },
-  
+
   // Family Stories
   {
     id: 39,
@@ -487,7 +490,7 @@ export const sleepStories = [
     isPremium: true,
     icon: "🐻"
   },
-  
+
   // Additional stories to reach 200
   // Featured Stories (continued)
   {
@@ -510,39 +513,39 @@ export const sleepStories = [
     isPremium: true,
     icon: "🌅"
   },
-  
+
   // Generate more stories to reach 200
   ...Array.from({ length: 150 }, (_, i) => {
     const id = i + 51;
     const categories = ["short", "long", "family", "featured"];
     const category = categories[Math.floor(Math.random() * categories.length)];
-    
+
     const shortTitles = [
-      "Moonlit Path", "Gentle Waves", "Forest Whispers", "Starry Night", 
+      "Moonlit Path", "Gentle Waves", "Forest Whispers", "Starry Night",
       "Mountain Echo", "Quiet Stream", "Evening Breeze", "Morning Dew",
       "Peaceful Garden", "Sunset Beach", "Quiet Snowfall", "Autumn Leaves",
       "Spring Blossoms", "Summer Meadow", "Winter Cabin", "Rainy Day",
       "Ocean Breeze", "Desert Night", "Lakeside Morning", "Foggy Valley"
     ];
-    
+
     const longTitles = [
-      "Journey Through Time", "Celestial Voyage", "Ancient Forest Tales", 
+      "Journey Through Time", "Celestial Voyage", "Ancient Forest Tales",
       "Ocean's Deep Secrets", "Mountain Sanctuary", "Island Paradise",
       "Enchanted Castle Dreams", "Countryside Memories", "Mystical Garden",
       "Northern Lights Wonder", "Bamboo Forest Serenity", "Sailing the Stars"
     ];
-    
+
     const familyTitles = [
       "The Friendly Cloud", "Moon and Stars Friends", "The Brave Little Fish",
       "Sky Castle Adventure", "The Wise Old Oak", "Starlight Companions",
       "The Kind Mountain", "Underwater Kingdom", "The Magic Paintbrush",
       "Bedtime for Bunny", "The Sleepy Owl", "The Lost Star"
     ];
-    
+
     const icons = ["🌙", "✨", "🌲", "🌊", "⛰️", "🏜️", "🌴", "🐉", "🌷", "🦋", "🌅", "🌫️", "🏡", "☁️", "🍂", "❄️", "🌃", "🏯", "🏝️", "💜", "📖", "🌠", "🌳", "🐠", "🏔️", "🏰", "🚂", "🏮", "🌺", "🎋", "⛵", "🏞️", "🌸", "🐲", "🦊", "🚢", "🧙‍♂️", "🐙", "🖌️", "🐻", "🌼"];
-    
+
     let title, description, duration, icon;
-    
+
     if (category === "short") {
       title = shortTitles[Math.floor(Math.random() * shortTitles.length)];
       description = "A peaceful journey to help you relax and drift to sleep.";
@@ -560,12 +563,12 @@ export const sleepStories = [
       description = "A featured story to help you find peaceful sleep.";
       duration = `${15 + Math.floor(Math.random() * 15)} min`;
     }
-    
+
     icon = icons[Math.floor(Math.random() * icons.length)];
-    
+
     // Determine if premium (about 30% of stories are premium)
     const isPremium = Math.random() < 0.3;
-    
+
     // Determine image based on category
     let image;
     if (category === "short") {
@@ -577,7 +580,7 @@ export const sleepStories = [
     } else {
       image = "/lovable-uploads/starlit-dreams.svg";
     }
-    
+
     return {
       id,
       title: `${title} ${id - 50}`,
@@ -588,7 +591,10 @@ export const sleepStories = [
       isPremium,
       icon
     };
-  })
+  }),
+
+  // Add the 100 additional stories
+  ...getAllAdditionalStories()
 ];
 
 // Function to get stories by category
