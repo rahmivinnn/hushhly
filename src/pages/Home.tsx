@@ -447,6 +447,30 @@ const Home: React.FC = () => {
         </motion.div>
       </section>
 
+      {/* Simple Meditation Section */}
+      <section className="px-4 mb-3">
+        <motion.div
+          onClick={() => navigate('/meditation-screen')}
+          className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3 text-white flex justify-between items-center cursor-pointer hover:shadow-lg transition-shadow active:opacity-90"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div>
+            <h2 className="font-medium text-sm flex items-center">
+              <Brain size={14} className="mr-1" />
+              Meditation
+            </h2>
+            <div className="flex items-center mt-1">
+              <p className="text-xs">Guided breathing meditation</p>
+              <ArrowRight size={14} className="ml-1" />
+            </div>
+          </div>
+          <div className="bg-white/20 p-2 rounded-full">
+            <Clock size={24} className="text-white" />
+          </div>
+        </motion.div>
+      </section>
+
       {/* Categories Section */}
       <section className="px-4 mb-3">
         <div className="flex justify-between items-center mb-2">

@@ -39,6 +39,7 @@ const Stories = lazy(() => import("./pages/Stories"));
 const StoryDetail = lazy(() => import("./pages/StoryDetail"));
 const StoryMeditation = lazy(() => import("./pages/StoryMeditation"));
 const MeditationDashboardPage = lazy(() => import("./pages/MeditationDashboardPage"));
+const MeditationScreen = lazy(() => import("./pages/MeditationScreen"));
 
 const queryClient = new QueryClient();
 
@@ -184,6 +185,7 @@ const App = () => {
                 <Route path="/ai-meditation" element={<AIMeditation />} />
                 <Route path="/ai-meditation-chat" element={<AIMeditationChat />} />
                 <Route path="/meditation-dashboard" element={<MeditationDashboardPage />} />
+                <Route path="/meditation-screen" element={<MeditationScreen />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
